@@ -22,6 +22,7 @@ textRect.center = (300, 150)
 # 将准备好的文本信息，绘制到主屏幕 Screen 上。
 screen.blit(text, textRect)
 # 固定代码段，实现点击"X"号退出界面的功能，几乎所有的pygame都会使用该段代码
+
 while True:
     # 循环获取事件，监听事件状态
     for event in pygame.event.get():
