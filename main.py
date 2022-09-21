@@ -4,18 +4,20 @@ import pygame
 # 使用pygame之前必须初始化
 pygame.init()
 # 设置主屏窗口
-screen = pygame.display.set_mode((400,400))
+screen = pygame.display.set_mode((600,300))
+icon = pygame.image.load('assets/texture/icon.png')
+pygame.display.set_icon(icon)     #设置图标
 # 设置窗口的标题，即游戏名称
 pygame.display.set_caption('Fight Against Gravity')
 # 引入字体类型
-f = pygame.font.Font('C:/Windows/Fonts/simhei.ttf',20)
+f = pygame.font.Font('assets/font/consola.ttf',30)
 # 生成文本信息，第一个参数文本内容；第二个参数，字体是否平滑；
 # 第三个参数，RGB模式的字体颜色；第四个参数，RGB模式字体背景颜色；
 text = f.render("Fight Against Gravity",True,(100,30,30),(0,0,0))
 #获得显示对象的rect区域坐标
 textRect =text.get_rect()
 # 设置显示对象居中
-textRect.center = (200,200)
+textRect.center = (300,150)
 # 将准备好的文本信息，绘制到主屏幕 Screen 上。
 screen.blit(text,textRect)
 # 固定代码段，实现点击"X"号退出界面的功能，几乎所有的pygame都会使用该段代码
