@@ -10,3 +10,6 @@ class Settings:
         self.screen_height = 800
         self.bg_color = (10, 10, 10)
         self.game_title = 'Fight Against Gravity'
+
+        # 开场时间设置
+        self.title_time_sec = 3  # 标题显示时间
