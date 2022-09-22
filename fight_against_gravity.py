@@ -22,7 +22,7 @@ def run_game():
     # 获得显示对象的rect区域坐标
     text_rect = text.get_rect()
     # 设置显示对象居中
-    text_rect.center = (200, 200)
+    text_rect.center = settings.screen_width/2, settings.screen_height/2
     # 将准备好的文本信息，绘制到主屏幕 Screen 上。
     screen.blit(text, text_rect)
 
