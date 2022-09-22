@@ -15,7 +15,7 @@ def run_game():
 
     pygame.display.set_caption('Fight Against Gravity')
     # 引入字体类型
-    f = pygame.font.Font('C:/Windows/Fonts/simhei.ttf', 20)
+    f = pygame.font.Font('assets/font/consolas.ttf', 20)
     # 生成文本信息，第一个参数文本内容；第二个参数，字体是否平滑；
     # 第三个参数，RGB模式的字体颜色；第四个参数，RGB模式字体背景颜色；
     text = f.render("Fight Against Gravity", True, (100, 30, 30), (0, 0, 0))
