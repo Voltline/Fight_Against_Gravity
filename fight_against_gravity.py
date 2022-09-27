@@ -3,6 +3,7 @@ from all_settings import Settings
 import game_function as gf
 from game_manager import GameManager
 from time import sleep
+# lty本地
 
 
 def run_game():
