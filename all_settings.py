@@ -12,4 +12,4 @@ class Settings:
         self.game_title = 'Fight Against Gravity'
 
         # 开场时间设置
-        self.title_time_sec = 3  # 标题显示时间
+        self.title_time_sec = 4  # 标题显示时间
