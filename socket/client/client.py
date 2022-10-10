@@ -13,15 +13,14 @@ class Socket_client:
         self.__host = ip
         try:
             self.__socket.connect((self.__host, self.__port))
-
         except Exception as err:
             print(err, "无法连接到服务器")
 
     def send(self, data):
-        self.__socket.send(data.encode())
+        self.__socket.send(str(data).encode())
 
     def receive(self):
-        print(self.__socket.recv(1024).decode())
+        return self.__socket.recv(1024).decode())
 
     def colse(self):
         self.__s.close()
@@ -29,3 +28,10 @@ class Socket_client:
 
 if __name__ == "__main__":
     client = Socket_client("localhost", 25555)
+    while(True):
+        a = input()
+        if(a == "0"):
+            break;
+        client.send(a)
+        print(client.receive())
+    client.close()
