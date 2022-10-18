@@ -32,4 +32,3 @@ def update_screen(settings, screen, gm):
 
     # 刷新屏幕
     pygame.display.flip()
-
