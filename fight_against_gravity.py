@@ -32,8 +32,13 @@ def run_game():
     pygame.display.flip()
     sleep(settings.title_time_sec)
 
+    # 准备时钟
+    clock = pygame.time.Clock()
+
     # Main Loop
     while True:
+        delta_t = clock.tick(settings.max_fps)  # 获取delta_time并限制最大帧率
+
         gf.check_events(settings, gm)
 
         gf.update_screen(settings, screen, gm)
