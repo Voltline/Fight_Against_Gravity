@@ -15,9 +15,10 @@ class SpaceObj(pygame.sprite.Sprite):
         self.rect = self.img.get_rect()
         self.rect.x, self.rect.y = 0, 0
 
-    def move(self, delta_t, planets: pygame.sprite.Group):
+    def move(self, delta_t, planets: pygame.sprite.Group = None):
         """负责该对象的移动,更新loc,spd,acc"""
         self.loc += self.spd * delta_t
+        self.rect.center = self.loc
         self.spd += self.acc * delta_t
         self.acc.update(0, 0)
         for planet in planets:
