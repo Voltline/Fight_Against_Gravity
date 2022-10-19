@@ -10,7 +10,7 @@ def run_game():
     # 初始化游戏 并创建一个窗口
     pygame.init()
     settings = Settings()  # 初始化设置类
-    icon = pygame.image.load("assets/texture/icon1.png")
+    icon = pygame.image.load(settings.icon_img_path)
     pygame.display.set_icon(icon)
     screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))  # 设置窗口大小
     pygame.display.set_caption(settings.game_title)  # 设置窗口标题
@@ -32,8 +32,13 @@ def run_game():
     pygame.display.flip()
     sleep(settings.title_time_sec)
 
+    # 准备时钟
+    clock = pygame.time.Clock()
+
     # Main Loop
     while True:
+        delta_t = clock.tick(settings.max_fps)  # 获取delta_time并限制最大帧率
+
         gf.check_events(settings, gm)
 
         gf.update_screen(settings, screen, gm)
