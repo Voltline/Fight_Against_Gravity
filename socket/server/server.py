@@ -1,7 +1,8 @@
 import socket
 from threading import Thread
 
-address = (socket.gethostname(), 25555)
+ip = "175.24.235.109"
+address = (ip, 25555)
 g_socket_server = None
 g_conn_poll = []
 

@@ -20,14 +20,15 @@ class Socket_client:
         self.__socket.send(str(data).encode())
 
     def receive(self):
-        return self.__socket.recv(1024).decode())
+        return self.__socket.recv(1024).decode()
 
     def colse(self):
         self.__s.close()
 
 
 if __name__ == "__main__":
-    client = Socket_client("localhost", 25555)
+    ip = "175.24.235.109"
+    client = Socket_client(ip, 25555)
     while(True):
         a = input()
         if(a == "0"):
