@@ -1,12 +1,14 @@
-﻿from ctypes import WinError
-from signal import raise_signal
-import socket
+﻿import socket
 
 
 class Socket_client:
+    """
+    使用TCP连接的socket函数封装
+    """
     def __init__(self, ip: str, port: int):
         """
         初始化
+        初始化后已经和服务端建立了socket连接
         """
         self.__socket = socket.socket()
         self.__port = port
@@ -17,12 +19,21 @@ class Socket_client:
             print(err, "无法连接到服务器")
 
     def send(self, data):
+        """
+        发送数据
+        """
         self.__socket.send(str(data).encode())
 
     def receive(self):
+        """
+        返回数据
+        """
         return self.__socket.recv(1024).decode()
 
     def colse(self):
+        """
+        关闭连接
+        """
         self.__s.close()
 
 
