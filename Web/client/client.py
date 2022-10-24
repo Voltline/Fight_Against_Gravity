@@ -1,7 +1,7 @@
 ﻿import socket
 
 
-class Socket_client:
+class SocketClient:
     """
     使用TCP连接的socket函数封装
     """
@@ -30,20 +30,21 @@ class Socket_client:
         """
         return self.__socket.recv(1024).decode()
 
-    def colse(self):
+    def close(self):
         """
         关闭连接
         """
-        self.__s.close()
+        self.__socket.close()
 
 
 if __name__ == "__main__":
-    ip = "175.24.235.109"
-    client = Socket_client(ip, 25555)
-    while(True):
+    ip = "localhost"
+    port = 25555
+    client = SocketClient(ip, port)
+    while True:
         a = input()
-        if(a == "0"):
-            break;
+        if a == "0":
+            break
         client.send(a)
-        print(client.receive())
+        # print(client.receive())
     client.close()
