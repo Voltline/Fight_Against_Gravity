@@ -1,5 +1,5 @@
-from ..client import client as CS
+from Web.SafeSocket import safeclient
 
 if __name__ == "__main__":
 
-    c = CS.Socket_client("localhost", "25555")
+    c = safeclient.Socket_client("localhost", "25555")
