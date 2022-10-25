@@ -8,10 +8,10 @@ from PIL import Image, ImageDraw, ImageFont  # PIL模块中的Image,ImageDraw,Im
 
 
 def createCheckCode() -> str:  # 返回值char_check为
-    '''生成本地验证码图片函数
+    """生成本地验证码图片函数
     :参数：无参数
     :返回：对应图片中的字符串
-    '''
+    """
     img1 = Image.new(mode="RGB", size=(140, 40), color=(50, 50, 40))  # 定义使用Image类实例化一个140px*40px,RGB(50,50,40)的图片
     draw1 = ImageDraw.Draw(img1, mode="RGB")  # 实例化一支画笔
     font1 = ImageFont.truetype("consolaz.ttf", 28)  # 定义要使用的字体

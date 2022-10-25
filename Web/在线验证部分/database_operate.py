@@ -26,3 +26,14 @@ def insert_acc_data(info : list) -> bool:
         return True
     except:
         return False
+
+def insert_connection_data(info : list) -> bool:
+    con_con = sql.connect("Database/connection.db")  # 连接账户数据库文件connection.db
+    cur_con = con_con.cursor()  # 创建connection数据库对应的指针cur_con
+    cur_con.execute("CREATE TABLE IF NOT EXISTS acc(IP,time)")  
+    try:
+        cur_con.execute("INSERT INTO acc(IP, time) VALUES(?,?)", info)
+        con_con.commit()
+        return True
+    except:
+        return False
