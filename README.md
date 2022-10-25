@@ -1,6 +1,7 @@
 <div align="center">
   <img src=assets/texture/FAGtitle.png >
 </div>
+
 # Fight Against Gravity Project
 > *Hope you all can enjoy our game!*
 
