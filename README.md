@@ -2,18 +2,18 @@
   <img src=assets/texture/FAGtitle.png >
 </div>
 
-# Fight Against Gravity Project
-> *Hope you all can enjoy our game!*
+# Fight Against Gravity
+> *Hope all of you can enjoy Fight Against Gravity!*
 
 ![License](https://img.shields.io/github/license/Voltline/Fight_Against_Gravity)
 ![Issues](https://img.shields.io/github/issues/Voltline/Fight_Against_Gravity)
 ![Stars](https://img.shields.io/github/stars/Voltline/Fight_Against_Gravity)
 
 ## 成员/Collabrators
-* ZYH (Voltline)
-* LTY (D_S_O_)
-* LKY (ShiinaRikka)
-* CDC (Cdccc1)
+* [ZYH (Voltline)](https://github.com/Voltline)
+* [LTY (D_S_O_)](https://github.com/DissipativeStructureObject)
+* [LKY (ShiinaRikka)](https://github.com/lky1433223)
+* [CDC (Cdccc1)](https://github.com/Cdccc1)
 
 ## 简介
 * 以宇宙为背景，两名玩家分别操控自己的飞船在有限地图中遨游
