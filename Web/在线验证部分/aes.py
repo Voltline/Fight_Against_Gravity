@@ -1,6 +1,5 @@
-from threading import local
 from Crypto.Cipher import AES
-import random 
+import random
 import base64
 
 def decode_base64(data : bytes) -> bytes:
@@ -13,10 +12,10 @@ def decode_base64(data : bytes) -> bytes:
         data += b'='* missing_padding
     return base64.b64decode(data)
 
-def generate_id_code() -> str: 
-    '''generate_id_code
+def generate_id_code() -> str:
+    """generate_id_code
     :返回：生成一个十六位随机密钥用于AES加密
-    '''
+    """
     char_check = ''
     for i in range(16):
     # 生成一个不包括0,o和O的字符
@@ -26,30 +25,30 @@ def generate_id_code() -> str:
     return char_check
 
 def trans_typ_detext(content : str) -> bytes:
-    '''转换文本函数
+    """转换文本函数
     :参数：content: 内容字符串
     :返回：content转换为bytes后再补字符为16的整数倍得到的bytes
-    '''
+    """
     content = bytes(content, encoding='utf-8')
     while len(content) % 16 != 0:
         content += b'\x00'
     return content
 
 def aes_encrypt(password : bytes, content : str) -> bytes:
-    '''AES加密函数
+    """AES加密函数
     :参数：password：密钥，content：内容
     :返回：密文Base64编码
-    '''
+    """
     aes = AES.new(password, AES.MODE_ECB)
     text = trans_typ_detext(content)
     en_text = base64.b64encode(aes.encrypt(text))
     return en_text
 
 def aes_decrypt(password : bytes, en_text : bytes) -> str:
-    '''AES解密函数
+    """AES解密函数
     :参数：password：密钥，content：内容
     :返回：字符串类型明文
-    '''
+    """
     aes = AES.new(password, AES.MODE_ECB)
     den_text = aes.decrypt(decode_base64(en_text))
     den_text = den_text.replace(b'\x00', b'')

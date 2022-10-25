@@ -24,6 +24,7 @@ class TCPServer:
                 # 等待客户端连接请求,获取connSock
                 conn, addr = s.accept()
                 print('警告，远端客户:{} 接入系统！！！'.format(addr))
+                db.insert_connection_data([str(addr), str(ctime())])
                 with conn:
                     print('接收请求信息。。。。。')
                     # 接收请求信息
@@ -88,4 +89,7 @@ if __name__ == '__main__':
     while True:
         print('execute tcpsever')
         while True:
-            Identify_Sever.Start_Register()
+            try:
+                Identify_Sever.Start_Register()
+            except:
+                pass
