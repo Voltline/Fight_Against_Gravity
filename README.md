@@ -1,14 +1,19 @@
-# Fight Against Gravity Project
+<div align="center">
+  <img src=assets/texture/FAGtitle.png >
+</div>
 
-这是一个基于GPL 3.0协议开源的游戏项目。
+# Fight Against Gravity
+> *Hope all of you can enjoy Fight Against Gravity!*
 
-This is an open source game project based on GPL 3.0 protocol.
+![License](https://img.shields.io/github/license/Voltline/Fight_Against_Gravity)
+![Issues](https://img.shields.io/github/issues/Voltline/Fight_Against_Gravity)
+![Stars](https://img.shields.io/github/stars/Voltline/Fight_Against_Gravity)
 
 ## 成员/Collabrators
-* ZYH (Voltline)
-* LTY (D_S_O_)
-* LKY (ShiinaRikka)
-* CDC (Cdccc1)
+* [ZYH (Voltline)](https://github.com/Voltline)
+* [LTY (D_S_O_)](https://github.com/DissipativeStructureObject)
+* [LKY (ShiinaRikka)](https://github.com/lky1433223)
+* [CDC (Cdccc1)](https://github.com/Cdccc1)
 
 ## 简介
 * 以宇宙为背景，两名玩家分别操控自己的飞船在有限地图中遨游
@@ -25,6 +30,9 @@ This is an open source game project based on GPL 3.0 protocol.
 ## 项目信息/About Fight Against Gravity
 ### 语言与模块/Lang & Modules
 * 语言/Lang：Python
-* 主要模块/Main Modules：pygame，PIL，socket，Crypto，base64，smtplib
-### 开源协议/Open Source Protocol
+* 主体/Main Part：pygame
+* 在线/Online Part：socket，Crypto，base64，smtplib
+* 数据/Data Part：json，sqlite3
+* 其他/Other Part: random，PIL
+### 开源协议/Open-Source Protocol
 * General Public License 3.0
