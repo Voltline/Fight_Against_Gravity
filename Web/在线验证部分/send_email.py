@@ -14,11 +14,12 @@ def generate_id_code():
     return char_check
 
 def send_email(user_name, target_email, id_code):
-    my_mail = "fag_identify_norep@yeah.net"
-    password = "KCJUXGAPEJWSLDLT"
-    #target_email = "2502136346@qq.com"
-    #user_name = "D_S_O_"
-    #id_code = "FAGYYDS"
+    my_mail = ''
+    password = ''
+    with open("server_email.txt", 'r') as f:
+        information = f.read().split('\n')
+        my_mail = information[0]
+        password = information[1]
 
     content2 = """<div>
         <includetail>
