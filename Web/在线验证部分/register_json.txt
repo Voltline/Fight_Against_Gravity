@@ -1,0 +1,16 @@
+register_check_code json:
+{
+    "opt" : 1,
+    // "aes_key" : "aes random key",
+    "user" : "str",  (aes random key encrypt)
+    "email" : "str"  (aes random key encrypt)
+} (aes public key encrypt)
+
+register_data_trans json:
+{
+    "opt" : 2,
+    // "aes_key" : "aes random key",
+    "user" : "str",  (aes random key encrypt)
+    "email" : "str"  (aes random key encrypt)
+    "password" : "str",  (aes random key encrypt)
+} (aes public key encrypt)
