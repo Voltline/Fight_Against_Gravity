@@ -95,3 +95,9 @@ def all_move(gm, delta_t):
         bullet.move(delta_t)
     for planet in gm.planets:
         planet.move()
+
+
+def check_bullets_planets_collisions(gm):
+    """使用圆形碰撞检测"""
+    collections = pygame.sprite.groupcollide(
+        gm.bullets, gm.planets, True, False, pygame.sprite.collide_circle)
