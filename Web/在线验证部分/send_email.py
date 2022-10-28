@@ -1,25 +1,36 @@
 import smtplib
 import random
+import json
 from email.mime.text import MIMEText
 from email.header import Header
-# email用于构建邮件内容
 
-def generate_id_code():
+
+def generate_id_code() -> str:
+    """生成验证码
+    :参数：无参数
+    :返回：返回生成的验证码
+    """
     char_check = ''
     for i in range(8):
-    # 生成一个不包括0,o和O的字符
+        # 生成一个不包括0,o和O的字符
         char1 = random.choice([chr(random.randint(65, 78)), chr(random.randint(80, 90)), str(random.randint(1, 9)),
-                            chr(random.randint(97, 110)), chr(random.randint(112, 122))])
+                               chr(random.randint(97, 110)), chr(random.randint(112, 122))])
         char_check += char1
     return char_check
 
-def send_email(user_name, target_email, id_code):
-    my_mail = ''
-    password = ''
-    with open("server_email.txt", 'r') as f:
-        information = f.read().split('\n')
-        my_mail = information[0]
-        password = information[1]
+
+def send_email(user_name: str, target_email: str, id_code: str) -> None:
+    """发送验证邮件
+    :参数：user_name：用户名，target_email：目标邮箱，id_code：验证码
+    :返回：无返回
+    """
+    with open("settings.json", 'r') as f:
+        information = json.load(f)
+    my_mail = information["Email"]["Addr"]
+    password = information["Email"]["Password"]
+    smtp_server = information["Email"]["SMTP_Server"]
+    port = information["Email"]["SMTP_Port"]
+    information = ""
 
     content2 = """<div>
         <includetail>
@@ -44,14 +55,14 @@ def send_email(user_name, target_email, id_code):
                             <div class="dragArea gen-group-list">
                                 <div class="gen-item">
                                     <div class="eml-w-item-block" style="padding: 0px;">
-                                        <div class="eml-w-phase-normal-16"><b>你好，"""+user_name+"""，你的注册验证码为：</b></div>
+                                        <div class="eml-w-phase-normal-16"><b>你好，""" + user_name + """，你的注册验证码为：</b></div>
                                 </div>
                                 </div>
 
                                 <div class="gen-item">
 
                                     <div class="eml-w-item-block" style="padding: 0px;">
-                                        <div class="eml-w-phase-normal-16" style="color: rgb(61, 139, 240);text-align: center;font-weight:bold;font-size: 30px"> """+id_code+""" </div>
+                                        <div class="eml-w-phase-normal-16" style="color: rgb(61, 139, 240);text-align: center;font-weight:bold;font-size: 30px"> """ + id_code + """ </div>
                                     </div>
                                 </div>
                                 <div class="gen-item" draggable="false">
@@ -228,11 +239,8 @@ def send_email(user_name, target_email, id_code):
     msg['To'] = Header(user_name)
     msg["Subject"] = Header("验证您的身份")
 
-
-    smtp_server = "smtp.yeah.net"
-
     server = smtplib.SMTP_SSL(smtp_server)
-    server.connect(smtp_server, 465)
+    server.connect(smtp_server, port)
     server.login(my_mail, password)
     server.sendmail(my_mail, target_email, msg.as_string())
 

@@ -46,5 +46,5 @@ if __name__ == "__main__":
         if a == "0":
             break
         client.send(a)
-        print(client.receive())
+        #print(client.receive())
     client.close()

@@ -1,0 +1,15 @@
+{
+  "Client": {
+    "Reg_IP": "47.100.27.66",
+    "Reg_Port": 25555,
+    "Game_IP": "47.100.27.66",
+    "Game_Port": 25555
+  },
+  "Email": {
+    "Addr": "fag_identify_norep@yeah.net",
+    "Password": "",
+    "SMTP_Server": "smtp.yeah.net",
+    "SMTP_Port": 465
+  },
+  "AES_Public_Key": "I4YYTad9pvg2Wg9W"
+}
