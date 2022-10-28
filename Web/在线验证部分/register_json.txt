@@ -1,16 +1,21 @@
 register_check_code json:
 {
     "opt" : 1,
-    // "aes_key" : "aes random key",
-    "user" : "str",  (aes random key encrypt)
-    "email" : "str"  (aes random key encrypt)
-} (aes public key encrypt)
+    "user" : "str",
+    "email" : "str"
+}
 
 register_data_trans json:
 {
     "opt" : 2,
-    // "aes_key" : "aes random key",
-    "user" : "str",  (aes random key encrypt)
-    "email" : "str"  (aes random key encrypt)
-    "password" : "str",  (aes random key encrypt)
-} (aes public key encrypt)
+    "user" : "str",
+    "email" : "str"
+    "password" : "str",
+}
+
+转发：login json:
+{
+    "opt" : 3
+    "user" : "str"
+    "password" : "str"
+}
