@@ -40,7 +40,7 @@ class Client:
         }
         self.__reg_client.send(json.dumps(msg_opt2))
         status = self.__reg_client.receive()
-        if status == "WRONG":
+        if status == "ERROR":
             return False
         elif status == "close":
             return True
@@ -56,9 +56,9 @@ class Client:
         }
         self.__log_client.send(json.dumps(msg_opt))
         status = self.__log_client.receive()
-        if status == "WRONG":
+        if status == "ERROR":
             return False
-        elif status == "close":
+        elif status == "ACCEPT":
             return True
         else:
             print("ServerReturnError!")
