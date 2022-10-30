@@ -25,7 +25,7 @@ class Settings:
         self.bullet_radius = 5  # bullet的圆的半径
         self.bullet_image = self.make_bullet_image()
         self.bullet_spd = 20  # 子弹相对于飞船的初速度的模,用的时候要乘以方向向量
-        self.bullet_damage = 1  # 每颗子弹造成的伤害
+        self.bullet_damage = 20  # 每颗子弹造成的伤害
 
         # Ship
         self.ship_image_path = 'assets/texture/ship.png'  # 飞船图片路径
