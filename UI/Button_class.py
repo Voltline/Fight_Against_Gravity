@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from turtle import width
 import pygame
 from Label_Class import Label
 
@@ -11,14 +10,12 @@ from Label_Class import Label
 
 
 class Control:
-    def __init__(self, rect, img_file: str, img_sub: int, text, font_info):
-        '''
-        rect: rect对象,决定控制组件的位置,也用于创建label, img_file: 图片文件路径,img_sub: 一个整数,表示这个图要被切成几张,text:文本内容,font_info: 字体设置
-        '''
-        '''
-        属性：is_show: 是否显示这个控件，is_active:控件是否被激活，__img: 被加载好的图像，img_width:底图的长度，subimg_width:子图宽度
+    def __init__(self, rect: pygame.Rect, img_file: str, img_sub: int, text, font_info):
+        """
+        rect: pygame.Rect对象,决定控制组件的位置,也用于创建label, img_file: 图片文件路径,img_sub: 一个整数,表示这个图要被切成几张,text:文本内容,font_info: 字体设置
+        属性：is_show: 是否显示这个控件，is_active:控件是否被激活，__img: 被加载好的图像，img_width:底图的长度，sub_img_width:子图宽度
         status:用于标记这个按钮可用还是不可用。
-        '''
+        """
         self.is_show = 1
         self.is_active = 0
         self.status = 1
@@ -33,6 +30,8 @@ class Control:
             self.img_width = 0
         else:
             self.__img = pygame.image.load(img_file)
+            self.__img = pygame.transform.smoothscale(self.__img, (self.rect.width, self.rect.height))
+            self.__img.set_colorkey((246, 246, 246))
             self.__imgList = []
 
         # sub_width是指单独一个小按钮的宽度，整个img是一串连续的小按钮，我只在这里进行裁剪
@@ -40,11 +39,12 @@ class Control:
         sub_width = int(img_rect.width / img_sub)
         x = 0
         for i in range(self.img_sub):
-            self.__imgList.append(self.__img.subsurface(x, 0), (sub_width, img_rect.height))
-        self.subimg_width = sub_width
+            self.__imgList.append(self.__img.subsurface((x, 0), (sub_width, img_rect.height)))
+            x += sub_width
+        self.sub_img_width = sub_width
 
-        # 下面设定Label对象
-        if (text == None):
+        # 下面设定Label对象，对于纯图片的按钮，没有text，没有text就没有label
+        if text is None:
             self.label = None
         else:
             self.label = Label(rect.left, rect.top, text, font_info)
@@ -52,8 +52,9 @@ class Control:
     def render(self, surface):
         if self.is_show:
             if self.__img is not None:
-                if self.status < self.img_sub:
-                    surface.blit(self.__imgList[self.status], (self.rect.left, self.rect.top))
+                surface.blit(self.__img, (self.rect.left, self.rect.top))
+                # if self.status < self.img_sub:
+                #     surface.blit(self.__imgList[self.status], (self.rect.left, self.rect.top))
             if self.label is not None:
                 self.label.render(surface)
 
@@ -76,3 +77,21 @@ class Control:
 
     def hide(self):
         self.is_show = 0
+
+
+class Button(Control):
+    def __init__(self, name: str, event_id, rect, img_file, img_sub, text="", font_info=None):
+        Control.__init__(self, rect, img_file, img_sub, text, font_info)
+
+        self.name = name
+        self.event_id = event_id
+
+    def set_text(self, text):
+        self.label.set_text(text)
+
+    # update :按钮更新状态，并上传事件
+    def update(self, event):
+        if self.check_click(event):
+            data = {"from_ui": self.name, "status": self.status}
+            ev = pygame.event.Event(self.event_id, data)
+            pygame.event.post(ev)
