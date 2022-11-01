@@ -11,15 +11,15 @@ screen.fill((0, 0, 0))
 font_info1 = {
     'font': pygame.font.Font("Font/SourceHanSans-Normal.ttc", 30),
     'tc': (255, 255, 255),
-    'bc': (0, 0, 0),
+    'bc': None,
     'align': 0,
     'valign': 0
 }
 BACK = pygame.event.custom_type()
 my_label = Label(100, 100, "First 我的label", font_info1)
 btn_rect = pygame.Rect(10, 10, 30, 30)
-my_button = Button("back", BACK, btn_rect, "Img/b2_55x39.png", 1)
-img_test = pygame.image.load("Img/b2_55x39.png").convert_alpha()
+my_button = Button("back", BACK, btn_rect, "Img/b4.png", 1)
+img_test = pygame.image.load("Img/b4.png").convert_alpha()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

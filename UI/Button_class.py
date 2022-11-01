@@ -95,3 +95,53 @@ class Button(Control):
             data = {"from_ui": self.name, "status": self.status}
             ev = pygame.event.Event(self.event_id, data)
             pygame.event.post(ev)
+
+
+class CheckBox(Control):
+    def __init__(self, btn_name, rect, img_file, img_sub, text, font_info):
+        Control.__init__(self, rect, img_file, img_sub, text, font_info)
+
+        self.name = btn_name
+
+        # 调整文字的位置
+        if self.label is not None:
+            x = rect.left + self.img_width
+            y = rect.top + int(rect.height / 2)
+            self.label.set_pos(x, y, 0, 1)
+
+        self.status = 1
+
+    def set_selected(self, flag):
+        if flag:
+            self.status = 2
+        elif self.status > 0:
+            self.status = 1
+
+    def get_selected(self):
+        return self.status == 2
+
+    def update(self, event):
+        if self.check_click(event):
+            if self.status == 1:
+                self.status = 2
+            elif self.status == 2:
+                self.status = 1
+
+
+class RadioButton(CheckBox):
+    def __init__(self, group_id, btn_name, rect, img_file, img_sub, text, font_info):
+        CheckBox.__init__(self, btn_name, rect, img_file, img_sub, text, font_info)
+        RADIO_CHANGE = pygame.USEREVENT + 7
+
+        self.group_id = group_id
+        self.event_id = RADIO_CHANGE
+
+    def change_selected(self, group_id, from_id):
+        if self.group_id == group_id:
+            self.set_selected(self.name == from_id)
+
+    def update(self, event):
+        if self.check_click(event):
+            data = {"from_ui": self.name}
+            ev = pygame.event.Event(self.event_id, data)
+            pygame.event.post(ev)
