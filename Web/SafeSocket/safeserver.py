@@ -14,13 +14,20 @@ class SocketSever:
         初始化socketserver
         ip:绑定服务器ip
         port:进程端口号
+        heart_time: 心跳检测，即超时断开连接时间。默认heart_time = -1表示不开启
         """
         self.heart_time = heart_time
+        """心跳检测"""
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        """服务端socket"""
         self.__host = ip
+        """服务端ip，云端请保留云服务器ip"""
         self.__port = port
-        self.que = queue.Queue()  # 消息队列 [（address， recv）]
-        self.conn_poll = {}  # 连接池 以字典方式存储 {address : socket}
+        """服务器端口"""
+        self.que = queue.Queue()  #
+        """消息队列 [（address， recv）]"""
+        self.conn_poll = {}  #
+        """socket连接池 以字典方式存储 {address : socket}"""
         self.accept_thread = None  # 消息接收线程
         try:
             self.__socket.bind((self.__host, self.__port))
@@ -46,6 +53,8 @@ class SocketSever:
             self.conn_poll.update({address: client})
             if self.heart_time > 0:
                 client.settimeout(self.heart_time)
+            # else:
+            #     client.settimeout(None)
             thread_message = Thread(target=self.message_handle, args=(client, address))
             thread_message.setDaemon(True)
             thread_message.start()
@@ -120,9 +129,9 @@ class SocketSever:
 if __name__ == "__main__":
     ip = "localhost"
     port = 25555
-    server = SocketSever(ip, port, heart_time=5)
+    server = SocketSever(ip, port)
     server.start()
-    cmd_que = queue.Queue()
+    # cmd_que = queue.Queue()
     while True:
         messages = server.get_message()
         for item in messages:
