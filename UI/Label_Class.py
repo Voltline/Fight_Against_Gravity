@@ -7,13 +7,13 @@ import pygame
 
 class Label:
     def __init__(self, left: int, top: int, text: str, font_info: dict):
-        '''
+        """
         left,top: 指定文本的起始坐标
         text: 文本内容
         font_info（可选参数）: 文字设定，初始化时传入一个字典:
             这个字典包含了"font"（字体），"tc"（字体颜色），"bc"（背景颜色），"align"（ 水平模式，0,1,2分别对应靠左、居中、靠右），"valign"（垂直模式，0,1,2分别代表）
             align和valign用于调整对齐
-        '''
+        """
         self.is_show = True  # 默认显示
 
         self.left = left
@@ -41,7 +41,7 @@ class Label:
             self.set_text(text)  # 此处会创建一个Surface对象用于之后的显示
 
     def render(self, surface):
-        '''接受一个surface对象，在其上方显示文字'''
+        """接受一个surface对象，在其上方显示文字"""
         if self.text != '' and self.is_show:
             surface.blit(self.text_surface, (self.display_x, self.display_y))
 
@@ -56,7 +56,7 @@ class Label:
         # pygame.font.render方法，返回一个surface对象
 
     def __get_size(self):
-        '''返回文字surface对象的大小，宽和高'''
+        """返回文字surface对象的大小，宽和高"""
         if self.text_surface is None:
             return (0, 0)
         else:
@@ -64,7 +64,7 @@ class Label:
             # pygame.surface.get_size()
 
     def set_algin(self, align: int):
-        '''设置水平对齐方式，0：靠左（也就是不变），1：居中，2：靠右'''
+        """设置水平对齐方式，0：靠左（也就是不变），1：居中，2：靠右"""
         width, height = self.__get_size()
         if (align == 2):
             self.display_x = self.left - width
