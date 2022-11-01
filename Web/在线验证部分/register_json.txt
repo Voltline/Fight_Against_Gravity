@@ -1,0 +1,21 @@
+register_check_code json:
+{
+    "opt" : 1,
+    "user" : "str",
+    "email" : "str"
+}
+
+register_data_trans json:
+{
+    "opt" : 2,
+    "user" : "str",
+    "email" : "str"
+    "password" : "str",
+}
+
+转发：login json:
+{
+    "opt" : 3
+    "user" : "str"
+    "password" : "str"
+}

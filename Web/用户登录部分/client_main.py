@@ -11,5 +11,7 @@ if __name__ == "__main__":
         "password": password
     }
     client.send(json.dumps(msg))
+    print(json.dumps(msg))
+    print(type(json.dumps(msg)))
     while True:
         pass

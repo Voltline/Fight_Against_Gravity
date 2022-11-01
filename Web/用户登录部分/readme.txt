@@ -11,3 +11,9 @@ login json:
     "user" : "str"
     "password" : "str"
 }
+转发到注册服务器：login json:
+{
+    "opt" : 3
+    "user" : "str"
+    "password" : "str"
+}
