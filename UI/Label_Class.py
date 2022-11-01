@@ -26,7 +26,7 @@ class Label:
         if font_info is None:
             self.font = pygame.font.Font("Font/SourceHanSans-Normal.ttc", 25)
             self.tc = (255, 255, 255)
-            self.bc = (0, 0, 0)
+            self.bc = None
             self.align = 0
             self.valign = 0
         else:
