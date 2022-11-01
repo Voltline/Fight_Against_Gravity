@@ -69,24 +69,29 @@ class Ship(SpaceObj):
         """在screen上绘制"""
         self.screen.blit(self.image, self.rect)
 
-    def fire(self, settings, screen, bullets):
-        new_bullet_spd = self.spd + settings.bullet_spd*Vector2(cos(self.angle), sin(self.angle))
-        new_bullet = Bullet(screen, settings, self.loc, new_bullet_spd)
+    def fire_bullet(self, settings, screen, bullets):
+        ship_dir = Vector2(cos(self.angle), sin(self.angle))
+        new_bullet_loc = self.loc + 0.6*self.image0.get_width()*ship_dir
+        new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
+        new_bullet = Bullet(screen, settings, new_bullet_loc, new_bullet_spd)
         bullets.add(new_bullet)
         self.is_fire = False
 
-    def die(self):
+    def die(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):
         """死亡时"""
         # TODO:加入死亡特效
         self.is_alive = False
         self.hp = 0
+        ships.remove(self)
+        dead_ships.add(self)
 
-    def check_alive(self):
+    def check_alive(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):
         if self.hp <= 0:
-            self.die()
+            self.die(ships, dead_ships)
 
-    def hit_bullet(self, damage):
+    def hit_bullet(self, damage,
+                   ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):
         """被子弹击中时"""
         # TODO:加入被击中的特效
         self.hp -= damage
-        self.check_alive()
+        self.check_alive(ships, dead_ships)

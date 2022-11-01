@@ -45,9 +45,11 @@ def run_game():
 
     # Main Loop
     while True:
-        delta_t = clock.tick(settings.max_fps) / 1000  # 获取delta_time(s)并限制最大帧率
+        delta_t = clock.tick(settings.max_fps) / 1000  # 获取delta_time(sec)并限制最大帧率
+        # print(clock.get_fps())
 
         gf.check_events(settings, gm)  # 检查键鼠活动
+        gf.check_collisions(gm)
         gf.all_move(gm, delta_t)
         gf.ships_fire_bullet(settings, screen, gm)
 

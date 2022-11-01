@@ -72,7 +72,8 @@ def update_screen(settings, screen, gm):
     # 重新绘制
     screen.fill(settings.bg_color)
     for ship in gm.ships:
-        ship.display()
+        if ship.is_alive:
+            ship.display()
     for bullet in gm.bullets:
         bullet.display()
     for planet in gm.planets:
@@ -84,13 +85,14 @@ def update_screen(settings, screen, gm):
 
 def ships_fire_bullet(settings, screen, gm):
     for ship in gm.ships:
-        if ship.is_fire:
-            ship.fire(settings, screen, gm.bullets)
+        if ship.is_alive and ship.is_fire:
+            ship.fire_bullet(settings, screen, gm.bullets)
 
 
 def all_move(gm, delta_t):
     for ship in gm.ships:
-        ship.move(delta_t)
+        if ship.is_alive:
+            ship.move(delta_t)
     for bullet in gm.bullets:
         bullet.move(delta_t)
     for planet in gm.planets:
@@ -101,3 +103,40 @@ def check_bullets_planets_collisions(gm):
     """使用圆形碰撞检测"""
     collections = pygame.sprite.groupcollide(
         gm.bullets, gm.planets, True, False, pygame.sprite.collide_circle)
+
+
+def check_ships_bullets_collisions(gm):
+    """mask检测"""
+    collisions = pygame.sprite.groupcollide(
+        gm.ships, gm.bullets, False, True, pygame.sprite.collide_mask)
+    for ship, bullets in collisions.items():
+        damage = 0
+        for bullet in bullets:
+            damage += bullet.damage
+        ship.hit_bullet(damage, gm.ships, gm.dead_ships)
+
+
+def check_ships_planets_collisions(gm):
+    """mask检测"""
+    collisions = pygame.sprite.groupcollide(
+        gm.ships, gm.planets, False, True, pygame.sprite.collide_mask)
+    for ship in collisions.keys():
+        ship.die(gm.ships, gm.dead_ships)
+
+
+def check_ships_ships_collisions(gm):
+    """mask检测"""
+    collisions = pygame.sprite.groupcollide(
+        gm.ships, gm.ships, False, False, pygame.sprite.collide_mask)
+    for ship1, ship2s in collisions.items():
+        for ship2 in ship2s:
+            if id(ship1) != id(ship2):
+                ship1.die(gm.ships, gm.dead_ships)
+                break
+
+
+def check_collisions(gm):
+    check_ships_ships_collisions(gm)
+    check_ships_planets_collisions(gm)
+    check_ships_bullets_collisions(gm)
+    check_bullets_planets_collisions(gm)

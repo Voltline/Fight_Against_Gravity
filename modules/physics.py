@@ -1,5 +1,6 @@
 """物理计算相关的函数"""
 import pygame
+from math import isclose
 
 G = 6.67408e-11
 
@@ -13,5 +14,9 @@ def gvt_acc(m0: float, loc0: pygame.Vector2, loc1: pygame.Vector2) -> pygame.Vec
     return: 重力加速度
     """
     ans = loc0 - loc1
-    ans = ans * G * m0 / ans.length()**3
+    if isclose(0, ans.length()):
+        ans.update(0, 0)
+    else:
+        ans = ans * G * m0 / ans.length()**3
+
     return ans
