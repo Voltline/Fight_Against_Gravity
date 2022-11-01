@@ -48,7 +48,7 @@ if __name__ == "__main__":
             """
             解码后的message
             """
-            if rmessage["opt"] == 1:
+            if rmessage["opt"] == 3:
                 if check(rmessage["user"], rmessage["password"]):
                     user_list.append({rmessage["user"]: message[0]})
                     server.send(message[0], "ACCEPT")

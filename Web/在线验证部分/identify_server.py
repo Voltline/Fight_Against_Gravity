@@ -26,26 +26,29 @@ def reg_server(ip: str, port: int, heart_time: int = -1) -> None:
             rmessage = json.loads(message[1])
             user_list.append({rmessage["user"]: message[0]})
             print(rmessage)
+            all_reg_acc = database_operate.get_all_reg_acc()
             if rmessage["opt"] != 3:
                 username, email = rmessage["user"], rmessage["email"]
-                if rmessage["opt"] == 1:
-                    email_sent[(username, email)] = True
-                    id_code = send_email.generate_id_code()
-                    send_email.send_email(username, email, id_code)
-                    server.send(addr, id_code)
-                elif rmessage["opt"] == 2:
-                    if (username, email) in email_sent:
-                        password = rmessage["password"]
-                        time_n = time.ctime()
-                        database_operate.insert_acc_data([username, password, time_n, email])
-                        email_sent.pop((username, email))
-                    else:
-                        server.send(addr, "ERROR")
-                    server.close(addr)
+                if username in all_reg_acc.keys():
+                    server.send(addr, "DUPLICATE")
                 else:
-                    print("unexpected opt")
+                    if rmessage["opt"] == 1:
+                        email_sent[(username, email)] = True
+                        id_code = send_email.generate_id_code()
+                        send_email.send_email(username, email, id_code)
+                        server.send(addr, id_code)
+                    elif rmessage["opt"] == 2:
+                        if (username, email) in email_sent:
+                            password = rmessage["password"]
+                            time_n = time.ctime()
+                            database_operate.insert_acc_data([username, password, time_n, email])
+                            email_sent.pop((username, email))
+                        else:
+                            server.send(addr, "ERROR")
+                        server.close(addr)
+                    else:
+                        print("unexpected opt")
             else:
-                all_reg_acc = database_operate.get_all_reg_acc()
                 username = rmessage["user"]
                 password = rmessage["password"]
                 if username in all_reg_acc:

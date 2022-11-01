@@ -2,7 +2,7 @@ from Web.SafeSocket import safeclient
 import json
 
 
-class Client:
+class IdentifyClient:
     def __init__(self, reg_ip: str, reg_port: int,
                  game_ip: str, game_port: int,
                  heart_time: int = -1):
@@ -11,10 +11,10 @@ class Client:
         :返回：服务器返回验证码
         """
         self.__reg_client = safeclient.SocketClient(reg_ip, reg_port)
-        self.__log_client = safeclient.SocketClient(game_ip, game_port)
+        self.__game_client = safeclient.SocketClient(game_ip, game_port)
 
     def get_check_code(self, username: str, email: str) -> str:
-        """注册客户端对象获取验证码
+        """验证客户端对象获取验证码
         :参数：username: 用户名, email：邮箱
         :返回：服务器返回验证码
         """
@@ -25,10 +25,14 @@ class Client:
         }
         self.__reg_client.send(json.dumps(msg_opt1))
         check_code = self.__reg_client.receive()
-        return check_code
+        if check_code != "DUPLICATE":
+            return check_code
+        else:
+            print("Username Duplicate Error!")
+            return ""
 
     def send_all_information(self, username: str, email: str, password: str) -> bool:
-        """注册客户端对象发送所有信息
+        """验证客户端对象发送所有信息
         :参数：username: 用户名, email：邮箱, password：密码
         :返回：服务器返回结果
         """
@@ -40,7 +44,7 @@ class Client:
         }
         self.__reg_client.send(json.dumps(msg_opt2))
         status = self.__reg_client.receive()
-        if status == "ERROR":
+        if status == "ERROR" or status == "DUPLICATE":
             return False
         elif status == "close":
             return True
@@ -49,13 +53,17 @@ class Client:
             return False
 
     def login(self, username: str, password: str) -> bool:
+        """验证客户端登录函数
+        :参数：username: 用户名, email：邮箱, password：密码
+        :返回：服务器返回结果
+        """
         msg_opt = {
             "opt": 3,
             "user": username,
             "password": password
         }
-        self.__log_client.send(json.dumps(msg_opt))
-        status = self.__log_client.receive()
+        self.__game_client.send(json.dumps(msg_opt))
+        status = self.__game_client.receive()
         if status == "ERROR":
             return False
         elif status == "ACCEPT":
@@ -63,6 +71,10 @@ class Client:
         else:
             print("ServerReturnError!")
             return False
+
+    def get_Game_Socket(self) -> None:
+        """获取验证客户端中的游戏服务器socket"""
+        return self.__game_client
 
 
 if __name__ == "__main__":
@@ -73,7 +85,7 @@ if __name__ == "__main__":
     log_ip = information["Client"]["Game_IP"]
     log_port = information["Client"]["Game_Port"]
     information = ""
-    client = Client(reg_ip, reg_port, log_ip, log_port)
+    client = IdentifyClient(reg_ip, reg_port, log_ip, log_port)
     choice = input("Input 'A' for login, 'B' for register: ")
     username = input("Input your username: ")
     if choice in ['A', 'a']:
@@ -86,11 +98,14 @@ if __name__ == "__main__":
     else:
         email = input("Input your email: ")
         check_code = client.get_check_code(username, email)
-        input_check_code = input("Input the check_code in your mailbox: ")
-        if check_code == input_check_code:
-            password = input("Input your password: ")
-            result = client.send_all_information(username, email, password)
-            if result is True:
-                print("Register Successfully!")
+        if check_code != '':
+            input_check_code = input("Input the check_code in your mailbox: ")
+            if check_code == input_check_code:
+                password = input("Input your password: ")
+                result = client.send_all_information(username, email, password)
+                if result is True:
+                    print("Register Successfully!")
+                else:
+                    print("Error! Try again later!")
             else:
                 print("Error! Try again later!")
