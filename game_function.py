@@ -92,11 +92,11 @@ def ships_fire_bullet(settings, screen, gm):
 def all_move(gm, delta_t):
     for ship in gm.ships:
         if ship.is_alive:
-            ship.move(delta_t)
+            ship.move(delta_t, gm.planets)
     for bullet in gm.bullets:
-        bullet.move(delta_t)
+        bullet.move(delta_t, gm.planets)
     for planet in gm.planets:
-        planet.move()
+        planet.move(delta_t, gm.planets)
 
 
 def check_bullets_planets_collisions(gm):
@@ -119,7 +119,7 @@ def check_ships_bullets_collisions(gm):
 def check_ships_planets_collisions(gm):
     """mask检测"""
     collisions = pygame.sprite.groupcollide(
-        gm.ships, gm.planets, False, True, pygame.sprite.collide_mask)
+        gm.ships, gm.planets, False, False, pygame.sprite.collide_mask)
     for ship in collisions.keys():
         ship.die(gm.ships, gm.dead_ships)
 

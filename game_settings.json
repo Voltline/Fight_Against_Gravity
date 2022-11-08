@@ -20,6 +20,9 @@
     "bullet_spd": 20,
     "bullet_damage": 20
   },
+  "Planet": {
+    "planet_image_path": "assets/texture/planet.png"
+  },
   "Ships": {
     "ship_image_path": "assets/texture/ship.png",
     "ship_hp": 100,

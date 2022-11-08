@@ -21,13 +21,11 @@ class SpaceObj(pygame.sprite.Sprite):
     def __get_image__(self, settings):
         return pygame.image.load(settings.space_obj_image_path)
 
-    def move(self, delta_t, planets: pygame.sprite.Group = None):
+    def move(self, delta_t, planets: pygame.sprite.Group):
         """负责该对象的移动,更新loc,spd,acc"""
         self.acc.update(0, 0)
-        # TODO: 测试阶段后要把if与planets缺省值删掉
-        if planets:
-            for planet in planets:
-                self.acc += gvt_acc(planet.mass, planet.loc, self.loc)
+        for planet in planets:
+            self.acc += gvt_acc(planet.mass, planet.loc, self.loc)
         self.loc += self.spd * delta_t
         self.rect.center = self.loc
         self.spd += self.acc * delta_t

@@ -36,6 +36,9 @@ class Settings:
         self.bullet_damage = bullet["bullet_damage"]  # 每颗子弹造成的伤害
         del bullet
 
+        # Planet
+        self.planet_image_path = inf["Planet"]["planet_image_path"]
+
         # Ships
         ships = inf["Ships"]
         self.ship_image_path = ships["ship_image_path"]  # 飞船图片路径

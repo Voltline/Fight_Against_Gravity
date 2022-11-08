@@ -6,6 +6,7 @@ from all_settings import Settings
 import game_function as gf
 from game_manager import GameManager
 from ship import Ship
+from planet import Planet
 
 
 def run_game():
@@ -18,12 +19,15 @@ def run_game():
     pygame.display.set_caption(settings.game_title)  # 设置窗口标题
 
     gm = GameManager(settings)
-    ship1 = Ship(screen, settings, Vector2(screen.get_rect().center)-Vector2(50, 0),
+    ship1 = Ship(screen, settings, Vector2(screen.get_rect().center)-Vector2(300, 0),
                  angle=0, player='1')
-    ship2 = Ship(screen, settings, Vector2(screen.get_rect().center)+Vector2(50, 0),
+    ship2 = Ship(screen, settings, Vector2(screen.get_rect().center)+Vector2(300, 0),
                  angle=3.14, player='2')
     gm.ships.add(ship1)
     gm.ships.add(ship2)
+
+    planet = Planet(screen, settings, Vector2(screen.get_rect().center), mass=5e15)
+    gm.planets.add(planet)
 
     # pygame.display.set_caption('Fight Against Gravity')
     # # 引入字体类型
