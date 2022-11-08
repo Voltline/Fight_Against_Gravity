@@ -1,4 +1,12 @@
+debug json:
+#debug
+{
+    "opt" : -1
+    "info" : str
+}
 heart json:
+# 心跳检测包
+#heart_beat
 {
     "opt" : 0
     "heartbeat" : int
@@ -6,6 +14,7 @@ heart json:
     #5 commend
 }
 login json:
+#用户登录请求
 {
     "opt" : 1
     "user" : "str"
@@ -13,7 +22,7 @@ login json:
 }
 转发到注册服务器：login json:
 {
-    "opt" : 3
+    "opt" : 2
     "user" : "str"
     "password" : "str"
 }

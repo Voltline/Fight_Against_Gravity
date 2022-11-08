@@ -1,3 +1,4 @@
+import json
 import socket
 from threading import Thread
 import queue
@@ -9,7 +10,7 @@ class SocketSever:
     对服务端的socket进行封装
     """
 
-    def __init__(self, ip: str, port: int, heart_time: int = -1):
+    def __init__(self, ip: str, port: int, heart_time: int = -1, debug: bool = False):
         """
         初始化socketserver
         ip:绑定服务器ip
@@ -28,12 +29,15 @@ class SocketSever:
         """消息队列 [（address， recv）]"""
         self.conn_poll = {}  #
         """socket连接池 以字典方式存储 {address : socket}"""
-        self.accept_thread = None  # 消息接收线程
+        self.accept_thread = None
+        """消息接收线程"""
+        self.debug = debug
+        """debug选项"""
         try:
             self.__socket.bind((self.__host, self.__port))
             self.__socket.listen(10)
         except Exception as err:
-            print(err, "Fail to build a socked listener")
+            print("[err info] ", err, "Fail to build a socked listener")
 
     def start(self):
         """
@@ -49,12 +53,10 @@ class SocketSever:
         """
         while True:
             client, address = self.__socket.accept()
-            print("client {0} connected".format(address))
+            print("[server info] client {0} connected".format(address))
             self.conn_poll.update({address: client})
             if self.heart_time > 0:
                 client.settimeout(self.heart_time)
-            # else:
-            #     client.settimeout(None)
             thread_message = Thread(target=self.message_handle, args=(client, address))
             thread_message.setDaemon(True)
             thread_message.start()
@@ -70,11 +72,11 @@ class SocketSever:
             client.close()
             if err_reason is not None:
                 print(err_reason)
-            print("连接{0}{1}断开".format(address, close_reason))
+            print("[server info] 连接{0}{1}断开".format(address, close_reason))
 
         while True:
             if getattr(client, '_closed'):
-                print("{}已停止运行".format(address))
+                print("[server info] {}已停止运行".format(address))
                 break
             try:
                 recv = client.recv(1024)
@@ -88,7 +90,13 @@ class SocketSever:
                 close("客户端主动")
                 break
             else:
-                self.que.put((address, recv.decode()))
+                msg = recv.decode()
+                if self.debug:
+                    print("[debug info]{recv msg}:", msg)
+                msg = json.loads(msg)
+                if msg["opt"] != 0:
+                    # 0是heart beat 不存入消息队列
+                    self.que.put((address, msg))
 
     def get_message(self):
         """
@@ -115,21 +123,26 @@ class SocketSever:
             client.close()
             self.conn_poll.pop(address)
         except Exception as err:
-            print(err, "连接未找到")
+            print("[err info] ", err, "连接未找到")
 
-    def send(self, address, msg: str):
+    def send(self, address, msg):
+        """
+        msg:支持dict（json）/str格式
+        """
         try:
             client: socket
             client = self.conn_poll[address]
+            if type(msg) == dict:
+                msg = json.dumps(msg)
             client.sendall(msg.encode())
         except Exception as err:
-            print(err, "发送失败")
+            print("[err info] ", err, "发送失败")
 
 
 if __name__ == "__main__":
     ip = "localhost"
     port = 25555
-    server = SocketSever(ip, port)
+    server = SocketSever(ip, port, heart_time=5, debug=True)
     server.start()
     # cmd_que = queue.Queue()
     while True:
