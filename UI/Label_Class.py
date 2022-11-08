@@ -6,7 +6,7 @@ import pygame
 
 
 class Label:
-    def __init__(self, left: int, top: int, text: str, font_info):
+    def __init__(self, left: int, top: int, text: str, font_info=None):
         """
         left,top: 指定文本的起始坐标
         text: 文本内容
@@ -14,6 +14,25 @@ class Label:
         这个字典包含了"font"（字体），"tc"（字体颜色），"bc"（背景颜色），"align"（ 水平模式，0,1,2分别对应靠左、居中、靠右），"valign"（垂直模式，0,1,2分别代表）
         align和valign用于调整对齐
         """
+        if font_info is None:
+            font_info = {
+                'font': pygame.font.Font("Font/SourceHanSans-Normal.ttc", 25),
+                'tc': (169, 183, 198),
+                'bc': None,
+                'align': 0,
+                'valign': 0
+            }
+            self.font = font_info["font"]
+            self.tc = font_info["tc"]
+            self.bc = font_info["bc"]
+            self.align = font_info["align"]
+            self.valign = font_info["valign"]
+        else:
+            self.font = font_info["font"]
+            self.tc = font_info["tc"]
+            self.bc = font_info["bc"]
+            self.align = font_info["align"]
+            self.valign = font_info["valign"]
         self.is_show = True  # 默认显示
 
         self.left = left
@@ -23,18 +42,18 @@ class Label:
         self.display_x = left
         self.display_y = top
 
-        if font_info is None:
-            self.font = pygame.font.Font("Font/SourceHanSans-Normal.ttc", 25)
-            self.tc = (255, 255, 255)
-            self.bc = None
-            self.align = 0
-            self.valign = 0
-        else:
-            self.font = font_info["font"]
-            self.tc = font_info["tc"]
-            self.bc = font_info["bc"]
-            self.align = font_info["align"]
-            self.valign = font_info["valign"]
+        # if font_info is None:
+        #     self.font = pygame.font.Font("Font/SourceHanSans-Normal.ttc", 25)
+        #     self.tc = (169, 183, 198)
+        #     self.bc = None
+        #     self.align = 0
+        #     self.valign = 0
+        # else:
+        #     self.font = font_info["font"]
+        #     self.tc = font_info["tc"]
+        #     self.bc = font_info["bc"]
+        #     self.align = font_info["align"]
+        #     self.valign = font_info["valign"]
         if text == '':
             self.text_surface = None
         else:
