@@ -1,5 +1,6 @@
 import pygame.sprite
 from pygame import Vector2
+from typing import Tuple
 
 
 class Camera:
@@ -29,7 +30,7 @@ class Camera:
         if self.d_zoom != 0:
             zoom0 = self.zoom
             mouse_real_loc = Vector2(self.screen_to_real(mouse_loc))  # 鼠标对应的真实坐标
-            self.zoom += self.zoom_spd * self.d_zoom
+            self.zoom *= self.zoom_spd ** self.d_zoom
             self.loc += (mouse_real_loc - self.loc)*(1 - zoom0/self.zoom)
             self.d_zoom = 0
 
@@ -43,13 +44,13 @@ class Camera:
     def change_mode(self):
         self.mode = (self.mode + 1) % self.mode_num
 
-    def real_to_screen(self, obj_real_loc: Vector2) -> tuple[float, float]:
+    def real_to_screen(self, obj_real_loc: Vector2) -> Tuple[float, float]:
         screen_center = self.screen.get_rect().center
         screen_x = screen_center[0] + (obj_real_loc.x - self.loc.x) * self.zoom
         screen_y = screen_center[1] + (obj_real_loc.y - self.loc.y) * self.zoom
         return screen_x, screen_y
 
-    def screen_to_real(self, obj_screen_loc: Vector2) -> tuple[float, float]:
+    def screen_to_real(self, obj_screen_loc: Vector2) -> Tuple[float, float]:
         screen_center = self.screen.get_rect().center
         real_x = self.loc.x + (obj_screen_loc.x - screen_center[0])/self.zoom
         real_y = self.loc.y + (obj_screen_loc.y - screen_center[1])/self.zoom

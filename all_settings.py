@@ -67,7 +67,7 @@ class Settings:
 
         # Camera
         self.camera_move_speed = -1  # 视角移动速度系数
-        self.camera_zoom_speed = 0.2  # 视角缩放速度系数
+        self.camera_zoom_speed = 1.2  # 视角缩放速度系数
         self.camera_k_change_mode = pygame.K_LCTRL  # 视角模式切换按键
         # self.camera_k_move =
 
