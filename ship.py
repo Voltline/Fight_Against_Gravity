@@ -11,14 +11,14 @@ from bullet import Bullet
 class Ship(SpaceObj):
     """玩家操控的飞船"""
     # TODO:添加尾焰等特效
-    def __init__(self, screen, settings,
+    def __init__(self, settings,
                  loc0: Vector2 = Vector2(0, 0), spd0: Vector2 = Vector2(0, 0),
-                 angle: float = 0, player='?Unknown Player?'):
-        super().__init__(screen, settings, 1*loc0, 1*spd0)
+                 angle: float = 0, player_name='?Unknown Player?'):
+        super().__init__(settings, 1*loc0, 1*spd0)
         self.image0 = self.image
         self.angle = angle
         self.update_image()
-        self.player = player  # 飞船所属玩家
+        self.player_name = player_name  # 飞船所属玩家的名字
         self.hp = settings.ship_hp
         self.go_acc = settings.ship_go_acc
         self.turn_spd = settings.ship_turn_spd
@@ -63,15 +63,11 @@ class Ship(SpaceObj):
         self.rect.center = self.loc
         self.mask = pygame.mask.from_surface(self.image)  # 更新mask
 
-    def display(self):
-        """在screen上绘制"""
-        self.screen.blit(self.image, self.rect)
-
-    def fire_bullet(self, settings, screen, bullets):
+    def fire_bullet(self, settings, bullets):
         ship_dir = Vector2(cos(self.angle), sin(self.angle))
         new_bullet_loc = self.loc + 0.6*self.image0.get_width()*ship_dir
         new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
-        new_bullet = Bullet(screen, settings, new_bullet_loc, new_bullet_spd)
+        new_bullet = Bullet(settings, new_bullet_loc, new_bullet_spd)
         bullets.add(new_bullet)
         self.is_fire = False
 

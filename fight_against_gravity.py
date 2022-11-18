@@ -1,12 +1,12 @@
 import pygame
 from pygame import Vector2
-from time import sleep
 
 from all_settings import Settings
 import game_function as gf
 from game_manager import GameManager
 from ship import Ship
 from planet import Planet
+from camera import Camera
 
 
 def run_game():
@@ -18,16 +18,19 @@ def run_game():
     screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))  # 设置窗口大小
     pygame.display.set_caption(settings.game_title)  # 设置窗口标题
 
+    # 设置gm (测试用)
     gm = GameManager(settings)
-    ship1 = Ship(screen, settings, Vector2(screen.get_rect().center)-Vector2(300, 0),
-                 angle=0, player='1')
-    ship2 = Ship(screen, settings, Vector2(screen.get_rect().center)+Vector2(300, 0),
-                 angle=3.14, player='2')
+    ship1 = Ship(settings, Vector2(-300, 0), Vector2(0, 30),
+                 angle=0, player_name='1')
+    ship2 = Ship(settings, Vector2(300, 0), Vector2(0, -30),
+                 angle=3.14, player_name='2')
     gm.ships.add(ship1)
     gm.ships.add(ship2)
-
-    planet = Planet(screen, settings, Vector2(screen.get_rect().center), mass=5e15)
+    planet = Planet(settings, Vector2(0, 0), mass=5e15)
     gm.planets.add(planet)
+
+    # 设置camera
+    camera = Camera(screen, settings, ship1.player_name, gm.ships)
 
     # pygame.display.set_caption('Fight Against Gravity')
     # # 引入字体类型
@@ -52,9 +55,9 @@ def run_game():
         delta_t = clock.tick(settings.max_fps) / 1000  # 获取delta_time(sec)并限制最大帧率
         # print(clock.get_fps())
 
-        gf.check_events(settings, gm)  # 检查键鼠活动
+        gf.check_events(settings, gm, camera)  # 检查键鼠活动
         gf.check_collisions(gm)
-        gf.all_move(gm, delta_t)
-        gf.ships_fire_bullet(settings, screen, gm)
+        gf.all_move(gm, camera, delta_t)
+        gf.ships_fire_bullet(settings, gm)
 
-        gf.update_screen(settings, screen, gm)
+        gf.update_screen(settings, gm, camera)

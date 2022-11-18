@@ -1,5 +1,11 @@
 import sys
 import pygame
+from pygame import Vector2
+
+
+# 鼠标位置信息，每帧实时更新
+mouse_loc = Vector2(0, 0)
+mouse_d_loc = Vector2(0, 0)
 
 
 def check_events_keydown(event, settings, gm):
@@ -52,14 +58,25 @@ def check_events_keyup(event, settings, gm):
         gm.ships.sprites()[1].is_fire = False
 
 
-def check_events(settings, gm):
+def check_events(settings, gm, camera):
     """响应键盘和鼠标事件"""
+    global mouse_loc, mouse_d_loc
+    mouse_loc.x, mouse_loc.y = pygame.mouse.get_pos()
+    mouse_d_loc.x, mouse_d_loc.y = pygame.mouse.get_rel()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
+
+            if event.button == 2:  # 是否按下鼠标中键
+                camera.change_mode()
+        elif event.type == pygame.MOUSEMOTION:
+            mouse_keys = pygame.mouse.get_pressed()
+            if mouse_keys[2]:  # 如果鼠标右键被按下
+                camera.d_loc.update(mouse_d_loc)
+        elif event.type == pygame.MOUSEWHEEL:
+            camera.d_zoom = event.y
 
         elif event.type == pygame.KEYDOWN:
             check_events_keydown(event, settings, gm)
@@ -67,29 +84,31 @@ def check_events(settings, gm):
             check_events_keyup(event, settings, gm)
 
 
-def update_screen(settings, screen, gm):
+def update_screen(settings, gm, camera):
     """更新屏幕"""
     # 重新绘制
-    screen.fill(settings.bg_color)
+    camera.screen.fill(settings.bg_color)
     for ship in gm.ships:
         if ship.is_alive:
-            ship.display()
+            ship.display(camera)
     for bullet in gm.bullets:
-        bullet.display()
+        bullet.display(camera)
     for planet in gm.planets:
-        planet.display()
+        planet.display(camera)
 
     # 刷新屏幕
     pygame.display.flip()
 
 
-def ships_fire_bullet(settings, screen, gm):
+def ships_fire_bullet(settings, gm):
     for ship in gm.ships:
         if ship.is_alive and ship.is_fire:
-            ship.fire_bullet(settings, screen, gm.bullets)
+            ship.fire_bullet(settings, gm.bullets)
 
 
-def all_move(gm, delta_t):
+def all_move(gm, camera, delta_t):
+    global mouse_loc
+    camera.move(mouse_loc)
     for ship in gm.ships:
         if ship.is_alive:
             ship.move(delta_t, gm.planets)

@@ -65,6 +65,12 @@ class Settings:
         self.ship2_k_fire = eval(ship2["k_fire"])
         del ship2
 
+        # Camera
+        self.camera_move_speed = -1  # 视角移动速度系数
+        self.camera_zoom_speed = 0.2  # 视角缩放速度系数
+        self.camera_k_change_mode = pygame.K_LCTRL  # 视角模式切换按键
+        # self.camera_k_move =
+
         del inf
 
     def make_bullet_image(self):
