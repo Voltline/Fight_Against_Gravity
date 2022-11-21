@@ -6,7 +6,7 @@ import pygame
 
 
 class Label:
-    def __init__(self, left: int, top: int, text: str, font_info=None):
+    def __init__(self, left: int, top: int, width: int, text: str, font_info=None):
         """
         left,top: 指定文本的起始坐标
         text: 文本内容
@@ -16,7 +16,7 @@ class Label:
         """
         if font_info is None:
             font_info = {
-                'font': pygame.font.Font("Font/SourceHanSans-Normal.ttc", 25),
+                'font': pygame.font.Font("Font/SourceHanSans-Normal.ttc", 21),
                 'tc': (169, 183, 198),
                 'bc': None,
                 'align': 0,
@@ -37,23 +37,12 @@ class Label:
 
         self.left = left
         self.top = top
+        self.width = width  # 背景板的宽度，方便计算居中
         self.text = text
 
         self.display_x = left
         self.display_y = top
 
-        # if font_info is None:
-        #     self.font = pygame.font.Font("Font/SourceHanSans-Normal.ttc", 25)
-        #     self.tc = (169, 183, 198)
-        #     self.bc = None
-        #     self.align = 0
-        #     self.valign = 0
-        # else:
-        #     self.font = font_info["font"]
-        #     self.tc = font_info["tc"]
-        #     self.bc = font_info["bc"]
-        #     self.align = font_info["align"]
-        #     self.valign = font_info["valign"]
         if text == '':
             self.text_surface = None
         else:
@@ -62,6 +51,7 @@ class Label:
     def render(self, surface: pygame.surface):
         """接受一个surface对象，在其上方显示文字"""
         if self.text != '' and self.is_show:
+            self.set_align(self.align)
             surface.blit(self.text_surface, (self.display_x, self.display_y))
 
     def set_text(self, text, tc=None, bc=None):
@@ -72,13 +62,15 @@ class Label:
         if bc is not None:
             self.bc = bc
         self.text_surface = self.font.render(self.text, True, self.tc, self.bc)
+        print(self.text, ",文字大小为", self.text_surface.get_size())  # 测试用
         # pygame.font.render方法，返回一个surface对象
 
     def __get_size(self):
-        """返回文字surface对象的大小，宽和高"""
+        """返回文字surface对象的大小，宽和高，与背景无关"""
         if self.text_surface is None:
             return 0, 0
         else:
+
             return self.text_surface.get_size()
             # pygame.surface.get_size()
 
@@ -88,7 +80,7 @@ class Label:
         if align == 2:
             self.display_x = self.left - width
         elif align == 1:
-            self.display_x = self.left - int(width / 2)
+            self.display_x = self.left + int((self.width-width) / 2)
         elif align == 0:
             self.display_x = self.left
 
