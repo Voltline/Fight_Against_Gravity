@@ -41,19 +41,19 @@ class Control:
             self.__imgList.append(self.__img)
 
         # sub_width是指单独一个小按钮的宽度，整个img是一串连续的小按钮，我只在这里进行裁剪
-        img_rect = self.__img.get_rect()
-        sub_width = int(img_rect.width / img_sub)
-        x = 0
-        for i in range(self.img_sub):
-            self.__imgList.append(self.__img.subsurface((x, 0), (sub_width, img_rect.height)))
-            x += sub_width
-        self.sub_img_width = sub_width
+        #     img_rect = self.__img.get_rect()
+        #     sub_width = int(img_rect.width / img_sub)
+        #     x = 0
+        #     for i in range(self.img_sub):
+        #         self.__imgList.append(self.__img.subsurface((x, 0), (sub_width, img_rect.height)))
+        #         x += sub_width
+        #     self.sub_img_width = sub_width
 
         # 下面设定Label对象，对于纯图片的按钮，没有text，没有text就没有label
         if text is None:
             self.label = None
         else:
-            self.label = Label(rect.left, rect.top, text, font_info)
+            self.label = Label(rect.left, rect.top, rect.width, text, font_info)
 
     def add_img(self, file_name: str):
         """多状态图进行添加"""
@@ -84,6 +84,10 @@ class Control:
         if event.type == pygame.MOUSEBUTTONDOWN:
             return self.is_over(event.pos)
 
+    def check_move(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            return self.is_over(event.pos)
+
     def disable(self):
         # self.status = 0
         self.is_able = 0
@@ -94,6 +98,13 @@ class Control:
 
     def hide(self):
         self.is_show = 0
+
+    def show(self):
+        self.is_show = 1
+
+    def change_image(self):
+        if len(self.__imgList) > 1:
+            self.status = 1
 
 
 class Button(Control):

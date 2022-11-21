@@ -1,14 +1,13 @@
 import pygame
 from Label_Class import Label
 from Button_class import Button
-from all_settings import Settings
+from InputBox_Class import InputBox
 
 """管理所有控件的页面类，一个Page代表一个屏幕画面"""
 
 
 class Page:
     def __init__(self, width, height):
-        self.setting = Settings()
         self.rect = pygame.Rect(0, 0, self.setting.screen_width, self.setting.screen_height)
         self.buttons = {}  # 统一管理按钮组件
         self.labels = {}  # 统一管理文本组件
