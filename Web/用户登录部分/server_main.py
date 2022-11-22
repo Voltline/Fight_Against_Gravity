@@ -44,7 +44,7 @@ if __name__ == "__main__":
         # 处理消息队列
         messages = server.get_message()
         for message in messages:
-            rmessage = json.loads(message[1])
+            rmessage = message[1]
             """
             解码后的message
             """
@@ -56,5 +56,3 @@ if __name__ == "__main__":
                     server.close(message[0])
             else:
                 print("unexpected opt")
-        # 处理超时链接
-        get_user_list = server.get_message()

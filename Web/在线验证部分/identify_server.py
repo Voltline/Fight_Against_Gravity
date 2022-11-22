@@ -59,8 +59,6 @@ def reg_server(ip: str, port: int, heart_time: int = -1) -> None:
                 else:
                     server.send(addr, "ERROR")
                 server.close(addr)
-        # 处理超时链接
-        get_user_list = server.get_message()
 
 
 if __name__ == "__main__":
