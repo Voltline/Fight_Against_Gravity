@@ -18,7 +18,7 @@
     "bullet_color": "(180, 255, 255)",
     "bullet_radius": 5,
     "bullet_spd": 20,
-    "bullet_damage": 20
+    "bullet_damage": 1
   },
   "Planet": {
     "planet_image_path": "assets/texture/planet.png"
@@ -26,7 +26,7 @@
   "Ships": {
     "ship_image_path": "assets/texture/ship.png",
     "ship_hp": 100,
-    "ship_go_acc": 10,
+    "ship_go_acc": 50,
     "ship_turn_spd": 1.7
   },
   "Ship1": {

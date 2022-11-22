@@ -34,15 +34,23 @@ class Ship(SpaceObj):
         self.is_alive = True  # 是否或者
 
     def __get_image__(self, settings):
+        """获取飞船图片"""
         return pygame.image.load(settings.ship_image_path).convert_alpha()
 
-    def move(self, delta_t, planets: pygame.sprite.Group):
+    def update_acc(self, planets: pygame.sprite.Group):
+        """重载，因为飞船加速度和玩家操作有关"""
+        acc0 = self.acc
         self.acc.update(0, 0)
         if self.is_go_ahead:
             self.acc += (self.go_acc*cos(self.angle), self.go_acc*sin(self.angle))
         if self.is_go_back:
             self.acc -= (self.go_acc * cos(self.angle), self.go_acc * sin(self.angle))
 
+        self.acc += self.get_acc_from_planets(planets)
+        return acc0
+
+    def update_angle(self, delta_t):
+        """根据玩家操作更新飞船朝向的角度"""
         if self.is_turn_left:
             self.angle -= self.turn_spd * delta_t
         if self.is_turn_right:
@@ -50,20 +58,21 @@ class Ship(SpaceObj):
         if self.is_turn_left ^ self.is_turn_right:
             self.update_image()
 
-        for planet in planets:
-            self.acc += gvt_acc(planet.mass, planet.loc, self.loc)
-
-        self.loc += self.spd * delta_t
-        self.rect.center = self.loc
-        self.spd += self.acc * delta_t
+    def move(self, delta_t, planets: pygame.sprite.Group):
+        """重载，因为飞船的move还需要update_angle"""
+        acc0 = self.update_acc(planets)
+        self.update_angle(delta_t)
+        self.update_loc_spd(acc0, delta_t)
 
     def update_image(self):
+        """根据飞船目前angle，旋转image0得到目前实际的image"""
         self.image = pygame.transform.rotate(self.image0, -degrees(self.angle))
         self.rect = self.image.get_rect()
         self.rect.center = self.loc
         self.mask = pygame.mask.from_surface(self.image)  # 更新mask
 
     def fire_bullet(self, settings, bullets):
+        """发射子弹"""
         ship_dir = Vector2(cos(self.angle), sin(self.angle))
         new_bullet_loc = self.loc + 0.6*self.image0.get_width()*ship_dir
         new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
@@ -79,9 +88,12 @@ class Ship(SpaceObj):
         ships.remove(self)
         dead_ships.add(self)
 
-    def check_alive(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):
+    def check_alive(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group) -> bool:
+        """检查飞船是否还活着，如果死了就执行die函数，返回值为是否活着"""
         if self.hp <= 0:
             self.die(ships, dead_ships)
+            return False
+        return True
 
     def hit_bullet(self, damage,
                    ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):

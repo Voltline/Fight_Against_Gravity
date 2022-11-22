@@ -1,6 +1,7 @@
 import sys
 import pygame
 from pygame import Vector2
+from trace import Trace
 
 
 # 鼠标位置信息，每帧实时更新
@@ -84,17 +85,30 @@ def check_events(settings, gm, camera):
             check_events_keyup(event, settings, gm)
 
 
-def update_screen(settings, gm, camera):
+def update_screen(settings, gm, camera, traces: list):
     """更新屏幕"""
     # 重新绘制
-    camera.screen.fill(settings.bg_color)
+    camera.screen.fill(settings.bg_color)  # 屏幕clear
+
+    # 先绘制尾迹，因为尾迹应该在最下层
+    for trace in traces:
+        trace.display(camera)
+
     for ship in gm.ships:
         if ship.is_alive:
             ship.display(camera)
+            traces.append(Trace(settings, ship.loc, pygame.time.get_ticks(), settings.trace_color))
     for bullet in gm.bullets:
         bullet.display(camera)
     for planet in gm.planets:
         planet.display(camera)
+
+    # 更新traces，删除其中应该消失的元素
+    for trace in traces.copy():
+        if trace.is_alive():
+            break
+        else:
+            traces.remove(trace)
 
     # 刷新屏幕
     pygame.display.flip()
