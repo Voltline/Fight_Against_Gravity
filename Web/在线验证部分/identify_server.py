@@ -23,7 +23,7 @@ def reg_server(ip: str, port: int, heart_time: int = -1) -> None:
         messages = server.get_message()
         for message in messages:
             addr = message[0]  # addr : client's address
-            rmessage = json.loads(message[1])
+            rmessage = message[1]
             user_list.append({rmessage["user"]: message[0]})
             print(rmessage)
             all_reg_acc = database_operate.get_all_reg_acc()
