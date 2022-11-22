@@ -99,7 +99,7 @@ if __name__ == "__main__":
         check_code = client.get_check_code(username, email)
         if check_code != '':
             input_check_code = input("Input the check_code in your mailbox: ")
-            if check_code == input_check_code:
+            if check_code.lower() == input_check_code.lower():
                 password = input("Input your password: ")
                 result = client.send_all_information(username, email, password)
                 if result is True:
