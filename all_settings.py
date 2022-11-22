@@ -71,6 +71,10 @@ class Settings:
         self.camera_k_change_mode = pygame.K_LCTRL  # 视角模式切换按键
         # self.camera_k_move =
 
+        # Trace
+        self.trace_life_ms = 60*1000  # 尾迹保留时间
+        self.trace_color = (200, 200, 200)  # 尾迹颜色
+
         del inf
 
     def make_bullet_image(self):

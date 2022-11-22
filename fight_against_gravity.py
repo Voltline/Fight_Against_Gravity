@@ -20,17 +20,23 @@ def run_game():
 
     # 设置gm (测试用)
     gm = GameManager(settings)
-    ship1 = Ship(settings, Vector2(-300, 0), Vector2(0, 30),
+    ship1 = Ship(settings, Vector2(0, 0), Vector2(0, 800),
                  angle=0, player_name='1')
-    ship2 = Ship(settings, Vector2(300, 0), Vector2(0, -30),
+    ship2 = Ship(settings, Vector2(500, 0), Vector2(0, 900),
                  angle=3.14, player_name='2')
     gm.ships.add(ship1)
     gm.ships.add(ship2)
-    planet = Planet(settings, Vector2(0, 0), mass=5e15)
-    gm.planets.add(planet)
+    planet1 = Planet(settings, Vector2(0, 0), Vector2(0, 0), mass=1e19)
+    # planet2 = Planet(settings, Vector2(2000, 0), Vector2(0, -7), mass=1e19)
+    # planet3 = Planet(settings, Vector2(106000, 0), Vector2(0, 0), mass=1e-30)
+
+    gm.planets.add(planet1)
+    # gm.planets.add(planet2)
+    # gm.planets.add(planet3)
 
     # 设置camera
     camera = Camera(screen, settings, ship1.player_name, gm.ships)
+    traces = []  # 保存所有尾迹
 
     # pygame.display.set_caption('Fight Against Gravity')
     # # 引入字体类型
@@ -53,11 +59,12 @@ def run_game():
     # Main Loop
     while True:
         delta_t = clock.tick(settings.max_fps) / 1000  # 获取delta_time(sec)并限制最大帧率
-        # print(clock.get_fps())
+        if (pygame.time.get_ticks()//10) % 500 == 0:  # 每5秒输出一次fps
+            print('fps:', clock.get_fps())
 
         gf.check_events(settings, gm, camera)  # 检查键鼠活动
         gf.check_collisions(gm)
         gf.all_move(gm, camera, delta_t)
         gf.ships_fire_bullet(settings, gm)
 
-        gf.update_screen(settings, gm, camera)
+        gf.update_screen(settings, gm, camera, traces)

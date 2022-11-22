@@ -56,3 +56,21 @@ class Camera:
         real_y = self.loc.y + (obj_screen_loc.y - screen_center[1])/self.zoom
         return real_x, real_y
 
+    def blit(self, image, rect_real: pygame.Rect):
+        """
+        image: 原始图片
+        rect_real: 实际图片所在的rect
+        功能：在self.screen的对应位置上绘制移动和缩放后的图片
+        """
+        rect_screen = pygame.rect.Rect(0, 0, rect_real.width*self.zoom, rect_real.height*self.zoom)
+        rect_screen.center = self.real_to_screen(Vector2(rect_real.center))
+        self.screen.blit(pygame.transform.rotozoom(image.convert_alpha(), 0, self.zoom), rect_screen)
+
+    def set_at(self, loc_real: Vector2, color):
+        """
+        loc_real: 实际坐标
+        color: 点的颜色
+        功能：在self.screen上对应实际loc的位置画一个颜色为color的点
+        """
+        pos_screen = list(map(int, self.real_to_screen(loc_real)))  # 转换后screen上的坐标，为二元组
+        self.screen.set_at(pos_screen, color)
