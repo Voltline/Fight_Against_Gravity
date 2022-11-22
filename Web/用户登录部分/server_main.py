@@ -38,21 +38,24 @@ if __name__ == "__main__":
     server.start()
     sttm = time.time()
     while True:
-        if time.time() - sttm > 4:
-            print(user_list)
-            sttm = time.time()
-        # 处理消息队列
-        messages = server.get_message()
-        for message in messages:
-            rmessage = message[1]
-            """
-            解码后的message
-            """
-            if rmessage["opt"] == 3:
-                if check(rmessage["user"], rmessage["password"]):
-                    user_list.append({rmessage["user"]: message[0]})
-                    server.send(message[0], "ACCEPT")
+        try:
+            if time.time() - sttm > 4:
+                print(user_list)
+                sttm = time.time()
+            # 处理消息队列
+            messages = server.get_message()
+            for message in messages:
+                rmessage = message[1]
+                """
+                解码后的message
+                """
+                if rmessage["opt"] == 3:
+                    if check(rmessage["user"], rmessage["password"]):
+                        user_list.append({rmessage["user"]: message[0]})
+                        server.send(message[0], "ACCEPT")
+                    else:
+                        server.close(message[0])
                 else:
-                    server.close(message[0])
-            else:
-                print("unexpected opt")
+                    print("unexpected opt")
+        except Exception as e:
+            print(f"[Error] : {e}")
