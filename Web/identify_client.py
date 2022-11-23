@@ -1,6 +1,6 @@
 import Web.Modules.safeclient as safeclient
 import json
-
+import os
 
 class IdentifyClient:
     def __init__(self, reg_ip: str, reg_port: int,
@@ -78,7 +78,10 @@ class IdentifyClient:
 
 
 def createIdentifyClient() -> IdentifyClient:
-    with open("Modules/settings.json", "r") as f:
+    current_path = os.getcwd()
+    fag_directory = os.path.dirname(current_path)
+    os.chdir(fag_directory)
+    with open("Web/Modules/settings.json", "r") as f:
         information = json.load(f)
     reg_ip = information["Client"]["Reg_IP"]
     reg_port = information["Client"]["Reg_Port"]
