@@ -2,11 +2,11 @@ import pygame
 from pygame import Vector2
 
 from all_settings import Settings
-import game_function as gf
-from game_manager import GameManager
-from ship import Ship
-from planet import Planet
-from camera import Camera
+from content import game_function as gf
+from content.game_manager import GameManager
+from content.ship import Ship
+from content.planet import Planet
+from content.camera import Camera
 
 
 def run_game():
@@ -20,19 +20,20 @@ def run_game():
 
     # 设置gm (测试用)
     gm = GameManager(settings)
-    ship1 = Ship(settings, Vector2(0, 0), Vector2(0, 800),
+    ship1 = Ship(settings, Vector2(2240, 0), Vector2(0, -1040),
                  angle=0, player_name='1')
-    ship2 = Ship(settings, Vector2(500, 0), Vector2(0, 900),
+    ship2 = Ship(settings, Vector2(500, 0), Vector2(0, -900),
                  angle=3.14, player_name='2')
     gm.ships.add(ship1)
     gm.ships.add(ship2)
-    planet1 = Planet(settings, Vector2(0, 0), Vector2(0, 0), mass=1e19)
-    # planet2 = Planet(settings, Vector2(2000, 0), Vector2(0, -7), mass=1e19)
+    planet1 = Planet(settings, Vector2(0, 0), Vector2(0, 60), mass=1e19)
+    planet2 = Planet(settings, Vector2(2000, 0), Vector2(0, -600), mass=1e18)
     # planet3 = Planet(settings, Vector2(106000, 0), Vector2(0, 0), mass=1e-30)
 
     gm.planets.add(planet1)
-    # gm.planets.add(planet2)
+    gm.planets.add(planet2)
     # gm.planets.add(planet3)
+
 
     # 设置camera
     camera = Camera(screen, settings, ship1.player_name, gm.ships)

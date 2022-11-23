@@ -4,7 +4,7 @@ from Button_class import Button
 from Label_Class import Label
 import sys
 import os
-from Web.在线验证部分.identify_client import IdentifyClient as ic
+from Web.identify_client import IdentifyClient as ic
 pygame.init()
 screen = pygame.display.set_mode((1200, 800))
 """页面状态"""

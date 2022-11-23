@@ -1,4 +1,4 @@
-from Web.SafeSocket import safeclient
+from Modules import safeclient
 import json
 
 
@@ -75,6 +75,7 @@ class IdentifyClient:
     def get_Game_Socket(self):
         """获取验证客户端中的游戏服务器socket"""
         return self.__game_client
+
 
 if __name__ == "__main__":
     with open("settings.json", "r") as f:

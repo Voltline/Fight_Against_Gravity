@@ -1,7 +1,7 @@
 import sys
 import pygame
 from pygame import Vector2
-from trace import Trace
+from content.trace import Trace
 
 
 # 鼠标位置信息，每帧实时更新

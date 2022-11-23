@@ -1,7 +1,4 @@
-from Web.SafeSocket import safeserver
-import send_email
-import database_operate
-import json
+from Modules import safeserver, database_operate, send_email
 import time
 
 email_sent = {}
@@ -62,7 +59,6 @@ def reg_server(ip: str, port: int, heart_time: int = -1) -> None:
 
 
 if __name__ == "__main__":
-    _debug_ = 1
-    ip = "localhost"
+    ip = ""
     port = 25555
     reg_server(ip, port)

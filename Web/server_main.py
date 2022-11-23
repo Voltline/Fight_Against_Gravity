@@ -1,12 +1,11 @@
-from Web.SafeSocket import safeclient
-from Web.SafeSocket import safeserver
+from Modules import safeserver, safeclient
 import json
 
 def check(user: str, password: str) -> bool:
     """
     真的去注册服务器 进行check
     """
-    with open("settings.json", 'r') as f:
+    with open("用户登录部分/settings.json", 'r') as f:
         information = json.load(f)
     print("checking2")
     reg_ip = information["Client"]["Reg_IP"]

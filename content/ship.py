@@ -3,9 +3,8 @@ from pygame import Vector2
 from math import sin
 from math import cos
 from math import degrees
-from modules.physics import gvt_acc
-from space_obj import SpaceObj
-from bullet import Bullet
+from content.space_obj import SpaceObj
+from content.bullet import Bullet
 
 
 class Ship(SpaceObj):

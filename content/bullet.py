@@ -1,6 +1,6 @@
 import pygame
 from pygame import Vector2
-from space_obj import SpaceObj
+from content.space_obj import SpaceObj
 
 
 class Bullet(SpaceObj):

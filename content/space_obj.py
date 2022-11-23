@@ -1,7 +1,7 @@
 """太空中各个对象的基类"""
 import pygame
 from pygame import Vector2
-from modules.physics import gvt_acc
+from content.physics import gvt_acc
 
 
 class SpaceObj(pygame.sprite.Sprite):
@@ -33,12 +33,21 @@ class SpaceObj(pygame.sprite.Sprite):
         return acc0.copy()
 
     def update_loc_spd(self, acc0, delta_t):
-        """在已经更新了acc后，更新spd和loc"""
+        """
+        在已经更新了acc后，更新spd和loc
+
+        误差不太大的组合：
+        x'用spd,x"不用,x"'用
+        x'用(spd+spd0)/2,x"用(acc+acc0)/2,x"'用
+
+        """
         aacc = (self.acc - acc0) / delta_t  # 加加速度
         spd0 = self.spd.copy()
+        acc = self.acc
+        spd = self.spd
         self.spd += self.acc * delta_t
-        self.loc += (self.spd)/1 * delta_t
-        # self.loc += (self.acc)/1 * delta_t**2 / 2
+        self.loc += (0.5*spd0+0.5*spd) * delta_t
+        self.loc += (0.5*acc0+0.5*acc) * delta_t**2 / 2
         self.loc += aacc * delta_t**3 / 6
         self.rect.center = self.loc
 
