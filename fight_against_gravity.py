@@ -7,6 +7,7 @@ from content.game_manager import GameManager
 from content.ship import Ship
 from content.planet import Planet
 from content.camera import Camera
+from content.trace import Trace
 
 
 def run_game():
@@ -28,12 +29,11 @@ def run_game():
     gm.ships.add(ship2)
     planet1 = Planet(settings, Vector2(0, 0), Vector2(0, 60), mass=1e19)
     planet2 = Planet(settings, Vector2(2000, 0), Vector2(0, -600), mass=1e18)
-    # planet3 = Planet(settings, Vector2(106000, 0), Vector2(0, 0), mass=1e-30)
+    # planet3 = Planet(settings, Vector2(160000, 0), Vector2(0, -6000), mass=1e23)
 
     gm.planets.add(planet1)
     gm.planets.add(planet2)
     # gm.planets.add(planet3)
-
 
     # 设置camera
     camera = Camera(screen, settings, ship1.player_name, gm.ships)
@@ -58,14 +58,25 @@ def run_game():
     clock = pygame.time.Clock()
 
     # Main Loop
+    printed_ms = -10  # 测试用，上次输出调试信息的时间
     while True:
         delta_t = clock.tick(settings.max_fps) / 1000  # 获取delta_time(sec)并限制最大帧率
-        if (pygame.time.get_ticks()//10) % 500 == 0:  # 每5秒输出一次fps
+        now_ms = pygame.time.get_ticks()  # 测试用，当前时间
+        if now_ms - printed_ms >= 2000:  # 每5秒输出一次fps等信息
+            printed_ms = now_ms
             print('fps:', clock.get_fps())
+            print('飞船信息:')
+            for ship in gm.ships:
+                print('\t', ship.player_name, ':', ship.hp)
+            print('子弹总数:', len(gm.bullets))
 
         gf.check_events(settings, gm, camera)  # 检查键鼠活动
         gf.check_collisions(gm)
+        loc0s = gf.get_all_loc(gm)
         gf.all_move(gm, camera, delta_t)
+        loc1s = gf.get_all_loc(gm)
         gf.ships_fire_bullet(settings, gm)
 
+        for i in range(len(loc0s)):
+            traces.append(Trace(settings, loc0s[i], loc1s[i], now_ms))
         gf.update_screen(settings, gm, camera, traces)

@@ -1,7 +1,6 @@
 import sys
 import pygame
 from pygame import Vector2
-from content.trace import Trace
 
 
 # 鼠标位置信息，每帧实时更新
@@ -97,7 +96,6 @@ def update_screen(settings, gm, camera, traces: list):
     for ship in gm.ships:
         if ship.is_alive:
             ship.display(camera)
-            traces.append(Trace(settings, ship.loc, pygame.time.get_ticks(), settings.trace_color))
     for bullet in gm.bullets:
         bullet.display(camera)
     for planet in gm.planets:
@@ -173,3 +171,14 @@ def check_collisions(gm):
     check_ships_planets_collisions(gm)
     check_ships_bullets_collisions(gm)
     check_bullets_planets_collisions(gm)
+
+
+def get_all_loc(gm):
+    """返回要绘制尾迹的对象的loc列表"""
+    locs = []
+    for space_obj in gm.ships:
+        locs.append(space_obj.loc.copy())
+    for space_obj in gm.planets:
+        locs.append(space_obj.loc.copy())
+
+    return locs

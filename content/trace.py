@@ -7,9 +7,9 @@ class Trace:
     """各种尾迹"""
     __color = [0]*3  # r,g,b
 
-    def __init__(self, settings, loc: Vector2, born_ms, color):
-        self.loc = loc.copy()
-        # self.color = color
+    def __init__(self, settings, loc0: Vector2, loc1: Vector2, born_ms):
+        self.loc0 = loc0.copy()
+        self.loc1 = loc1.copy()
         self.color = self.get_color()
         self.born_ms = born_ms  # 尾迹出现的时间戳(ms)
         self.life_ms = settings.trace_life_ms  # 尾迹持续的时间(ms)
@@ -20,11 +20,12 @@ class Trace:
 
     def display(self, camera):
         """在screen上绘制"""
-        camera.set_at(self.loc, self.color)
+        camera.draw_line(self.loc0, self.loc1, self.color)
 
     @staticmethod
     def get_color() -> (int, int, int):
         """随时间改变颜色"""
-        i = randint(0, 2)
-        Trace.__color[i] = (Trace.__color[i] + 1) % 256
+        i = randint(0, 4)
+        if i < 3:
+            Trace.__color[i] = (Trace.__color[i] + 1) % 256
         return Trace.__color[:]

@@ -18,9 +18,11 @@ class Ship(SpaceObj):
         self.angle = angle
         self.update_image()
         self.player_name = player_name  # 飞船所属玩家的名字
-        self.hp = settings.ship_hp
-        self.go_acc = settings.ship_go_acc
-        self.turn_spd = settings.ship_turn_spd
+        self.hp = settings.ship_hp  # 生命值
+        self.go_acc = settings.ship_go_acc  # 引擎的加速度
+        self.turn_spd = settings.ship_turn_spd  # 转向的角速度
+        self.fired_time = 0  # 上次发射子弹的时间戳(s)
+        self.fire_rate = settings.ship_fire_rate  # 飞船射速(发/秒)
 
         # 主动状态
         self.is_go_ahead = False    # 是否在前进
@@ -72,12 +74,15 @@ class Ship(SpaceObj):
 
     def fire_bullet(self, settings, bullets):
         """发射子弹"""
-        ship_dir = Vector2(cos(self.angle), sin(self.angle))
-        new_bullet_loc = self.loc + 0.6*self.image0.get_width()*ship_dir
-        new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
-        new_bullet = Bullet(settings, new_bullet_loc, new_bullet_spd)
-        bullets.add(new_bullet)
-        self.is_fire = False
+        if self.is_fire:
+            now_time = pygame.time.get_ticks() / 1000  # 当前时间戳(秒)
+            if now_time - self.fired_time >= 1 / self.fire_rate:  # 限制射速
+                self.fired_time = now_time
+                ship_dir = Vector2(cos(self.angle), sin(self.angle))
+                new_bullet_loc = self.loc + 0.6*self.image0.get_width()*ship_dir
+                new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
+                new_bullet = Bullet(settings, new_bullet_loc, new_bullet_spd)
+                bullets.add(new_bullet)
 
     def die(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):
         """死亡时"""
