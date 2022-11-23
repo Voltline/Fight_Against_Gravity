@@ -63,6 +63,6 @@ def reg_server(ip: str, port: int, heart_time: int = -1) -> None:
 
 if __name__ == "__main__":
     _debug_ = 1
-    ip = ""
+    ip = "localhost"
     port = 25555
     reg_server(ip, port)

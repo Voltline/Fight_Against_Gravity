@@ -36,20 +36,25 @@ class SocketClient:
             self.send(msg)
             time.sleep(self.heart_beat - 0.4)
 
-    def send(self, msg):
+    def send(self, message):
         """
         data:数据 支持str/json格式
         发送数据
         """
-        if type(msg) == dict:
-            msg = json.dumps(msg)
-        self.__socket.sendall(msg.encode())
+        if type(message) == dict:
+            message = json.dumps(message)
+        self.__socket.sendall(message.encode())
 
     def receive(self):
         """
         返回数据
         """
-        return self.__socket.recv(1024).decode()
+        message = self.__socket.recv(1024).decode()
+        try:
+            message = json.loads(message)
+        except Exception as err:
+            print("[warning info]消息{}不是json格式报文,未解析".format(message), err)
+        return message
 
     def close(self):
         """
@@ -62,7 +67,6 @@ if __name__ == "__main__":
     ip = "localhost"
     port = 25555
     client = SocketClient(ip, port, 5)
-    print(1)
     while True:
         a = input()
         if a == "0":
@@ -73,4 +77,6 @@ if __name__ == "__main__":
         }
         print(a)
         client.send(a)
+        msg = client.receive()
+        print(msg)
     client.close()

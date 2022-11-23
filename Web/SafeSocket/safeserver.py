@@ -8,6 +8,13 @@ import time
 class SocketSever:
     """
     对服务端的socket进行封装
+    一些info
+    {
+        [server info]服务器正常info
+        [debug info]debug信息
+        [err info]错误信息
+        [warning info]警报信息，代表有一些不影响运行的错误发生
+    }
     """
 
     def __init__(self, ip: str, port: int, heart_time: int = -1, debug: bool = False):
@@ -92,15 +99,20 @@ class SocketSever:
             else:
                 msg = recv.decode()
                 if self.debug:
-                    print("[debug info]{recv msg}:", msg)
-                msg = json.loads(msg)
-                if msg["opt"] != 0:
-                    # 0是heart beat 不存入消息队列
+                    print("[debug info]{recv msg from%s}:%s" % (address, msg))
+                try:
+                    msg = json.loads(msg)
+                    if msg["opt"] != 0:
+                        # 0是heart beat 不存入消息队列
+                        self.que.put((address, msg))
+                except Exception as err:
+                    print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
                     self.que.put((address, msg))
 
     def get_message(self):
         """
         返回当前消息队列中的所有消息
+        格式[(address, msg)]
         """
         res = []
         while not self.que.empty():
@@ -134,6 +146,8 @@ class SocketSever:
             client = self.conn_poll[address]
             if type(msg) == dict:
                 msg = json.dumps(msg)
+            if self.debug:
+                print("[debug info]sending",msg)
             client.sendall(msg.encode())
         except Exception as err:
             print("[err info] ", err, "发送失败")
@@ -144,11 +158,10 @@ if __name__ == "__main__":
     port = 25555
     server = SocketSever(ip, port, heart_time=5, debug=True)
     server.start()
-    # cmd_que = queue.Queue()
     while True:
         messages = server.get_message()
         for item in messages:
             print(item)
+            address = item[0]
+            server.send(address, "ACK")
         lt = server.get_connection()
-        # for item in lt:
-        #     server.close(item)

@@ -1,8 +1,6 @@
 from Web.SafeSocket import safeclient
 from Web.SafeSocket import safeserver
 import json
-import time
-
 
 def check(user: str, password: str) -> bool:
     """
@@ -10,6 +8,7 @@ def check(user: str, password: str) -> bool:
     """
     with open("settings.json", 'r') as f:
         information = json.load(f)
+    print("checking2")
     reg_ip = information["Client"]["Reg_IP"]
     reg_port = information["Client"]["Reg_Port"]
     information = ''
@@ -19,9 +18,11 @@ def check(user: str, password: str) -> bool:
         "password": password
     }
     check_client = safeclient.SocketClient(reg_ip, reg_port)
-    check_client.send(json.dumps(msg))
+    check_client.send(msg)
+    print(msg)
     status = check_client.receive()
     check_client.close()
+    print(status)
     if status == "ERROR":
         return False
     elif status == "close":
@@ -33,29 +34,36 @@ def check(user: str, password: str) -> bool:
 
 user_list = []  # {"username" : address}
 if __name__ == "__main__":
-    _debug_ = 1
-    server = safeserver.SocketSever("", 25555)
+    server = safeserver.SocketSever("127.0.0.1", 25555, heart_time=5, debug=1)
     server.start()
-    sttm = time.time()
     while True:
         try:
-            if time.time() - sttm > 4:
-                print(user_list)
-                sttm = time.time()
             # 处理消息队列
             messages = server.get_message()
+            # print(1)
             for message in messages:
-                rmessage = message[1]
+                print(message)
+                messageAdr, messageMsg = message
                 """
                 解码后的message
                 """
-                if rmessage["opt"] == 3:
-                    if check(rmessage["user"], rmessage["password"]):
-                        user_list.append({rmessage["user"]: message[0]})
-                        server.send(message[0], "ACCEPT")
+                if messageMsg["opt"] == 1:
+                    print("checking")
+                    if check(messageMsg["user"], messageMsg["password"]):
+                        user_list.append({messageMsg["user"]: messageAdr})
+                        sendMsg = {
+                            "opt": 2,
+                            "status": "ACK"
+                        }
+                        server.send(messageAdr, sendMsg)
                     else:
-                        server.close(message[0])
+                        sendMsg = {
+                            "opt": 2,
+                            "status": "NAK"
+                        }
+                        server.send(messageAdr, sendMsg)
+                        server.close(messageAdr)
                 else:
-                    print("unexpected opt")
+                    print("unexpected opt", message)
         except Exception as e:
-            print(f"[Error] : {e}")
+            print("[Error] : {e}", e)
