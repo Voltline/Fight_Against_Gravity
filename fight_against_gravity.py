@@ -1,5 +1,6 @@
 import pygame
 from pygame import Vector2
+import threading  # 处理输入事件与绘制图形要和处理运动与碰撞分开，不然拖窗口会一起卡死
 
 from all_settings import Settings
 from content import game_function as gf
@@ -54,15 +55,18 @@ def run_game():
     # pygame.display.flip()
     # sleep(settings.title_time_sec)
 
-    # 准备时钟
-    clock = pygame.time.Clock()
-
     # Main Loop
-    printed_ms = -10  # 测试用，上次输出调试信息的时间
-    while True:
+
+    clock = pygame.time.Clock()  # 准备时钟
+    printed_ms = 0  # 测试用，上次输出调试信息的时间
+    physics_dt = settings.physics_dt
+    surplus_dt = 0  # 这次delta_t被physics_dt消耗剩下的时间
+
+    is_run = [True]
+    while is_run[0]:
         delta_t = clock.tick(settings.max_fps) / 1000  # 获取delta_time(sec)并限制最大帧率
         now_ms = pygame.time.get_ticks()  # 测试用，当前时间
-        if now_ms - printed_ms >= 2000:  # 每5秒输出一次fps等信息
+        if now_ms - printed_ms >= 2000:  # 每2秒输出一次fps等信息
             printed_ms = now_ms
             print('fps:', clock.get_fps())
             print('飞船信息:')
@@ -70,13 +74,15 @@ def run_game():
                 print('\t', ship.player_name, ':', ship.hp)
             print('子弹总数:', len(gm.bullets))
 
-        gf.check_events(settings, gm, camera)  # 检查键鼠活动
-        gf.check_collisions(gm)
-        loc0s = gf.get_all_loc(gm)
-        gf.all_move(gm, camera, delta_t)
-        loc1s = gf.get_all_loc(gm)
-        gf.ships_fire_bullet(settings, gm)
+        gf.check_events(settings, gm, camera, is_run)  # 检查键鼠活动
 
-        for i in range(len(loc0s)):
-            traces.append(Trace(settings, loc0s[i], loc1s[i], now_ms))
-        gf.update_screen(settings, gm, camera, traces)
+        surplus_dt += delta_t
+        while surplus_dt >= physics_dt:
+            surplus_dt -= physics_dt
+            gf.check_collisions(gm)
+            gf.all_move(gm, physics_dt)
+            gf.ships_fire_bullet(settings, gm)
+        gf.add_traces(settings, gm, traces, now_ms)
+
+        surplus_ratio = surplus_dt / physics_dt
+        gf.update_screen(settings, gm, camera, traces, surplus_ratio)

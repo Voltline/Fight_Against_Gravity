@@ -9,8 +9,10 @@ class SpaceObj(pygame.sprite.Sprite):
     def __init__(self, settings,
                  loc0: Vector2 = Vector2(0, 0), spd0: Vector2 = Vector2(0, 0)):
         super().__init__()
-        self.loc: Vector2 = loc0  # 位置
-        self.spd: Vector2 = spd0  # 速度
+        self.loc: Vector2 = loc0.copy()  # 位置
+        self.loc0 = self.loc.copy()  # 上一次的位置, 用于线性插值
+        self.loc00 = self.loc.copy()  # 上一次渲染的位置，用于记录尾迹
+        self.spd: Vector2 = spd0.copy()  # 速度
         self.acc = Vector2(0, 0)  # 加速度
         self.image = self.__get_image__(settings)
         self.rect = self.image.get_rect()
@@ -32,7 +34,7 @@ class SpaceObj(pygame.sprite.Sprite):
         self.acc = self.get_acc_from_planets(planets)
         return acc0.copy()
 
-    def update_loc_spd(self, acc0, delta_t):
+    def update_loc_spd(self, dt, planets: pygame.sprite.Group):
         """
         在已经更新了acc后，更新spd和loc
 
@@ -41,21 +43,34 @@ class SpaceObj(pygame.sprite.Sprite):
         x'用(spd+spd0)/2,x"用(acc+acc0)/2,x"'用
 
         """
-        aacc = (self.acc - acc0) / delta_t  # 加加速度
         spd0 = self.spd.copy()
-        acc = self.acc
+        acc0 = self.acc.copy()
         spd = self.spd
-        self.spd += self.acc * delta_t
-        self.loc += (0.5*spd0+0.5*spd) * delta_t
-        self.loc += (0.5*acc0+0.5*acc) * delta_t**2 / 2
-        self.loc += aacc * delta_t**3 / 6
+        # 韦尔莱算法
+        self.update_loc(dt)
+        self.update_acc(planets)
+        self.spd += (acc0 + self.acc)/2 * dt
+
+        # 自己瞎写的算法
+        # self.spd += self.acc * delta_t + aacc * delta_t**2 / 2
+        # self.loc += (0.5*spd0+0.5*spd) * delta_t
+        # self.loc += (0.5*acc0+0.5*acc) * delta_t**2 / 2
+        # self.loc += aacc * delta_t**3 / 6
+
+    def update_loc(self, dt):
+        """下一时刻的位置需要这一时刻的速度和加速度"""
+        self.loc0.update(self.loc)
+        self.loc += self.spd * dt + self.acc * dt * dt / 2
         self.rect.center = self.loc
 
     def move(self, delta_t, planets: pygame.sprite.Group):
-        """负责该对象的移动,更新loc,spd,acc"""
-        acc0 = self.update_acc(planets)
-        self.update_loc_spd(acc0, delta_t)
+        """
+        负责该对象的移动,更新loc,spd,acc
+        之所以开move函数是为了方便ship重载
+        """
+        self.update_loc_spd(delta_t, planets)
 
     def display(self, camera):
         """在screen上绘制"""
+
         camera.blit(self.image, self.rect)

@@ -10,6 +10,9 @@
     "title_time_sec": 3,
     "icon_img_path": "assets/texture/icon1.png"
   },
+  "Physics": {
+    "physics_dt": 0.015625
+  },
   "SpaceObj": {
     "space_obj_image_path": "assets/texture/space_obj.png"
   },
@@ -51,7 +54,7 @@
     "camera_k_change_mode": "pygame.K_LCTRL"
   },
   "Trace": {
-    "trace_life_ms": 5000,
+    "trace_life_ms": 3000,
     "trace_color": "(200, 200, 200)"
   }
 }

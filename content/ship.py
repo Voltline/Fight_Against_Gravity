@@ -61,9 +61,8 @@ class Ship(SpaceObj):
 
     def move(self, delta_t, planets: pygame.sprite.Group):
         """重载，因为飞船的move还需要update_angle"""
-        acc0 = self.update_acc(planets)
         self.update_angle(delta_t)
-        self.update_loc_spd(acc0, delta_t)
+        self.update_loc_spd(delta_t, planets)
 
     def update_image(self):
         """根据飞船目前angle，旋转image0得到目前实际的image"""

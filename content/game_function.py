@@ -1,7 +1,7 @@
 import sys
 import pygame
 from pygame import Vector2
-
+from content.trace import Trace
 
 # 鼠标位置信息，每帧实时更新
 mouse_loc = Vector2(0, 0)
@@ -58,13 +58,16 @@ def check_events_keyup(event, settings, gm):
         gm.ships.sprites()[1].is_fire = False
 
 
-def check_events(settings, gm, camera):
+def check_events(settings, gm, camera, is_run):
     """响应键盘和鼠标事件"""
     global mouse_loc, mouse_d_loc
     mouse_loc.x, mouse_loc.y = pygame.mouse.get_pos()
     mouse_d_loc.x, mouse_d_loc.y = pygame.mouse.get_rel()
-    for event in pygame.event.get():
+
+    event = pygame.event.poll()
+    while event:
         if event.type == pygame.QUIT:
+            is_run[0] = False
             sys.exit()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -83,9 +86,15 @@ def check_events(settings, gm, camera):
         elif event.type == pygame.KEYUP:
             check_events_keyup(event, settings, gm)
 
+        event = pygame.event.poll()
 
-def update_screen(settings, gm, camera, traces: list):
+
+def update_screen(settings, gm, camera, traces: list, surplus_ratio):
     """更新屏幕"""
+
+    global mouse_loc
+    camera.move(mouse_loc)  # 更新camera位置
+
     # 重新绘制
     camera.screen.fill(settings.bg_color)  # 屏幕clear
 
@@ -93,13 +102,11 @@ def update_screen(settings, gm, camera, traces: list):
     for trace in traces:
         trace.display(camera)
 
-    for ship in gm.ships:
-        if ship.is_alive:
-            ship.display(camera)
-    for bullet in gm.bullets:
-        bullet.display(camera)
-    for planet in gm.planets:
-        planet.display(camera)
+    for objs in gm.ships, gm.bullets, gm.planets:
+        for obj in objs:
+            obj.rect.center = surplus_ratio*obj.loc + (1-surplus_ratio)*obj.loc0
+            obj.display(camera)
+            obj.rect.center = obj.loc
 
     # 更新traces，删除其中应该消失的元素
     for trace in traces.copy():
@@ -118,16 +125,18 @@ def ships_fire_bullet(settings, gm):
             ship.fire_bullet(settings, gm.bullets)
 
 
-def all_move(gm, camera, delta_t):
-    global mouse_loc
-    camera.move(mouse_loc)
+def all_move(gm, delta_t):
+    for planet in gm.planets:
+        planet.acc0.update(planet.acc)
+        planet.update_loc(delta_t)
+    for planet in gm.planets:
+        planet.update_acc(gm.planets)
+        planet.update_spd(delta_t)
     for ship in gm.ships:
         if ship.is_alive:
             ship.move(delta_t, gm.planets)
     for bullet in gm.bullets:
         bullet.move(delta_t, gm.planets)
-    for planet in gm.planets:
-        planet.move(delta_t, gm.planets)
 
 
 def check_bullets_planets_collisions(gm):
@@ -173,12 +182,10 @@ def check_collisions(gm):
     check_bullets_planets_collisions(gm)
 
 
-def get_all_loc(gm):
-    """返回要绘制尾迹的对象的loc列表"""
-    locs = []
-    for space_obj in gm.ships:
-        locs.append(space_obj.loc.copy())
-    for space_obj in gm.planets:
-        locs.append(space_obj.loc.copy())
+def add_traces(settings, gm, traces, now_ms):
+    """在traces里添加尾迹"""
+    for objs in gm.ships, gm.planets:
+        for obj in objs:
+            traces.append(Trace(settings, obj.loc00, obj.loc, now_ms))
+            obj.loc00.update(obj.loc)
 
-    return locs

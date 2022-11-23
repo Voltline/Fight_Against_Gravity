@@ -26,6 +26,11 @@ class Settings:
         # SpaceObj
         self.space_obj_image_path = inf["SpaceObj"]["space_obj_image_path"]  # space_obj图片路径
 
+        # 物理
+        physics = inf["Physics"]  # 物理模拟计算每次的delta_t
+        self.physics_dt = physics["physics_dt"]
+        del physics
+
         # Bullet
         bullet = inf["Bullet"]
         self.bullet_color_key = eval(bullet["bullet_color_key"])  # bullet的透明色
@@ -125,5 +130,4 @@ class Settings:
             inf[sector][target_key] = str(new_key)
         with open("game_settings.json", "r") as g:
             json.dump(inf, g)
-        self.__init__() # 重新调用初始化函数改变键位参数
-
+        self.__init__()  # 重新调用初始化函数改变键位参数
