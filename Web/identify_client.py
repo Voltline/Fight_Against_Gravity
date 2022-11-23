@@ -1,6 +1,6 @@
 import Web.Modules.safeclient as safeclient
 import json
-
+import os
 
 class IdentifyClient:
     def __init__(self, reg_ip: str, reg_port: int,
@@ -77,8 +77,11 @@ class IdentifyClient:
         return self.__game_client
 
 
-if __name__ == "__main__":
-    with open("settings.json", "r") as f:
+def createIdentifyClient() -> IdentifyClient:
+    current_path = os.getcwd()
+    fag_directory = os.path.dirname(current_path)
+    os.chdir(fag_directory)
+    with open("Web/Modules/settings.json", "r") as f:
         information = json.load(f)
     reg_ip = information["Client"]["Reg_IP"]
     reg_port = information["Client"]["Reg_Port"]
@@ -86,6 +89,10 @@ if __name__ == "__main__":
     log_port = information["Client"]["Game_Port"]
     information = ""
     client = IdentifyClient(reg_ip, reg_port, log_ip, log_port)
+    return client
+
+if __name__ == "__main__":
+    client = createIdentifyClient()
     choice = input("Input 'A' for login, 'B' for register: ")
     username = input("Input your username: ")
     if choice in ['A', 'a']:

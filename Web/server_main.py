@@ -7,7 +7,7 @@ def check(user: str, password: str) -> bool:
     """
     真的去注册服务器 进行check
     """
-    with open("用户登录部分/settings.json", 'r') as f:
+    with open("Modules/settings.json", 'r') as f:
         information = json.load(f)
     print("checking2")
     reg_ip = information["Client"]["Reg_IP"]

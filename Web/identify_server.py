@@ -7,24 +7,21 @@ email_sent = {}
 user_list = []  # {"username" : address}
 
 
-def reg_server(ip: str, port: int, heart_time: int = -1) -> None:
+def reg_server(ip: str, port: int, heart_time: int = -1, debug: bool = False) -> None:
     """注册服务器
     :参数: ip: 服务器ip， port: 端口， heart_time: 心跳时间（默认-1）
     :返回: 无返回
     """
-    server = safeserver.SocketSever(ip, port)
+    server = safeserver.SocketSever(ip, port, heart_time, debug)
     server.start()
-    sttm = time.time()
     while True:
-        if time.time() - sttm > 4:
-            print(user_list)
-            sttm = time.time()
         messages = server.get_message()
         for message in messages:
+            if debug: # 如果开启debug就把接收到的消息伴随时间打印出来
+                print(f"[Msg In]{time.ctime()} : {message}")
             addr = message[0]  # addr : client's address
             rmessage = message[1]
             user_list.append({rmessage["user"]: message[0]})
-            print(rmessage)
             all_reg_acc = database_operate.get_all_reg_acc()
             if rmessage["opt"] != 3:
                 username, email = rmessage["user"], rmessage["email"]
@@ -63,4 +60,4 @@ def reg_server(ip: str, port: int, heart_time: int = -1) -> None:
 if __name__ == "__main__":
     ip = ""
     port = 25555
-    reg_server(ip, port)
+    reg_server(ip, port, debug=True)

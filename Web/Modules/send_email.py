@@ -1,6 +1,7 @@
 import smtplib
 import random
 import json
+import sys
 from email.mime.text import MIMEText
 from email.header import Header
 
@@ -24,7 +25,7 @@ def send_email(user_name: str, target_email: str, id_code: str) -> None:
     :参数：user_name：用户名，target_email：目标邮箱，id_code：验证码
     :返回：无返回
     """
-    with open("../settings.json", 'r') as f:
+    with open("Modules/settings.json", 'r') as f:
         information = json.load(f)
     my_mail = information["Email"]["Addr"]
     password = information["Email"]["Password"]

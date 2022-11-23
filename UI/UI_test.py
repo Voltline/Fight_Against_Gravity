@@ -4,7 +4,7 @@ from Button_class import Button
 from Label_Class import Label
 import sys
 import os
-from Web.identify_client import IdentifyClient as ic
+from Web import identify_client as ic
 pygame.init()
 screen = pygame.display.set_mode((1200, 800))
 """页面状态"""
@@ -96,7 +96,7 @@ r_check_button = Button('check', SENDCHECK, check_rect, "Img/light_butbg.png", 0
 # confirm_button = Button('confirm', CONFIRM, confirm_rect, "Img/light_butbg.png", 0, '确认', register_font)
 """注册测试"""
 check_code = ''
-identify_client = ic("47.100.69.244", 25555, "124.223.215.89", 25555)
+identify_client = ic.createIdentifyClient()
 running = True
 while running:
     if page_status == 0:
