@@ -1,5 +1,7 @@
-from Modules import safeserver, safeclient
+import Web.Modules.safeserver as safeserver
+import Web.Modules.safeclient as safeclient
 import json
+
 
 def check(user: str, password: str) -> bool:
     """

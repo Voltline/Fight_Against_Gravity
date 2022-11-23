@@ -1,4 +1,6 @@
-from Modules import safeserver, database_operate, send_email
+import Web.Modules.safeserver as safeserver
+import Web.Modules.database_operate as database_operate
+import Web.Modules.send_email as send_email
 import time
 
 email_sent = {}

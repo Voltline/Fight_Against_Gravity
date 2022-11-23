@@ -1,4 +1,4 @@
-from Modules import safeclient
+import Web.Modules.safeclient as safeclient
 import json
 
 

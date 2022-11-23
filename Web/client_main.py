@@ -1,4 +1,4 @@
-from Modules import safeclient
+import Web.Modules.safeclient as safeclient
 # client_main暂时没有更新，请勿使用
 if __name__ == "__main__":
     client = safeclient.SocketClient("localhost", 25555, heart_beat=5)
