@@ -77,8 +77,8 @@ class IdentifyClient:
         return self.__game_client
 
 
-if __name__ == "__main__":
-    with open("settings.json", "r") as f:
+def createIdentifyClient() -> IdentifyClient:
+    with open("Modules/settings.json", "r") as f:
         information = json.load(f)
     reg_ip = information["Client"]["Reg_IP"]
     reg_port = information["Client"]["Reg_Port"]
@@ -86,6 +86,10 @@ if __name__ == "__main__":
     log_port = information["Client"]["Game_Port"]
     information = ""
     client = IdentifyClient(reg_ip, reg_port, log_ip, log_port)
+    return client
+
+if __name__ == "__main__":
+    client = createIdentifyClient()
     choice = input("Input 'A' for login, 'B' for register: ")
     username = input("Input your username: ")
     if choice in ['A', 'a']:
