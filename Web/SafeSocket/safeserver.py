@@ -146,6 +146,8 @@ class SocketSever:
             client = self.conn_poll[address]
             if type(msg) == dict:
                 msg = json.dumps(msg)
+            if self.debug:
+                print("[debug info]sending",msg)
             client.sendall(msg.encode())
         except Exception as err:
             print("[err info] ", err, "发送失败")

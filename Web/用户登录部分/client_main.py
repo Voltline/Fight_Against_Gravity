@@ -2,7 +2,7 @@ from Web.SafeSocket import safeclient
 import json
 
 if __name__ == "__main__":
-    client = safeclient.SocketClient("localhost", 25555)
+    client = safeclient.SocketClient("localhost", 25555, heart_beat=5)
     user = input("input the user name")
     password = input("input the pass word")
     msg = {
@@ -10,8 +10,12 @@ if __name__ == "__main__":
         "user": user,
         "password": password
     }
-    client.send(json.dumps(msg))
-    print(json.dumps(msg))
-    print(type(json.dumps(msg)))
+    print(msg)
+    client.send(msg)
+    recvMsg = client.receive()
+    if recvMsg["status"] == "ACK":
+        print("ACK")
+    else:
+        print("NAK")
     while True:
         pass

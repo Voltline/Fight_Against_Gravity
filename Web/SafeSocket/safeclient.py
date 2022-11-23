@@ -76,7 +76,7 @@ if __name__ == "__main__":
             "info": a
         }
         print(a)
-        client.send("t")
+        client.send(a)
         msg = client.receive()
         print(msg)
     client.close()
