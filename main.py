@@ -1,6 +1,5 @@
 """程序入口"""
 from fight_against_gravity import run_game
-
 """
 游戏操作：
 wasd：玩家1的移动
@@ -12,5 +11,6 @@ u：玩家2的发射子弹
 鼠标中键：切换视角模式（自由移动模式or跟随飞船模式）
 鼠标滚轮：视角缩放
 """
+
 
 run_game()

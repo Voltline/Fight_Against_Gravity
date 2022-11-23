@@ -11,6 +11,7 @@ class Camera:
         self.zoom = 1  # 缩放程度
         self.move_spd = settings.camera_move_speed  # 移动速度系数(自由视角移动时)
         self.zoom_spd = settings.camera_zoom_speed  # 缩放速度系数
+        self.zoom_max = settings.camera_zoom_max  # 缩放倍数上限(过高会导致fps过低)
         self.mode = 0  # 视角移动模式: 0:自由移动 1:跟随飞船
         self.mode_num = 2
         self.player_ship = self.find_player_ship(player_name, ships)  # 对应的玩家飞船
@@ -31,6 +32,8 @@ class Camera:
             zoom0 = self.zoom
             mouse_real_loc = Vector2(self.screen_to_real(mouse_loc))  # 鼠标对应的真实坐标
             self.zoom *= self.zoom_spd ** self.d_zoom
+            if self.zoom > self.zoom_max:
+                self.zoom = self.zoom_max
             self.loc += (mouse_real_loc - self.loc)*(1 - zoom0/self.zoom)
             self.d_zoom = 0
 
@@ -66,7 +69,7 @@ class Camera:
         rect_screen.center = self.real_to_screen(Vector2(rect_real.center))
         self.screen.blit(pygame.transform.rotozoom(image.convert_alpha(), 0, self.zoom), rect_screen)
 
-    def set_at(self, loc_real: Vector2, color):
+    def draw_dot(self, loc_real: Vector2, color):
         """
         loc_real: 实际坐标
         color: 点的颜色
@@ -74,3 +77,9 @@ class Camera:
         """
         pos_screen = list(map(int, self.real_to_screen(loc_real)))  # 转换后screen上的坐标，为二元组
         self.screen.set_at(pos_screen, color)
+
+    def draw_line(self, loc0_real: Vector2, loc1_real: Vector2, color):
+        pos0_screen = list(map(int, self.real_to_screen(loc0_real)))  # 转换后screen上的坐标，为二元组
+        pos1_screen = list(map(int, self.real_to_screen(loc1_real)))
+        pygame.draw.line(self.screen, color, pos0_screen, pos1_screen)
+

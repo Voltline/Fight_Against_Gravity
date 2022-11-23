@@ -26,6 +26,11 @@ class Settings:
         # SpaceObj
         self.space_obj_image_path = inf["SpaceObj"]["space_obj_image_path"]  # space_obj图片路径
 
+        # 物理
+        physics = inf["Physics"]  # 物理模拟计算每次的delta_t
+        self.physics_dt = physics["physics_dt"]
+        del physics
+
         # Bullet
         bullet = inf["Bullet"]
         self.bullet_color_key = eval(bullet["bullet_color_key"])  # bullet的透明色
@@ -45,6 +50,7 @@ class Settings:
         self.ship_hp = ships["ship_hp"]  # 飞船初始血量
         self.ship_go_acc = ships["ship_go_acc"]  # 飞船前进/后退的加速度
         self.ship_turn_spd = ships["ship_turn_spd"]  # 飞船转弯的角速度(弧度制)
+        self.ship_fire_rate = ships["ship_fire_rate"]  # 飞船射速(发/秒)
         del ships
 
         # Ship1
@@ -66,14 +72,19 @@ class Settings:
         del ship2
 
         # Camera
-        self.camera_move_speed = -1  # 视角移动速度系数
-        self.camera_zoom_speed = 1.2  # 视角缩放速度系数
-        self.camera_k_change_mode = pygame.K_LCTRL  # 视角模式切换按键
+        camera = inf["Camera"]
+        self.camera_move_speed = camera['camera_move_speed']  # 视角移动速度系数
+        self.camera_zoom_speed = camera['camera_zoom_speed']  # 视角缩放速度系数
+        self.camera_zoom_max = camera['camera_zoom_max']  # 视角缩放倍数上限
+        self.camera_k_change_mode = eval(camera['camera_k_change_mode'])  # 视角模式切换按键
         # self.camera_k_move =
+        del camera
 
         # Trace
-        self.trace_life_ms = 60*1000  # 尾迹保留时间
-        self.trace_color = (200, 200, 200)  # 尾迹颜色
+        trace = inf['Trace']
+        self.trace_life_ms = trace['trace_life_ms']  # 尾迹保留时间
+        self.trace_color = eval(trace['trace_color'])  # 尾迹颜色
+        del trace
 
         del inf
 
@@ -119,5 +130,4 @@ class Settings:
             inf[sector][target_key] = str(new_key)
         with open("game_settings.json", "r") as g:
             json.dump(inf, g)
-        self.__init__() # 重新调用初始化函数改变键位参数
-
+        self.__init__()  # 重新调用初始化函数改变键位参数

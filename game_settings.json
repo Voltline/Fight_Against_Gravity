@@ -10,6 +10,9 @@
     "title_time_sec": 3,
     "icon_img_path": "assets/texture/icon1.png"
   },
+  "Physics": {
+    "physics_dt": 0.015625
+  },
   "SpaceObj": {
     "space_obj_image_path": "assets/texture/space_obj.png"
   },
@@ -17,7 +20,7 @@
     "bullet_color_key": "(0, 0, 0)",
     "bullet_color": "(180, 255, 255)",
     "bullet_radius": 5,
-    "bullet_spd": 200,
+    "bullet_spd": 400,
     "bullet_damage": 1
   },
   "Planet": {
@@ -27,7 +30,8 @@
     "ship_image_path": "assets/texture/ship.png",
     "ship_hp": 100,
     "ship_go_acc": 50,
-    "ship_turn_spd": 1.7
+    "ship_turn_spd": 1.7,
+    "ship_fire_rate": 100
   },
   "Ship1": {
     "k_go_ahead": "pygame.K_w",
@@ -42,5 +46,15 @@
     "k_turn_left": "pygame.K_j",
     "k_turn_right": "pygame.K_l",
     "k_fire": "pygame.K_u"
+  },
+  "Camera": {
+    "camera_move_speed": -1,
+    "camera_zoom_speed": 1.2,
+    "camera_zoom_max": 5,
+    "camera_k_change_mode": "pygame.K_LCTRL"
+  },
+  "Trace": {
+    "trace_life_ms": 3000,
+    "trace_color": "(200, 200, 200)"
   }
 }
