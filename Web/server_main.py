@@ -2,14 +2,19 @@ import Web.Modules.safeserver as safeserver
 import Web.Modules.safeclient as safeclient
 import json
 
+_debug_ = False  # debug选项 请勿在生产环境中开启
+
 
 def check(user: str, password: str) -> bool:
     """
     真的去注册服务器 进行check
     """
+    if _debug_:
+        pass
+        # print("[debug info]ACK user", user)
+        # return True
     with open("Modules/settings.json", 'r') as f:
         information = json.load(f)
-    print("checking2")
     reg_ip = information["Client"]["Reg_IP"]
     reg_port = information["Client"]["Reg_Port"]
     information = ''
@@ -20,10 +25,8 @@ def check(user: str, password: str) -> bool:
     }
     check_client = safeclient.SocketClient(reg_ip, reg_port)
     check_client.send(msg)
-    print(msg)
     status = check_client.receive()
     check_client.close()
-    print(status)
     if status == "ERROR":
         return False
     elif status == "close":
@@ -33,9 +36,10 @@ def check(user: str, password: str) -> bool:
         return False
 
 
-user_list = []  # {"username" : address}
+user_list = {}  # {"username" : address}
 if __name__ == "__main__":
-    server = safeserver.SocketSever("127.0.0.1", 25555, heart_time=5, debug=1)
+    _debug_ = True  # 测试环境debug设置为1
+    server = safeserver.SocketSever("127.0.0.1", 25555, heart_time=5, debug=_debug_)
     server.start()
     while True:
         try:
@@ -43,15 +47,17 @@ if __name__ == "__main__":
             messages = server.get_message()
             # print(1)
             for message in messages:
-                print(message)
+                if _debug_:
+                    print("[debug info]message", message)
                 messageAdr, messageMsg = message
                 """
                 解码后的message
                 """
                 if messageMsg["opt"] == 1:
-                    print("checking")
+                    if _debug_:
+                        print("[debug info]checking", message)
                     if check(messageMsg["user"], messageMsg["password"]):
-                        user_list.append({messageMsg["user"]: messageAdr})
+                        user_list[messageMsg["user"]] = messageAdr
                         sendMsg = {
                             "opt": 2,
                             "status": "ACK"
@@ -66,5 +72,17 @@ if __name__ == "__main__":
                         server.close(messageAdr)
                 else:
                     print("unexpected opt", message)
+            # 清除已失效连接
+            connections = server.get_connection()
+            to_del = []  # 即将删除的连接
+            for userName in user_list:
+                if user_list[userName] not in connections:
+                    if _debug_:
+                        print("[debug info]user %s is unused" % userName)
+                    to_del.append(userName)
+            for item in to_del:
+                if _debug_:
+                    print("[debug info]user %s is deleted" % item)
+                user_list.pop(item)
         except Exception as e:
             print("[Error] : {e}", e)

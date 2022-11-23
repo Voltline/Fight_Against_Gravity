@@ -16,5 +16,9 @@ if __name__ == "__main__":
         print("ACK")
     else:
         print("NAK")
+        print("登陆失败 请重新启动游戏")
+        input("回车以继续")
+        client.close()
+        exit(0)
     while True:
         pass
