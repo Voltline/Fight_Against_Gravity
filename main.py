@@ -1,5 +1,5 @@
 """程序入口"""
-from fight_against_gravity import run_game
+from fight_against_gravity import local_game
 """
 游戏操作：
 wasd：玩家1的移动
@@ -13,4 +13,4 @@ u：玩家2的发射子弹
 """
 
 
-run_game()
+local_game()

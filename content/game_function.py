@@ -93,10 +93,14 @@ def update_screen(settings, gm, camera, traces: list, surplus_ratio):
     """更新屏幕"""
 
     global mouse_loc
-    camera.move(mouse_loc)  # 更新camera位置
 
     # 重新绘制
     camera.screen.fill(settings.bg_color)  # 屏幕clear
+
+    for objs in gm.ships, gm.bullets, gm.planets:
+        for obj in objs:
+            obj.rect.center = surplus_ratio*obj.loc + (1-surplus_ratio)*obj.loc0
+    camera.move(mouse_loc)  # 要先更新飞船的rect再更新camera的位置
 
     # 先绘制尾迹，因为尾迹应该在最下层
     for trace in traces:
@@ -104,7 +108,6 @@ def update_screen(settings, gm, camera, traces: list, surplus_ratio):
 
     for objs in gm.ships, gm.bullets, gm.planets:
         for obj in objs:
-            obj.rect.center = surplus_ratio*obj.loc + (1-surplus_ratio)*obj.loc0
             obj.display(camera)
             obj.rect.center = obj.loc
 
@@ -188,4 +191,3 @@ def add_traces(settings, gm, traces, now_ms):
         for obj in objs:
             traces.append(Trace(settings, obj.loc00, obj.loc, now_ms))
             obj.loc00.update(obj.loc)
-

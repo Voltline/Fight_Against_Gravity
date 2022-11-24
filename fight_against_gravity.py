@@ -8,10 +8,10 @@ from content.game_manager import GameManager
 from content.ship import Ship
 from content.planet import Planet
 from content.camera import Camera
-from content.trace import Trace
+import content.communicate_simulation as cs
 
-
-def run_game():
+def local_game():
+    """本地游戏"""
     # 初始化游戏 并创建一个窗口
     pygame.init()
     settings = Settings()  # 初始化设置类
@@ -28,32 +28,17 @@ def run_game():
                  angle=3.14, player_name='2')
     gm.ships.add(ship1)
     gm.ships.add(ship2)
-    planet1 = Planet(settings, Vector2(0, 0), Vector2(0, 60), mass=1e19)
-    planet2 = Planet(settings, Vector2(2000, 0), Vector2(0, -600), mass=1e18)
-    # planet3 = Planet(settings, Vector2(160000, 0), Vector2(0, -6000), mass=1e23)
+    planet1 = Planet(settings, Vector2(0, 0), Vector2(0, 0), mass=1e19)
+    # planet2 = Planet(settings, Vector2(2000, 0), Vector2(0, -600), mass=1e18)
+    # planet3 = Planet(settings, Vector2(160000, 0), Vector2(0, 0.6), mass=1e23)
 
     gm.planets.add(planet1)
-    gm.planets.add(planet2)
+    # gm.planets.add(planet2)
     # gm.planets.add(planet3)
 
     # 设置camera
     camera = Camera(screen, settings, ship1.player_name, gm.ships)
     traces = []  # 保存所有尾迹
-
-    # pygame.display.set_caption('Fight Against Gravity')
-    # # 引入字体类型
-    # f = pygame.font.Font('assets/font/consolas.ttf', 50)
-    # # 生成文本信息，第一个参数文本内容；第二个参数，字体是否平滑；
-    # # 第三个参数，RGB模式的字体颜色；第四个参数，RGB模式字体背景颜色；
-    # text = f.render("Fight Against Gravity", True, (100, 30, 30), (0, 0, 0))
-    # # 获得显示对象的rect区域坐标
-    # text_rect = text.get_rect()
-    # # 设置显示对象居中
-    # text_rect.center = settings.screen_width/2, settings.screen_height/2
-    # # 将准备好的文本信息，绘制到主屏幕 Screen 上。
-    # screen.blit(text, text_rect)
-    # pygame.display.flip()
-    # sleep(settings.title_time_sec)
 
     # Main Loop
 
@@ -71,7 +56,7 @@ def run_game():
             print('fps:', clock.get_fps())
             print('飞船信息:')
             for ship in gm.ships:
-                print('\t', ship.player_name, ':', ship.hp)
+                print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length())
             print('子弹总数:', len(gm.bullets))
 
         gf.check_events(settings, gm, camera, is_run)  # 检查键鼠活动
@@ -86,3 +71,17 @@ def run_game():
 
         surplus_ratio = surplus_dt / physics_dt
         gf.update_screen(settings, gm, camera, traces, surplus_ratio)
+
+
+def client_game():
+    """在线游戏，本地端的游戏函数"""
+    room_id = cs.client_get_room_id()
+
+
+def server_game():
+    """在线游戏，服务端的游戏函数，测试完成后要删除所有显示相关的代码"""
+    pass
+
+
+def client_main():
+    pass
