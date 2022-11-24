@@ -17,8 +17,7 @@ def reg_server(ip: str, port: int, heart_time: int = -1, debug: bool = False) ->
     while True:
         messages = server.get_message()
         for message in messages:
-            if debug: # 如果开启debug就把接收到的消息伴随时间打印出来
-                print(f"[Msg In]{time.ctime()} : {message}")
+            print(f"[Msg In]{time.ctime()} : {message}")
             addr = message[0]  # addr : client's address
             rmessage = message[1]
             user_list.append({rmessage["user"]: message[0]})
@@ -60,4 +59,8 @@ def reg_server(ip: str, port: int, heart_time: int = -1, debug: bool = False) ->
 if __name__ == "__main__":
     ip = ""
     port = 25555
-    reg_server(ip, port, debug=True)
+    while True:
+        try:
+            reg_server(ip, port, debug=True)
+        except Exception as e:
+            print(f"[Error] {e}")
