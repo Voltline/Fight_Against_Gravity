@@ -1,4 +1,4 @@
-# 保存游戏的各类设置
+"""保存游戏的各类设置"""
 import pygame
 import json
 
