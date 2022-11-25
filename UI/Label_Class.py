@@ -16,7 +16,7 @@ class Label:
         """
         if font_info is None:
             font_info = {
-                'font': pygame.font.Font("Font/SourceHanSans-Normal.ttc", 21),
+                'font': pygame.font.Font("UI/Font/SourceHanSans-Normal.ttc", 21),  # 11/25 14:23日，文件路径添加前缀UI，可能还要回滚
                 'tc': (169, 183, 198),
                 'bc': None,
                 'align': 0,
@@ -114,3 +114,7 @@ class Label:
             self.is_show = False
         else:
             self.is_show = True
+
+    def set_text_color(self, color):
+        self.tc = color
+
