@@ -3,7 +3,7 @@ import pygame.key
 
 
 class InputBox:
-    def __init__(self, rect: pygame.Rect) -> None:
+    def __init__(self, rect: pygame.Rect, is_pw=0) -> None:
         """
         rect，传入矩形实体，传达输入框的位置和大小
         """
@@ -17,8 +17,9 @@ class InputBox:
         self.active = False
         self.text = ''
         self.done = False
-        self.font = pygame.font.Font("Font/SourceHanSans-Normal.ttc", 18)
+        self.font = pygame.font.Font("UI/Font/SourceHanSans-Normal.ttc", 18)  # 11/25 14:25 文件路径添加前缀UI
         self.font_color = pygame.Color(169, 183, 198)
+        self.is_pw = is_pw
         # self.bg = pygame.Color(52, 52, 52)
         self.keylist = pygame.key.get_pressed()  # 获取所有案件，能够处理“按住”事件，而非单独单次的按住
 
@@ -46,12 +47,15 @@ class InputBox:
                     self.text += event.unicode
 
     def draw(self, screen: pygame.surface.Surface):
-        txt_surface = self.font.render(self.text, True, self.font_color)  # 文字转换为图片
-        width = max(325, txt_surface.get_width()+10)  # 当文字过长时，延长文本框
-        self.boxBody.w = width
-        pygame.draw.rect(screen, self.color_inside, self.boxBody, 0, border_radius=15)
-        pygame.draw.rect(screen, self.color, self.boxBody, 4, border_radius=15)
-        screen.blit(txt_surface, (self.boxBody.x+5, self.boxBody.y+5))
+        if self.is_pw:
+            self.draw_password(screen)
+        else:
+            txt_surface = self.font.render(self.text, True, self.font_color)  # 文字转换为图片
+            width = max(325, txt_surface.get_width()+10)  # 当文字过长时，延长文本框
+            self.boxBody.w = width
+            pygame.draw.rect(screen, self.color_inside, self.boxBody, 0, border_radius=15)
+            pygame.draw.rect(screen, self.color, self.boxBody, 4, border_radius=15)
+            screen.blit(txt_surface, (self.boxBody.x+5, self.boxBody.y+5))
 
     def switch(self):
         self.active = not self.active

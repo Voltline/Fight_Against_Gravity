@@ -65,6 +65,7 @@ class Control:
     def render(self, surface):
         if self.is_show:
             if self.__img is not None:
+                # print(self.text, self.status)
                 surface.blit(self.__imgList[self.status], (self.rect.left, self.rect.top))
                 # if self.status < self.img_sub:
                 #     surface.blit(self.__imgList[self.status], (self.rect.left, self.rect.top))
@@ -85,8 +86,12 @@ class Control:
             return self.is_over(event.pos)
 
     def check_move(self, event):
+        """如果鼠标在按钮上要响应相应的动态效果"""
         if event.type == pygame.MOUSEMOTION:
-            return self.is_over(event.pos)
+            if self.is_over(event.pos):
+                self.status = 1
+            else:
+                self.status = 0
 
     def disable(self):
         # self.status = 0
