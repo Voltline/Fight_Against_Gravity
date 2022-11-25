@@ -24,9 +24,9 @@ def get_all_reg_acc() -> dict:
     return accounts  # 返回所有账户字典
 
 
-def check_duplicate(username: str, email: str) -> bool:
+def check_duplicate(username: str) -> bool:
     """注册过程检查重复函数
-    :参数：username：用户名，email：邮箱
+    :参数：username：用户名
     :返回：是否重复（布尔值）
     """
     con_account = sql.connect("Database/account.db")  # 连接账户数据库文件account.db
@@ -37,12 +37,9 @@ def check_duplicate(username: str, email: str) -> bool:
     acc_username_key, acc_email_key = {}, {}
     for each in acc:  # 遍历账户库指针中获取到的内容，并依次添加进入accounts字典
         acc_username_key[each[0]] = each[3]
-        acc_email_key[each[3]] = each[0]
     check = False
 
     if username in acc_username_key:
-        check = True
-    if email in acc_email_key:
         check = True
 
     return check
