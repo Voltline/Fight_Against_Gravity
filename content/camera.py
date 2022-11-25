@@ -42,7 +42,7 @@ class Camera:
             self.loc += self.move_spd * self.d_loc / self.zoom
             self.d_loc.update(0, 0)
         elif self.mode == 1:  # 跟随飞船模式
-            self.loc.update(self.player_ship.loc)
+            self.loc.update(self.player_ship.rect.center)
 
     def change_mode(self):
         self.mode = (self.mode + 1) % self.mode_num

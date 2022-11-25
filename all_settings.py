@@ -1,4 +1,4 @@
-# 保存游戏的各类设置
+"""保存游戏的各类设置"""
 import pygame
 import json
 
@@ -10,9 +10,8 @@ class Settings:
             inf = json.load(f)
         # 窗口设置
         window = inf["Window"]
-        self.screen_width = window["screen_width"]
-        self.screen_height = window["screen_height"]
-        self.bg_color = eval(window["bg_color"])
+        self.screen_width, self.screen_height = window["screen_resolution"]
+        self.bg_color = window["bg_color"]
         self.game_title = window["game_title"]
         self.max_fps = window["max_fps"]  # 最大帧率
         del window
@@ -33,8 +32,8 @@ class Settings:
 
         # Bullet
         bullet = inf["Bullet"]
-        self.bullet_color_key = eval(bullet["bullet_color_key"])  # bullet的透明色
-        self.bullet_color = eval(bullet["bullet_color"])  # bullet的颜色
+        self.bullet_color_key = bullet["bullet_color_key"]  # bullet的透明色
+        self.bullet_color = bullet["bullet_color"]  # bullet的颜色
         self.bullet_radius = bullet["bullet_radius"]  # bullet的圆的半径
         self.bullet_image = self.make_bullet_image()
         self.bullet_spd = bullet["bullet_spd"]  # 子弹相对于飞船的初速度的模,用的时候要乘以方向向量
@@ -83,7 +82,7 @@ class Settings:
         # Trace
         trace = inf['Trace']
         self.trace_life_ms = trace['trace_life_ms']  # 尾迹保留时间
-        self.trace_color = eval(trace['trace_color'])  # 尾迹颜色
+        self.trace_color = trace['trace_color']  # 尾迹颜色
         del trace
 
         del inf
