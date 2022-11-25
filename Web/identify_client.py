@@ -28,7 +28,7 @@ class IdentifyClient:
         if check_code != "DUPLICATE":
             return check_code
         else:
-            print("Username Duplicate Error!")
+            print("Username or Email Duplicate Error!")
             return ""
 
     def send_all_information(self, username: str, email: str, password: str) -> bool:
