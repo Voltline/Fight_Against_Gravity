@@ -69,7 +69,7 @@ class IdentifyServer:
                 all_reg_acc = database_operate.get_all_reg_acc()
                 if rmessage["opt"] != 3:
                     username, email = rmessage["user"], rmessage["email"]
-                    if database_operate.check_duplicate(username, email):
+                    if database_operate.check_duplicate(username):
                         self.server.send(addr, "DUPLICATE")
                     else:
                         if rmessage["opt"] == 1:
