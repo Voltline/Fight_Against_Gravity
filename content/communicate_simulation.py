@@ -31,6 +31,3 @@ def server_receive() -> (list, dict):
     else:
         return None, None
 
-
-def client_get_room_id() -> int:
-    return 1

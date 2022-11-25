@@ -1,3 +1,4 @@
+from Web.Modules.safeclient import SocketClient
 import pygame
 from pygame import Vector2
 import threading  # 处理输入事件与绘制图形要和处理运动与碰撞分开，不然拖窗口会一起卡死
@@ -16,35 +17,12 @@ ip = '1.15.229.11'
 port = 25555
 
 
-def local_game():
-    """本地游戏"""
-    # 初始化游戏 并创建一个窗口
-    pygame.init()
-    settings = Settings()  # 初始化设置类
-    icon = pygame.image.load(settings.icon_img_path)
-    pygame.display.set_icon(icon)
-    screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))  # 设置窗口大小
-    pygame.display.set_caption(settings.game_title)  # 设置窗口标题
-
-    # 设置gm (测试用)
+def client_game(settings, screen, room_id, map_name, player_names):
+    """在线游戏，本地端的游戏函数"""
     gm = GameManager()
-    ship1 = Ship(settings, Vector2(2240, 0), Vector2(0, -1040),
-                 angle=0, player_name='1')
-    ship2 = Ship(settings, Vector2(500, 0), Vector2(0, -900),
-                 angle=3.14, player_name='2')
-    gm.ships.add(ship1)
-    gm.ships.add(ship2)
-    planet1 = Planet(settings, Vector2(0, 0), Vector2(0, 60), mass=1e19)
-    planet2 = Planet(settings, Vector2(2000, 0), Vector2(0, -600), mass=1e18)
-    # planet3 = Planet(settings, Vector2(160000, 0), Vector2(0, 0.6), mass=1e23)
-
-    gm.planets.add(planet1)
-    gm.planets.add(planet2)
-    # gm.planets.add(planet3)
-
-    # 设置camera
-    camera = Camera(screen, settings, ship1.player_name, gm.ships)
-    traces = []  # 保存所有尾迹
+    gf.load_map(settings, gm, Map(map_name), player_names)
+    camera = Camera(screen, settings, PlayerInfo.player_name, gm.ships)
+    traces = []
 
     clock = pygame.time.Clock()  # 准备时钟
     printed_ms = 0  # 测试用，上次输出调试信息的时间
@@ -65,17 +43,40 @@ def local_game():
 
         gf.check_events(settings, gm, camera, is_run)  # 检查键鼠活动
 
-        surplus_dt += delta_t
-        while surplus_dt >= physics_dt:
-            surplus_dt -= physics_dt
-            gf.check_collisions(gm)
-            gf.all_move(gm, physics_dt)
-            gf.ships_fire_bullet(settings, gm)
+        # surplus_dt += delta_t
+        # while surplus_dt >= physics_dt:
+        #     surplus_dt -= physics_dt
+        #     gf.check_collisions(gm)
+        #     gf.all_move(gm, physics_dt)
+        #     gf.ships_fire_bullet(settings, gm)
         gf.add_traces(settings, gm, traces, now_ms)
 
         surplus_ratio = surplus_dt / physics_dt
         gf.update_screen(settings, gm, camera, traces, surplus_ratio)
 
 
+def client_main():
+    # 初始化
+    client = SocketClient(ip, port)
+    pygame.init()
+    settings = Settings()  # 初始化设置类
+    icon = pygame.image.load(settings.icon_img_path)
+    pygame.display.set_icon(icon)
+    screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))  # 设置窗口大小
+    pygame.display.set_caption(settings.game_title)  # 设置窗口标题
 
+    # 开启一局游戏的步骤：
+    # 房主点击开始游戏按钮，服务器收集{房间id,所有玩家id,地图名字}并调用创建游戏函数
+    # 模拟时收集信息步骤省略
 
+    # 登陆账号
+    PlayerInfo.player_name = 'player1'
+
+    # 在房间中，点击开始游戏按钮
+    room_id = 1
+    map_name = '静止双星系统'
+    player_names = ['player1', 'player2']
+    gf.button_start_game_click(room_id, map_name, player_names)
+
+    # 游戏开始
+    client_game(settings, screen, room_id, map_name, player_names)

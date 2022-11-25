@@ -104,3 +104,10 @@ class Ship(SpaceObj):
         # TODO:加入被击中的特效
         self.hp -= damage
         self.check_alive(ships, dead_ships)
+
+    def make_msg(self) -> dict:
+        """重载，飞船还需要传输player_name和angle"""
+        msg = super().make_msg()
+        msg['player_name'] = self.player_name
+        msg['angle'] = self.angle
+        return msg

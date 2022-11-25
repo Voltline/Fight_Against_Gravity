@@ -2,6 +2,10 @@ import sys
 import pygame
 from pygame import Vector2
 from content.trace import Trace
+from content.ship import Ship
+from content.planet import Planet
+from content.msg_type import MsgType
+import content.communicate_simulation as cs
 
 # 鼠标位置信息，每帧实时更新
 mouse_loc = Vector2(0, 0)
@@ -191,3 +195,63 @@ def add_traces(settings, gm, traces, now_ms):
         for obj in objs:
             traces.append(Trace(settings, obj.loc00, obj.loc, now_ms))
             obj.loc00.update(obj.loc)
+
+
+def load_map(settings, gm, game_map, player_names):
+    """加载地图到gm"""
+    for group in gm.ships, gm.dead_ships, gm.planets, gm.bullets:
+        group.clear()
+    length = min(len(game_map.ships_info), len(player_names))
+    for i in range(length):  # 加载飞船
+        loc = game_map.ships_info[i].loc
+        spd = game_map.ships_info[i].spd
+        angle = game_map.ships_info[i].angle
+        player_name = player_names[i]
+        ship = Ship(settings, loc, spd, angle=angle, player_name=player_name)
+        gm.ships.add(ship)
+    for planet_info in game_map.planets_info:
+        loc = planet_info.loc
+        spd = planet_info.spd
+        mass = planet_info.mass
+        planet = Planet(settings, loc, spd, mass=mass)
+        gm.planets.add(planet)
+
+
+def button_start_game_click(room_id, map_name, player_names):
+    msg_type = MsgType.StartGame
+    cs.client_send(args=[msg_type, room_id, map_name, player_names])
+
+
+def client_receive_msg(gm, is_run, room_id):
+    msg = cs.client_receive()
+    while msg:
+        msg_args, msg_kwargs = msg[0], msg[1]
+        if room_id == msg_args[1]:
+            if msg_args[0] == MsgType.AllObjs:
+
+            msg = cs.client_receive()
+
+
+def client_receive_planets(gm, planets):
+    for i in range(len(gm.planets)):
+        gm.planets[i].loc.update(planets[i].loc)
+        gm.planets[i].spd.update(planets[i].spd)
+        gm.planets[i].acc.update(planets[i].acc)
+
+
+def client_receive_ships(gm, ships, dead_ships):
+    for dead_ship in dead_ships:
+        for gm_ship in gm.ships:
+            if gm_ship.
+    for i in range(len(gm.ships)):
+        gm.ships[i].loc.update(ships[i].loc)
+        gm.ships[i].spd.update(ships[i].spd)
+        gm.ships[i].acc.update(ships[i].acc)
+
+def client_receive_bullets(gm, bullets):
+    for i in range(len(gm.ships)):
+        gm.bullets[i].loc.update(bullets[i].loc)
+        gm.bullets[i].spd.update(bullets[i].spd)
+        gm.bullets[i].acc.update(bullets[i].acc)
+
+

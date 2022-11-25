@@ -74,3 +74,12 @@ class SpaceObj(pygame.sprite.Sprite):
         """在screen上绘制"""
 
         camera.blit(self.image, self.rect)
+
+    def make_msg(self) -> dict:
+        """返回用于网络传输的信息"""
+        msg = {
+            'locx': self.loc.x, 'locy': self.loc.y,
+            'spdx': self.spd.x, 'spdy': self.spd.y,
+            'accx': self.acc.x, 'accy': self.acc.y
+        }
+        return msg

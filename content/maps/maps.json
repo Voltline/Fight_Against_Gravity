@@ -1,0 +1,63 @@
+{
+  "静止单星系统": {
+    "planets_info": [
+      {
+        "locx": 0,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": 0,
+        "mass": 1e19
+      }
+    ],
+    "ships_info": [
+      {
+        "locx": 500,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -900,
+        "angle": 0
+      },
+      {
+        "locx": 1000,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -600,
+        "angle": 3.14159
+      }
+    ]
+  },
+  "静止双星系统": {
+    "planets_info": [
+      {
+        "locx": 0,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": 60,
+        "mass": 1e19
+      },
+      {
+        "locx": 2000,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -600,
+        "mass": 1e18
+      }
+    ],
+    "ships_info": [
+      {
+        "locx": 500,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -900,
+        "angle": 3.14159
+      },
+      {
+        "locx": 2240,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -1040,
+        "angle": 0
+      }
+    ]
+  }
+}
