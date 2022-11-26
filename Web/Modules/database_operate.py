@@ -24,6 +24,27 @@ def get_all_reg_acc() -> dict:
     return accounts  # 返回所有账户字典
 
 
+def check_duplicate(username: str) -> bool:
+    """注册过程检查重复函数
+    :参数：username：用户名
+    :返回：是否重复（布尔值）
+    """
+    con_account = sql.connect("Database/account.db")  # 连接账户数据库文件account.db
+    cur_acc = con_account.cursor()  # 创建account数据库对应的指针cur_acc
+    cur_acc.execute("CREATE TABLE IF NOT EXISTS acc(ID,password,time,email)")
+    cur_acc.execute("SELECT * FROM acc")  # 账户库指针选中acc表中的所有内容
+    acc = cur_acc.fetchall()  # 账户库指针复制acc表中的所有内容
+    acc_username_key, acc_email_key = {}, {}
+    for each in acc:  # 遍历账户库指针中获取到的内容，并依次添加进入accounts字典
+        acc_username_key[each[0]] = each[3]
+    check = False
+
+    if username in acc_username_key:
+        check = True
+
+    return check
+
+
 def insert_acc_data(info: list) -> bool:
     """注册插入用户数据
     :参数：info：用户信息列表
@@ -54,6 +75,7 @@ def insert_connection_data(info: list) -> bool:
         return True
     except:
         return False
+
 
 def insert_login_data(info: list) -> bool:
     """插入一条登录记录
