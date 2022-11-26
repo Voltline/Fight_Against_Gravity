@@ -68,8 +68,8 @@ def local_game():
         surplus_dt += delta_t
         while surplus_dt >= physics_dt:
             surplus_dt -= physics_dt
-            gf.check_collisions(gm)
-            gf.all_move(gm, physics_dt)
+            gm.check_collisions()
+            gm.all_move(physics_dt)
             gf.ships_fire_bullet(settings, gm)
         gf.add_traces(settings, gm, traces, now_ms)
 

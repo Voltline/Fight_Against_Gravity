@@ -111,3 +111,9 @@ class Ship(SpaceObj):
         msg['player_name'] = self.player_name
         msg['angle'] = self.angle
         return msg
+
+    def make_ctrl_msg(self) -> list:
+        """返回飞船操作状态信息"""
+        return [self.is_go_ahead, self.is_go_back,
+                self.is_turn_left, self.is_turn_right,
+                self.is_fire]
