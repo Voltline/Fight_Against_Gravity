@@ -27,8 +27,8 @@ def local_game():
     pygame.display.set_caption(settings.game_title)  # 设置窗口标题
 
     # 设置gm (测试用)
-    gm = GameManager()
-    ship1 = Ship(settings, Vector2(2240, 0), Vector2(0, -1040),
+    gm = GameManager(settings)
+    ship1 = Ship(settings, Vector2(2240, 0), Vector2(0, -1100),
                  angle=0, player_name='1')
     ship2 = Ship(settings, Vector2(500, 0), Vector2(0, -900),
                  angle=3.14, player_name='2')

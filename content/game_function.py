@@ -138,3 +138,12 @@ def add_traces(settings, gm, traces, now_ms):
         for obj in objs:
             traces.append(Trace(settings, obj.loc00, obj.loc, now_ms))
             obj.loc00.update(obj.loc)
+
+
+def button_start_game_click(net, room_id, map_name, player_names):
+    msg = {
+        'type': MsgType.StartGame,
+        'args': [room_id, map_name, player_names],
+        'kwargs': {}
+    }
+    net.send(msg)

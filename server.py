@@ -1,5 +1,7 @@
 from Web.Modules.safeserver import SocketSever
 
+
+class Server:
 ip = '1.15.229.11'
 port = 25555
 

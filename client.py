@@ -18,7 +18,7 @@ class Client:
     port = 25555
 
     def __init__(self):
-        self.client = SocketClient(Client.ip, Client.port)
+        self.net = SocketClient(Client.ip, Client.port)  # 负责收发信息
         self.settings = Settings()  # 初始化设置类
         pygame.init()
         icon = pygame.image.load(self.settings.icon_img_path)
@@ -39,15 +39,15 @@ class Client:
         room_id = 1
         map_name = '静止双星系统'
         player_names = ['player1', 'player2']
-        gf.button_start_game_click(room_id, map_name, player_names)
+        gf.button_start_game_click(self.net, room_id, map_name, player_names)
 
         # 游戏开始
         self.client_game(room_id, map_name, player_names)
 
     def client_game(self, room_id, map_name, player_names):
         """在线游戏，本地端的游戏函数"""
-        gm = GameManager()
-        gm.load_map(self.settings, Map(map_name), player_names)
+        gm = GameManager(self.settings)
+        gm.load_map(Map(map_name), player_names)
         camera = Camera(self.screen, self.settings, PlayerInfo.player_name, gm.ships)
         traces = []
 
@@ -77,20 +77,43 @@ class Client:
                 gm.all_move(physics_dt)
                 # gf.ships_fire_bullet(settings, gm)
 
-            # 接收服务端消息
-            msg = self.client.receive()
-            self.deal_msg(gm, msg)
+            self.net.send(gm)  # 发送玩家控制消息
+            self.deal_msg(gm)  # 接收并处理消息
 
             gf.add_traces(self.settings, gm, traces, now_ms)
 
             surplus_ratio = surplus_dt / physics_dt
             gf.update_screen(self.settings, gm, camera, traces, surplus_ratio)
 
-    def deal_msg(self, gm, msg):
-        """处理msg消息"""
-        msg_type = msg['type']
-        if msg_type == MsgType.AllObjs:
+    def send_ctrl_msg(self, gm):
+        """发送玩家控制消息"""
+        ctrl_msg = []
+        for ship in gm.ships:
+            if ship.player_name == PlayerInfo.player_name:
+                ctrl_msg = ship.make_ctrl_msg()
+                break
+        msg = {
+            'type': MsgType.PlayerCtrl,
+            'args': ctrl_msg,
+            'kwargs': {}
+        }
+        self.net.send(msg)
 
+    def deal_msg(self, gm):
+        """接收并处理消息"""
+        msg = self.net.receive()
+        if msg:
+            msg_type = msg['type']
+            args = msg['args']
+            kwargs = msg['kwargs']
+            if msg_type == MsgType.AllObjs:
+                gm.client_update(args[0], args[1], args[2])
+            elif msg_type == MsgType.Planets:
+                gm.client_update(planets_msg=args[0])
+            elif msg_type == MsgType.AllShips:
+                gm.client_update(all_ships_msg=args)
+            elif msg_type == MsgType.Bullets:
+                gm.client_update(bullets_msg=args[0])
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@
 import pygame
 from pygame import Vector2
 from content.physics import gvt_acc
+from content.obj_msg import ObjMsg
 
 
 class SpaceObj(pygame.sprite.Sprite):
@@ -75,11 +76,14 @@ class SpaceObj(pygame.sprite.Sprite):
 
         camera.blit(self.image, self.rect)
 
-    def make_msg(self) -> dict:
+    def make_msg(self) -> list:
         """返回用于网络传输的信息"""
-        msg = {
-            'locx': self.loc.x, 'locy': self.loc.y,
-            'spdx': self.spd.x, 'spdy': self.spd.y,
-            'accx': self.acc.x, 'accy': self.acc.y
-        }
-        return msg
+        msg = ObjMsg(self)
+        return msg.make_msg()
+
+    def update_by_msg(self, msg: list):
+        """通过消息更新自身状态"""
+        msg = ObjMsg(msg)
+        self.loc.update(msg.locx, msg.locy)
+        self.spd.update(msg.spdx, msg.spdy)
+        self.acc.update(msg.accx, msg.accy)

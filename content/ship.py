@@ -5,6 +5,7 @@ from math import cos
 from math import degrees
 from content.space_obj import SpaceObj
 from content.bullet import Bullet
+from content.obj_msg import ObjMsg
 
 
 class Ship(SpaceObj):
@@ -105,11 +106,12 @@ class Ship(SpaceObj):
         self.hp -= damage
         self.check_alive(ships, dead_ships)
 
-    def make_msg(self) -> dict:
+    def make_msg(self) -> list:
         """重载，飞船还需要传输player_name和angle"""
         msg = super().make_msg()
-        msg['player_name'] = self.player_name
-        msg['angle'] = self.angle
+        msg.append(self.angle)
+        msg.append(self.player_name)
+
         return msg
 
     def make_ctrl_msg(self) -> list:
@@ -117,3 +119,9 @@ class Ship(SpaceObj):
         return [self.is_go_ahead, self.is_go_back,
                 self.is_turn_left, self.is_turn_right,
                 self.is_fire]
+
+    def update_by_msg(self, msg: list):
+        """通过消息更新自身状态"""
+        super().update_by_msg(msg)
+        msg = ObjMsg(msg)
+        self.angle = msg.angle
