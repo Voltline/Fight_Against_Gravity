@@ -17,7 +17,7 @@ from game_room import GameRoom
 
 class Server:
     """服务端"""
-    ip = '127.0.0.1'
+    ip = '10.0.4.17'
     port = 25555
 
     def __init__(self):
