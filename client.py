@@ -127,16 +127,21 @@ class Client:
         """接收并处理消息"""
         msg = self.net.receive()
         if msg:
-            msg_type = msg['type']
-            args = msg['args']
-            kwargs = msg['kwargs']
-            if msg_type == MsgType.AllObjs:
+            mtype = msg['type']
+            if msg['time']:
+                time = msg['time']
+            if msg['args']:
+                args = msg['args']
+            if msg['kwargs']:
+                kwargs = msg['kwargs']
+
+            if mtype == MsgType.AllObjs:
                 gm.client_update(args[0], args[1], args[2])
-            elif msg_type == MsgType.Planets:
+            elif mtype == MsgType.Planets:
                 gm.client_update(planets_msg=args[0])
-            elif msg_type == MsgType.AllShips:
+            elif mtype == MsgType.AllShips:
                 gm.client_update(all_ships_msg=args)
-            elif msg_type == MsgType.Bullets:
+            elif mtype == MsgType.Bullets:
                 gm.client_update(bullets_msg=args[0])
 
     def get_lag_time(self, room_id):

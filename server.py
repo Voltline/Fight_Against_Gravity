@@ -46,9 +46,13 @@ class Server:
         for address, msg in messages:
             print(address, msg)
             mtype = msg['type']
-            time = msg['time']
-            args = msg['args']
-            kwargs = msg['kwargs']
+            if msg['time']:
+                time = msg['time']
+            if msg['args']:
+                args = msg['args']
+            if msg['kwargs']:
+                kwargs = msg['kwargs']
+
             if mtype == MsgType.StartGame:
                 room_id, map_name, player_names = args
                 new_room = GameRoom(self.settings, self.net, room_id, map_name, player_names)
