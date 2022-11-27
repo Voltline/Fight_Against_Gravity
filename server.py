@@ -17,7 +17,7 @@ from game_room import GameRoom
 
 class Server:
     """服务端"""
-    ip = '1.15.229.11'
+    ip = '127.0.0.1'
     port = 25555
 
     def __init__(self):
@@ -31,6 +31,8 @@ class Server:
         # 开启一局游戏的步骤：
         # 房主点击开始游戏按钮，服务器收集{房间id,所有玩家id,地图名字}并调用创建游戏函数
         # 模拟时收集信息步骤省略
+
+        self.net.start()
 
         # 不断接收消息
         is_run = [True]
