@@ -156,8 +156,9 @@ def get_time():
 
 def find_player_ship(ships, player_name):
     """在ships中找player_name的ship，返回ship"""
-    for ship in ships:
-        if ship.player_name == player_name:
-            return ship
+    if ships:
+        for ship in ships:
+            if ship.player_name == player_name:
+                return ship
     return None
 
