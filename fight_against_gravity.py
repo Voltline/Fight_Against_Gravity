@@ -8,7 +8,6 @@ from content.game_manager import GameManager
 from content.ship import Ship
 from content.planet import Planet
 from content.camera import Camera
-import content.communicate_simulation as cs
 from content.maps.map_obj import Map
 from content.player_info import PlayerInfo
 
@@ -75,7 +74,3 @@ def local_game():
 
         surplus_ratio = surplus_dt / physics_dt
         gf.update_screen(settings, gm, camera, traces, surplus_ratio)
-
-
-
-

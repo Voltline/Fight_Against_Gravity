@@ -85,6 +85,9 @@ class Settings:
         self.trace_color = trace['trace_color']  # 尾迹颜色
         del trace
 
+        # net
+        self.net_clock_check_num = 10  # 校时的次数
+
         del inf
 
     def make_bullet_image(self):

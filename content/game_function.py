@@ -5,7 +5,6 @@ from content.trace import Trace
 from content.ship import Ship
 from content.planet import Planet
 from content.msg_type import MsgType
-import content.communicate_simulation as cs
 
 # 鼠标位置信息，每帧实时更新
 mouse_loc = Vector2(0, 0)
@@ -147,3 +146,17 @@ def button_start_game_click(net, room_id, map_name, player_names):
         'kwargs': {}
     }
     net.send(msg)
+
+
+def get_time():
+    """返回当前的时间(sec)"""
+    return pygame.time.get_ticks()/1000
+
+
+def find_player_ship(ships, player_name):
+    """在ships中找player_name的ship，返回ship"""
+    for ship in ships:
+        if ship.player_name == player_name:
+            return ship
+    return None
+

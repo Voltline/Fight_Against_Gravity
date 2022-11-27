@@ -5,6 +5,7 @@ class MsgType:
     """
     传输时,msg={
         "type":msg_type(int)
+        "time":second(float)
         "args":msg_args(list)
         "kwargs":msg_kwargs(dict)
     }
@@ -34,6 +35,18 @@ class MsgType:
     # msg_args=[room_id, map_name, player_names]
     StartGame = 5
 
+    # 服务端接收信息：结束游戏
+    # msg_args=[room_id]
+    StopGame = 6
+
     # 服务端接收信息：玩家控制信息
-    # msg_args=[room_id, player_name, is_go_ahead, is_go_back, is_turn_left, is_turn_right, is_fire]
-    PlayerCtrl = 6
+    # msg_args=[room_id, player_name, [is_go_ahead, is_go_back, is_turn_left, is_turn_right, is_fire]]
+    PlayerCtrl = 7
+
+    # 客户端和服务端都接收，校对时间
+    # msg_args=[room_id, player_name]
+    CheckClock = 8
+
+    # 客户端接收，服务器真正开始游戏的时间
+    # msg_args=[room_id]
+    ServerStartGameTime = 9
