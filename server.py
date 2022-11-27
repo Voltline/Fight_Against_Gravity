@@ -44,6 +44,7 @@ class Server:
         """接收并处理消息"""
         messages = self.net.get_message()
         for address, msg in messages:
+            print(address, msg)
             mtype = msg['type']
             time = msg['time']
             args = msg['args']
