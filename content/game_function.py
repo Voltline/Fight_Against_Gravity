@@ -142,6 +142,7 @@ def add_traces(settings, gm, traces, now_ms):
 def button_start_game_click(net, room_id, map_name, player_names):
     msg = {
         'type': MsgType.StartGame,
+        'time': get_time(),
         'args': [room_id, map_name, player_names],
         'kwargs': {}
     }
