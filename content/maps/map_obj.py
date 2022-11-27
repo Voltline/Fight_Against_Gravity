@@ -67,5 +67,5 @@ class Map:
 
     @staticmethod
     def load_maps():
-        with open('maps.json', 'r') as f:
+        with open('./content/maps/maps.json', 'r', encoding='utf-8') as f:
             Map.maps_info = json.load(f)
