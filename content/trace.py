@@ -23,7 +23,7 @@ class Trace:
         """在screen上绘制"""
         camera.draw_line(self.loc0, self.loc1, self.color)
 
-    #@staticmethod
+    # @staticmethod
     def get_color(self) -> (int, int, int):
         """随时间改变颜色"""
         Trace.__color[0] = int((math.cos(((self.born_ms//10 % 360 - 90)*math.pi)/360))**2 * 255)

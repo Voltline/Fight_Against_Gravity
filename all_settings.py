@@ -1,11 +1,14 @@
 """保存游戏的各类设置"""
 import pygame
 import json
+from content.maps.map_obj import Map
 
 
 class Settings:
     """保存游戏的各类设置"""
     def __init__(self):
+        Map.load_maps()  # 加载maps_info
+
         with open("game_settings.json", "r") as f:
             inf = json.load(f)
         # 窗口设置
@@ -84,6 +87,9 @@ class Settings:
         self.trace_life_ms = trace['trace_life_ms']  # 尾迹保留时间
         self.trace_color = trace['trace_color']  # 尾迹颜色
         del trace
+
+        # net
+        self.net_clock_check_num = 10  # 校时的次数
 
         del inf
 
