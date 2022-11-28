@@ -46,7 +46,7 @@ class Client:
         map_name = '静止双星系统'
         player_names = ['player1']
         gf.button_start_game_click(self.net, room_id, map_name, player_names)
-
+        print('开始游戏')  # TODO: debug
         # 游戏开始
         self.game(room_id, map_name, player_names)
 
@@ -63,6 +63,7 @@ class Client:
         surplus_dt = 0  # 这次delta_t被physics_dt消耗剩下的时间
 
         # 校时
+        print('开始校时')  # TODO: debug
         lag_time = self.get_lag_time(room_id)
         server_start_time = self.get_server_start_game_time(room_id)
         start_time = server_start_time - lag_time
@@ -164,6 +165,7 @@ class Client:
                 'kwargs': {}
             }
             self.net.send(msg)
+            print('已发送校时信息:', cnt)  # TODO: debug
             msg = None
             while not msg:
                 msg = self.net.receive()

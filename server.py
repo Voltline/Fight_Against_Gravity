@@ -55,11 +55,7 @@ class Server:
 
             if mtype == MsgType.StartGame:
                 room_id, map_name, player_names = args
-                new_room = GameRoom(self.settings, self.net, room_id, map_name, player_names)
-                new_thread = threading.Thread(target=new_room.main())
-                self.rooms[room_id] = new_room
-                self.threads[room_id] = new_thread
-                new_thread.start()
+                self.start_game(room_id, map_name, player_names)
             elif mtype == MsgType.StopGame:
                 room_id = args[0]
                 self.rooms[room_id].is_run[0] = False
@@ -76,6 +72,14 @@ class Server:
             if not room.is_run[0]:  # 房间没在运行
                 del self.rooms[room_id]
                 del self.threads[room_id]
+
+    def start_game(self, room_id, map_name, player_names):
+        """开始一局新的room_game"""
+        new_room = GameRoom(self.settings, self.net, room_id, map_name, player_names)
+        new_thread = threading.Thread(target=new_room.main())
+        self.rooms[room_id] = new_room
+        self.threads[room_id] = new_thread
+        new_thread.start()
 
 
 if __name__ == '__main__':
