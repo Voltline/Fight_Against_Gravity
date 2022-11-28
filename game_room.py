@@ -107,8 +107,10 @@ class GameRoom:
         ship = gf.find_player_ship(self.gm.ships, player_name)
         ship.load_ctrl_msg(ctrl_msg)
 
-    def send_check_clock_msg(self, player_name):
+    def send_check_clock_msg(self, player_name, addr):
         """对玩家发送校时消息"""
+        self.players_address[player_name] = addr
+
         msg = {
             'type': MsgType.CheckClock,
             'time': gf.get_time(),

@@ -64,7 +64,7 @@ class Server:
                 self.rooms[room_id].load_ctrl_msg(player_name, ctrl_msg)
             elif mtype == MsgType.CheckClock:
                 room_id, player_name = args
-                self.rooms[room_id].send_check_clock_msg(player_name)
+                self.rooms[room_id].send_check_clock_msg(player_name, address)
 
     def clean_rooms(self):
         """把已经结束的room从rooms里清除"""
