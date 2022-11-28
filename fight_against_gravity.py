@@ -8,7 +8,12 @@ from content.game_manager import GameManager
 from content.ship import Ship
 from content.planet import Planet
 from content.camera import Camera
-import content.communicate_simulation as cs
+from content.maps.map_obj import Map
+from content.player_info import PlayerInfo
+
+ip = '1.15.229.11'
+port = 25555
+
 
 def local_game():
     """本地游戏"""
@@ -22,25 +27,23 @@ def local_game():
 
     # 设置gm (测试用)
     gm = GameManager(settings)
-    ship1 = Ship(settings, Vector2(2240, 0), Vector2(0, -1040),
+    ship1 = Ship(settings, Vector2(2240, 0), Vector2(0, -1100),
                  angle=0, player_name='1')
     ship2 = Ship(settings, Vector2(500, 0), Vector2(0, -900),
                  angle=3.14, player_name='2')
     gm.ships.add(ship1)
     gm.ships.add(ship2)
-    planet1 = Planet(settings, Vector2(0, 0), Vector2(0, 0), mass=1e19)
-    # planet2 = Planet(settings, Vector2(2000, 0), Vector2(0, -600), mass=1e18)
+    planet1 = Planet(settings, Vector2(0, 0), Vector2(0, 60), mass=1e19)
+    planet2 = Planet(settings, Vector2(2000, 0), Vector2(0, -600), mass=1e18)
     # planet3 = Planet(settings, Vector2(160000, 0), Vector2(0, 0.6), mass=1e23)
 
     gm.planets.add(planet1)
-    # gm.planets.add(planet2)
+    gm.planets.add(planet2)
     # gm.planets.add(planet3)
 
     # 设置camera
     camera = Camera(screen, settings, ship1.player_name, gm.ships)
     traces = []  # 保存所有尾迹
-
-    # Main Loop
 
     clock = pygame.time.Clock()  # 准备时钟
     printed_ms = 0  # 测试用，上次输出调试信息的时间
@@ -64,24 +67,10 @@ def local_game():
         surplus_dt += delta_t
         while surplus_dt >= physics_dt:
             surplus_dt -= physics_dt
-            gf.check_collisions(gm)
-            gf.all_move(gm, physics_dt)
+            gm.check_collisions()
+            gm.all_move(physics_dt)
             gf.ships_fire_bullet(settings, gm)
         gf.add_traces(settings, gm, traces, now_ms)
 
         surplus_ratio = surplus_dt / physics_dt
         gf.update_screen(settings, gm, camera, traces, surplus_ratio)
-
-
-def client_game():
-    """在线游戏，本地端的游戏函数"""
-    room_id = cs.client_get_room_id()
-
-
-def server_game():
-    """在线游戏，服务端的游戏函数，测试完成后要删除所有显示相关的代码"""
-    pass
-
-
-def client_main():
-    pass

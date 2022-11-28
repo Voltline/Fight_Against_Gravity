@@ -22,20 +22,3 @@ class Planet(SpaceObj):
     def update_spd(self, dt):
         self.spd += (self.acc0 + self.acc) / 2 * dt
 
-    # def update_loc_spd(self, dt, planets: pygame.sprite.Group):
-    #     """
-    #     在已经更新了acc后，更新spd和loc
-    #
-    #     误差不太大的组合：
-    #     x'用spd,x"不用,x"'用
-    #     x'用(spd+spd0)/2,x"用(acc+acc0)/2,x"'用
-    #     """
-    #     aacc = (self.acc - acc0) / dt  # 加加速度
-    #     spd0 = self.spd.copy()
-    #     acc = self.acc
-    #     spd = self.spd
-    #     self.spd += self.acc * dt
-    #     self.loc += (0.6*spd0+0.4*spd) * dt
-    #     self.loc += (0.5*acc0+0.5*acc) * dt ** 2 / 2
-    #     self.loc += aacc * dt ** 3 / 6
-    #     self.rect.center = self.loc
