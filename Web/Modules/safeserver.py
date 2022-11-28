@@ -5,7 +5,7 @@ import queue
 import time
 
 
-class SocketSever:
+class SocketServer:
     """
     对服务端的socket进行封装
     一些info
@@ -147,7 +147,7 @@ class SocketSever:
             if type(msg) == dict:
                 msg = json.dumps(msg)
             if self.debug:
-                print("[debug info]sending",msg)
+                print("[debug info]sending", msg)
             client.sendall(msg.encode())
         except Exception as err:
             print("[err info] ", err, "发送失败")
@@ -156,7 +156,7 @@ class SocketSever:
 if __name__ == "__main__":
     ip = "localhost"
     port = 25555
-    server = SocketSever(ip, port, heart_time=5, debug=True)
+    server = SocketServer(ip, port, heart_time=5, debug=True)
     server.start()
     while True:
         messages = server.get_message()
