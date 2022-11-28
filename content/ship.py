@@ -129,5 +129,5 @@ class Ship(SpaceObj):
     def update_by_msg(self, msg: list):
         """通过消息更新自身状态"""
         super().update_by_msg(msg)
-        msg = ObjMsg(msg)
+        msg = ObjMsg(obj_msg=msg)
         self.angle = msg.angle

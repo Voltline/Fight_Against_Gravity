@@ -1,6 +1,7 @@
 import pygame
 from pygame import Vector2
 import threading
+import sys
 
 from all_settings import Settings
 from content import game_function as gf
@@ -11,7 +12,7 @@ from content.camera import Camera
 from content.maps.map_obj import Map
 from content.player_info import PlayerInfo
 from content.msg_type import MsgType
-from Web.Modules.safeserver import SocketSever
+from Web.Modules.safeserver import SocketServer
 from game_room import GameRoom
 
 
@@ -21,10 +22,14 @@ class Server:
     port = 25555
 
     def __init__(self):
-        self.net = SocketSever(Server.ip, Server.port)  # 负责收发信息
+        self.net = SocketServer(Server.ip, Server.port)  # 负责收发信息
         self.settings = Settings()  # 初始化设置类
         self.rooms = {}  # {id(int): game_room}
         self.threads = {}  # {id(int): room_thread}
+
+        # 鼠标位置信息，每帧实时更新
+        self.mouse_loc = Vector2(0, 0)
+        self.mouse_d_loc = Vector2(0, 0)
 
     def main(self):
         """服务端主函数"""
@@ -82,6 +87,29 @@ class Server:
         self.threads[room_id] = new_thread
         new_thread.start()
         print('结束start_game')  # TODO: debug
+
+    def check_events(self, gm, camera, is_run):
+        """响应键盘和鼠标事件"""
+        self.mouse_loc.update(pygame.mouse.get_pos())
+        self.mouse_d_loc.update(pygame.mouse.get_rel())
+
+        event = pygame.event.poll()
+        while event:
+            if event.type == pygame.QUIT:
+                is_run[0] = False
+                sys.exit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 2:  # 是否按下鼠标中键
+                    camera.change_mode()
+            elif event.type == pygame.MOUSEMOTION:
+                mouse_keys = pygame.mouse.get_pressed()
+                if mouse_keys[2]:  # 如果鼠标右键被按下
+                    camera.d_loc.update(self.mouse_d_loc)
+            elif event.type == pygame.MOUSEWHEEL:
+                camera.d_zoom = event.y
+
+            event = pygame.event.poll()
 
 
 if __name__ == '__main__':

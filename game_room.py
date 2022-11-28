@@ -5,13 +5,13 @@ from content.game_manager import GameManager
 from content.maps.map_obj import Map
 from content.camera import Camera
 from content.msg_type import MsgType
-from Web.Modules.safeserver import SocketSever
+from Web.Modules.safeserver import SocketServer
 import content.game_function as gf
 
 
 class GameRoom:
     """服务端的游戏房间"""
-    def __init__(self, settings, net: SocketSever, room_id, map_name, player_names):
+    def __init__(self, settings, net: SocketServer, room_id, map_name, player_names):
         self.settings = settings
         self.net = net
         self.id = room_id
@@ -40,14 +40,20 @@ class GameRoom:
         physics_dt = self.settings.physics_dt
         surplus_dt = 0  # 这次delta_t被physics_dt消耗剩下的时间
 
+        print('开始校时')
         # 校时并确定每个player对应的address
-        while len(self.players_address) != self.player_names:
+        while len(self.players_address) != len(self.player_names):
+            print(self.players_address)
             pass
-        time.sleep(3)
+        print('完成校时')
+        time.sleep(10)
+        print('开始发送游戏开始时间')
         self.send_start_game_time(gf.get_time()+5)  # 等五秒之后开始游戏
+        print('游戏开始时间发送成功')
         surplus_dt -= 5
 
         while self.is_run[0]:
+            pygame.event.pump()
             delta_t = clock.tick(self.settings.max_fps) / 1000  # 获取delta_time(sec)并限制最大帧率
             now_ms = pygame.time.get_ticks()  # 测试用，当前时间
             if now_ms - printed_ms >= 2000:  # 每2秒输出一次fps等信息

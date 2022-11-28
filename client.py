@@ -65,7 +65,9 @@ class Client:
         # 校时
         print('开始校时')  # TODO: debug
         lag_time = self.get_lag_time(room_id)
+        print('校时成功,lag_time=', lag_time, '开始获取游戏开始时间')  # TODO: debug
         server_start_time = self.get_server_start_game_time(room_id)
+        print('游戏开始时间获取成功:', server_start_time)  # TODO: debug
         start_time = server_start_time - lag_time
         surplus_dt += gf.get_time() - start_time
 
