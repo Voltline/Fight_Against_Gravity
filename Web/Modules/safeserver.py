@@ -150,6 +150,8 @@ class SocketServer:
                 msg = json.dumps(msg)
             if self.debug:
                 print("[debug info]sending", msg)
+            lenth = len(msg)
+            client.sendall(("%04d" % lenth).encode())
             client.sendall(msg.encode())
         except Exception as err:
             print("[err info] ", err, "发送失败")
