@@ -29,7 +29,7 @@ class OptType:
     {
         "opt" : 11
         "user" : "str"
-        "status" : "ACK"/"ACK"
+        "status" : "ACK"/"NAK"
         "roomid" : int
     }
     """

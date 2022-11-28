@@ -156,7 +156,7 @@ class SocketServer:
 if __name__ == "__main__":
     ip = "localhost"
     port = 25555
-    server = SocketSever(ip, port, heart_time=5, debug=True)
+    server = SocketServer(ip, port, heart_time=5, debug=True)
     server.start()
     while True:
         messages = server.get_message()

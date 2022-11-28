@@ -37,7 +37,7 @@ class ServerMain:
         self.user_list = {}  # {roomid: Room}
         self.room_list = {}  # {"username" : User}
         self.server = None
-        self.server = safeserver.SocketSever("127.0.0.1", 25555, heart_time=5, debug=_debug_)
+        self.server = safeserver.SocketServer("127.0.0.1", 25555, heart_time=5, debug=_debug_)
 
     @staticmethod
     def check(user: str, password: str) -> bool:
@@ -97,7 +97,7 @@ class ServerMain:
             sendMsg = messageMsg
             sendMsg["status"] = "NAK"
             sendMsg["roomid"] = None
-            self.server.send(sendMsg)
+            self.server.send(messageAdr, sendMsg)
 
     def clear(self):
         """

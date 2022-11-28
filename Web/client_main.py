@@ -1,21 +1,41 @@
 import Web.Modules.safeclient as safeclient
 import Web.Modules.OptType as OptType
+import os
+import json
 
 OptType = OptType.OptType
+_debug_ = False  # 调试选项 运行环境请勿开启
 
 
 class ClientMain:
     def __init__(self):
-        pass
+        current_path = os.getcwd()
+        fag_directory = os.path.dirname(current_path)
+        os.chdir(fag_directory)
+        with open("Web/Modules/settings.json", "r") as f:
+            settings = json.load(f)
+        ip = settings["Client"]["Game_IP"]
+        port = settings["Client"]["Game_Port"]
+        if _debug_:
+            ip = "localhost"
+            port = 25555
+        self.client = safeclient.SocketClient(ip, port, heart_beat=5)
+        self.user = None
 
-    def login(user: str, password: str, client: safeclient.SocketClient):
+    def login(self, user: str, password: str):
+        """
+        用户登录
+        user：用户名
+        password：用户密码
+
+        """
         msg = {
             "opt": OptType.login,
             "user": user,
             "password": password
         }
-        client.send(msg)
-        recvMsg = client.receive()
+        self.client.send(msg)
+        recvMsg = self.client.receive()
         if recvMsg["status"] == "ACK":
             print("ACK")
             return True
@@ -25,19 +45,24 @@ class ClientMain:
             input("回车以继续")
             return False
 
-    def creatroom(user: str):
+    def creat_room(self):
         msg = {
             "opt": OptType.creatRoom,
-            "user": user
+            "user": self.user
         }
+        self.client.send(msg)
+
+    def start(self):
+        self.user = input("input the user name")
+        password = input("input the pass word")
+        if not self.login(self.user, password):
+            self.client.close()
+            exit(0)
+        while True:
+            pass
 
 
 if __name__ == "__main__":
-    client = safeclient.SocketClient("localhost", 25555, heart_beat=5)
-    user = input("input the user name")
-    password = input("input the pass word")
-    if not login(user, password, client):
-        client.close()
-        exit(0)
-    while True:
-        pass
+    _debug_ = True
+    s = ClientMain()
+    s.start()
