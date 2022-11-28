@@ -52,7 +52,9 @@ class SocketClient:
         """
         返回数据
         """
-        message = self.__socket.recv(1024).decode()
+        lenth = self.__socket.recv(4)
+        lenth = int(lenth.decode())
+        message = self.__socket.recv(lenth).decode()
         try:
             message = json.loads(message)
         except Exception as err:
