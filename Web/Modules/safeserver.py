@@ -5,7 +5,7 @@ import queue
 import time
 
 
-class SocketSever:
+class SocketServer:
     """
     对服务端的socket进行封装
     一些info
