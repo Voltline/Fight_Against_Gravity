@@ -86,7 +86,9 @@ class SocketServer:
                 print("[server info] {}已停止运行".format(address))
                 break
             try:
-                recv = client.recv(1024)
+                lenth = client.recv(4)
+                lenth = int(lenth.decode())
+                recv = client.recv(lenth)
             except socket.timeout as err:
                 close("超时", err_reason=err)
                 break
@@ -99,7 +101,7 @@ class SocketServer:
             else:
                 msg = recv.decode()
                 if self.debug:
-                    print("[debug info]{recv msg from%s}:%s" % (address, msg))
+                    print("[debug info]{recv %d lenth msg from%s}:%s" % (lenth, address, msg))
                 try:
                     msg = json.loads(msg)
                     if msg["opt"] != 0:
@@ -163,5 +165,10 @@ if __name__ == "__main__":
         for item in messages:
             print(item)
             address = item[0]
-            server.send(address, "ACK")
+            msg = {
+                "opt": -1,
+                "info": "ACK"
+            }
+            print(msg)
+            server.send(address, msg)
         lt = server.get_connection()
