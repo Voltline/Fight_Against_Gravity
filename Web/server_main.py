@@ -83,7 +83,7 @@ class ServerMain:
             self.server.send(messageAdr, sendMsg)
         else:
             sendMsg = messageMsg
-            sendMsg["stuts"] = "NAK"
+            sendMsg["stauts"] = "NAK"
             self.server.send(messageAdr, sendMsg)
             self.server.close(messageAdr)
 

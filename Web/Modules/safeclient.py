@@ -43,6 +43,9 @@ class SocketClient:
         """
         if type(message) == dict:
             message = json.dumps(message)
+        lenth = len(message)
+        lenth = "%04d" % lenth
+        self.__socket.sendall(lenth.encode())
         self.__socket.sendall(message.encode())
 
     def receive(self):
@@ -67,16 +70,21 @@ if __name__ == "__main__":
     ip = "localhost"
     port = 25555
     client = SocketClient(ip, port, 5)
+    cnt = 0
     while True:
-        a = input()
+        # a = input()
+        a = 0
         if a == "0":
             break
+        a = "t" * 1024 * 8
         a = {
             "opt": -1,
             "info": a
         }
+        cnt += 1
         print(a)
         client.send(a)
         msg = client.receive()
         print(msg)
+        time.sleep(0.01)
     client.close()
