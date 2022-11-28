@@ -77,7 +77,7 @@ class Server:
         """开始一局新的room_game"""
         print('开始start_game')  # TODO: debug
         new_room = GameRoom(self.settings, self.net, room_id, map_name, player_names)
-        new_thread = threading.Thread(target=new_room.main())
+        new_thread = threading.Thread(target=new_room.main)
         self.rooms[room_id] = new_room
         self.threads[room_id] = new_thread
         new_thread.start()
