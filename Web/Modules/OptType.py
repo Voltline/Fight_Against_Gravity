@@ -33,6 +33,47 @@ class OptType:
         "roomid" : int
     }
     """
+    joinRoom = 12
+    """
+    用户加入房间
+    {
+        "opt" : 12
+        "user" : "str"
+        "roomid" : "id"
+        "status" : "ACK"/"NAK"
+    }
+    """
+    leftRoom = 13
+    """
+    用户离开房间
+    {
+        "opt" : 13
+        "user" : "str"
+        "roomid" : "id"
+        "status" : "ACK"/"NAK"
+    }
+    """
+    deleteRoom = 14
+    """
+    用户删除房间
+    {
+        "opt" : 14
+        "user" : "str"
+        "roomid" : "id"
+        "status" : "ACK" / "NAK"
+    }
+    """
+    getRoom = 15
+    """
+    {
+        "opt" : 15
+        "roomlist" : [{
+            "roomid" : roomid
+            "owner" : user
+            "size" : int #玩家人数
+        }]
+    }
+    """
 
 
 if __name__ == "__main__":
