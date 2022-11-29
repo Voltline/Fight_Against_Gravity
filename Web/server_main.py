@@ -51,9 +51,9 @@ class ServerMain:
 
     def __init__(self):
         self.user_list = {}
-        """"{roomid: Room}"""
-        self.room_list = {}
         """{"username" : User}"""
+        self.room_list = {}
+        """"{roomid: Room}"""
         self.server = safeserver.SocketServer("127.0.0.1", 25555, heart_time=5, debug=_debug_)
 
     def back_msg(self, message: dict, feedback: str):
@@ -116,6 +116,8 @@ class ServerMain:
         """
         messageAdr, messageMsg = message
         user = messageMsg["user"]
+        if(_debug_):
+            print("[debug] userlist",self.user_list)
         if user not in self.user_list:
             sendMsg = messageMsg
             sendMsg["status"] = "NAK"
@@ -178,7 +180,7 @@ class ServerMain:
         to_del = []  # 即将删除的连接
         # print(connections)
         for name, user in self.user_list.items():
-            if not (user.get_address() not in connections):
+            if user.get_address() not in connections:
                 if _debug_:
                     print("[debug info]user {0} is unused".format((name, user.get_address())))
                 to_del.append(name)
