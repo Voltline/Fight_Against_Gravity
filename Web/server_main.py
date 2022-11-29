@@ -2,6 +2,7 @@ import Web.Modules.safeserver as safeserver
 import Web.Modules.safeclient as safeclient
 import Web.Modules.OptType as OptType
 import json
+import uuid
 
 OptType = OptType.OptType
 _debug_ = False  # debug选项 请勿在生产环境中开启
@@ -12,8 +13,10 @@ class Room:
     房间类 存储玩家，房间号，运行每局游戏主逻辑
     """
 
-    def __init__(self):
-        # TODO:生成房间号的更优方式
+    def __init__(self, roomid, owner):
+        self.roomid = roomid
+        self.owner = owner
+        self.userlist = [owner]
         pass
 
 
@@ -77,9 +80,10 @@ class ServerMain:
         messageAdr, messageMsg = message
         if self.check(messageMsg["user"], messageMsg["password"]):
             newUser = User(messageAdr, messageMsg["user"])
-            self.user_list[messageAdr] = newUser
+            self.user_list[messageMsg["user"]] = newUser
+            print(self.user_list)
             sendMsg = messageMsg
-            sendMsg["stuts"] = "ACK"
+            sendMsg["status"] = "ACK"
             self.server.send(messageAdr, sendMsg)
         else:
             sendMsg = messageMsg
@@ -93,11 +97,60 @@ class ServerMain:
         """
         messageAdr, messageMsg = message
         user = messageMsg["user"]
-        if user not in self.user_list:
+        if not (user in self.user_list):
+            print(self.user_list)
+            print(user)
             sendMsg = messageMsg
             sendMsg["status"] = "NAK"
             sendMsg["roomid"] = None
             self.server.send(messageAdr, sendMsg)
+        else:
+            roomid = str(uuid.uuid1())
+            newroom = Room(roomid, messageMsg["user"])
+            self.room_list[roomid] = newroom
+            sendMsg = messageMsg
+            sendMsg["status"] = "ACK"
+            sendMsg["roomid"] = roomid
+            self.server.send(messageAdr, sendMsg)
+
+    def deleteroom(self, message):
+        """
+        删除房间
+        """
+        messageAdr, messageMsg = message
+
+        def returnfalse():
+            sendMsg = messageMsg
+            sendMsg["status"] = "NAK"
+            self.server.send(messageAdr, sendMsg)
+
+        roomid = messageMsg["roomid"]
+        if roomid not in self.room_list:
+            returnfalse()
+            return False
+        if self.room_list[roomid].owner != messageMsg["user"]:
+            returnfalse()
+            return False
+        if len(self.room_list[roomid].userlist) > 1:
+            returnfalse()
+            return False
+        self.room_list.pop(roomid)
+        sendMsg = messageMsg
+        sendMsg["status"] = "ACK"
+        self.server.send(messageAdr, sendMsg)
+        return True
+
+    def joinroom(self, message):
+        # TODO joinroom
+        pass
+
+    def leftroom(self, message):
+        # TODO leftroom
+        pass
+
+    def getroom(self, message):
+        # TODO getroom
+        pass
 
     def clear(self):
         """
@@ -106,8 +159,10 @@ class ServerMain:
         # 清除已失效连接
         connections = self.server.get_connection()
         to_del = []  # 即将删除的连接
-        for userAdd in self.user_list:
-            if userAdd not in connections:
+        # print(connections)
+        for user in self.user_list:
+            userAdd = self.user_list[user].address
+            if not (userAdd in connections):
                 if _debug_:
                     print("[debug info]user {0} is unused".format((userAdd, self.user_list[userAdd].name)))
                 to_del.append(userAdd)
@@ -128,10 +183,13 @@ class ServerMain:
                 """
                 解码后的message
                 """
-                if messageMsg["opt"] == 1:
+                opt = messageMsg["opt"]
+                if opt == OptType.login:
                     self.login(message)
-                elif messageMsg["opt"] == 2:
+                elif opt == OptType.creatRoom:
                     self.creatroom(message)
+                elif opt == OptType.deleteRoom:
+                    self.deleteroom(message)
                 else:
                     print("[warning]unexpected opt", message)
             self.clear()

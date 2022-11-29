@@ -9,6 +9,7 @@ _debug_ = False  # 调试选项 运行环境请勿开启
 
 class ClientMain:
     def __init__(self):
+        # TODO:heartbeat 服务端从json读取
         current_path = os.getcwd()
         fag_directory = os.path.dirname(current_path)
         os.chdir(fag_directory)
@@ -19,8 +20,10 @@ class ClientMain:
         if _debug_:
             ip = "localhost"
             port = 25555
+
         self.client = safeclient.SocketClient(ip, port, heart_beat=5)
         self.user = None
+        self.roomid = None
 
     def login(self, user: str, password: str):
         """
@@ -45,12 +48,35 @@ class ClientMain:
             input("回车以继续")
             return False
 
-    def creat_room(self):
+    def creatroom(self):
         msg = {
             "opt": OptType.creatRoom,
             "user": self.user
         }
         self.client.send(msg)
+        recv = self.client.receive()
+        if recv["status"] == "NAK":
+            return False
+        elif recv["status"] == "ACK":
+            self.roomid = recv["roomid"]
+            return self.roomid
+        else:
+            pass
+
+    def deleteroom(self):
+        msg = {
+            "opt": OptType.deleteRoom,
+            "user": self.user,
+            "roomid": self.roomid
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        if recv["status"] == "NAK":
+            return False
+        elif recv["status"] == "ACK":
+            return True
+        else:
+            pass
 
     def start(self):
         self.user = input("input the user name")
@@ -59,7 +85,13 @@ class ClientMain:
             self.client.close()
             exit(0)
         while True:
-            pass
+            opt = int(input())
+            if opt == 1:
+                print("get1")
+                print(self.creatroom())
+            if opt == 2:
+                print("get2")
+                print(self.deleteroom())
 
 
 if __name__ == "__main__":

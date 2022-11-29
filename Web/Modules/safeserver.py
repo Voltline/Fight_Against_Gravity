@@ -32,7 +32,7 @@ class SocketServer:
         """服务端ip，云端请保留云服务器ip"""
         self.__port = port
         """服务器端口"""
-        self.que = queue.Queue()  #
+        self.que = queue.Queue()
         """消息队列 [（address， recv）]"""
         self.conn_poll = {}  #
         """socket连接池 以字典方式存储 {address : socket}"""
@@ -42,7 +42,8 @@ class SocketServer:
         """debug选项"""
         try:
             self.__socket.bind((self.__host, self.__port))
-            self.__socket.listen(10)
+            self.__socket.listen(5)
+            # self.__socket.setsockopt(socket.SOL_SOCKET, socket.TCP_QUICKACK, True)
         except Exception as err:
             print("[err info] ", err, "Fail to build a socked listener")
 
@@ -64,6 +65,8 @@ class SocketServer:
             self.conn_poll.update({address: client})
             if self.heart_time > 0:
                 client.settimeout(self.heart_time)
+
+                client.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
             thread_message = Thread(target=self.message_handle, args=(client, address))
             thread_message.setDaemon(True)
             thread_message.start()
@@ -86,8 +89,9 @@ class SocketServer:
                 print("[server info] {}已停止运行".format(address))
                 break
             try:
-                lenth = client.recv(4)
-                lenth = int(lenth.decode())
+                lenth = 1024
+                # lenth = client.recv(4)
+                # lenth = int(lenth.decode())
                 recv = client.recv(lenth)
             except socket.timeout as err:
                 close("超时", err_reason=err)
@@ -100,16 +104,28 @@ class SocketServer:
                 break
             else:
                 msg = recv.decode()
+                # 粘连包切片
+                tmpmsg = []
+                cutpos = [0]
+                for i in range(1, len(msg)):
+                    if msg[i - 1] == '}' and msg[i] == '{':
+                        cutpos.append(i)
+                cutpos.append(len(msg))
+                for i in range(1, len(cutpos)):
+                    tmpmsg.append(msg[cutpos[i - 1]:cutpos[i]])
                 if self.debug:
                     print("[debug info]{recv %d lenth msg from%s}:%s" % (lenth, address, msg))
-                try:
-                    msg = json.loads(msg)
-                    if msg["opt"] != 0:
-                        # 0是heart beat 不存入消息队列
+                for msg in tmpmsg:
+                    try:
+                        msg = json.loads(msg)
+                        if msg["opt"] != 0:
+                            # 0是heart beat 不存入消息队列
+                            self.que.put((address, msg))
+                    except Exception as err:
+                        print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
+                        if self.debug:
+                            exit(-1)
                         self.que.put((address, msg))
-                except Exception as err:
-                    print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
-                    self.que.put((address, msg))
 
     def get_message(self):
         """
@@ -150,8 +166,8 @@ class SocketServer:
                 msg = json.dumps(msg)
             if self.debug:
                 print("[debug info]sending", msg)
-            lenth = len(msg)
-            client.sendall(("%04d" % lenth).encode())
+            # lenth = len(msg)
+            # client.sendall(("%04d" % lenth).encode())
             client.sendall(msg.encode())
         except Exception as err:
             print("[err info] ", err, "发送失败")
@@ -169,8 +185,9 @@ if __name__ == "__main__":
             address = item[0]
             msg = {
                 "opt": -1,
-                "info": "ACK"
+                "info": item
             }
             print(msg)
-            server.send(address, msg)
+            for i in range(5):
+                server.send(address, msg)
         lt = server.get_connection()
