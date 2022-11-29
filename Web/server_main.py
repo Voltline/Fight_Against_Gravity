@@ -8,22 +8,6 @@ OptType = OptType.OptType
 _debug_ = False  # debug选项 请勿在生产环境中开启
 
 
-class Room:
-    """
-    房间类 存储玩家，房间号，运行每局游戏主逻辑
-    """
-
-    def __init__(self, roomid, owner):
-        self.roomid = roomid
-        self.owner = owner
-        self.roomname = None
-        self.userlist = [owner]
-        pass
-    # TODO：修改 用成员函数
-    # TODO:选择地图 踢出多余的人 room大厅 开始游戏/准备 start
-    # TODO：get_message
-
-
 class User:
     """
     玩家类 存储玩家信息 包括address name 房间号
@@ -34,6 +18,31 @@ class User:
         self.name = name
         self.roomid = None
 
+    def get_address(self):
+        return self.address
+
+    def get_name(self):
+        return self.name
+
+    def get_roomid(self):
+        return self.roomid
+
+
+class Room:
+    """
+    房间类 存储玩家，房间号，运行每局游戏主逻辑
+    """
+
+    def __init__(self, roomid, owner: User):
+        self.roomid = roomid
+        self.owner = owner
+        self.roomname = None
+        self.userlist = [owner]
+        pass
+    # TODO：修改 用成员函数
+    # TODO: 选择地图 踢出多余的人 room大厅 开始游戏/准备 start
+    # TODO：get_message
+
 
 class ServerMain:
     """
@@ -41,10 +50,15 @@ class ServerMain:
     """
 
     def __init__(self):
-        self.user_list = {}  # {roomid: Room}
-        self.room_list = {}  # {"username" : User}
-        self.server = None
+        self.user_list = {}
+        """"{roomid: Room}"""
+        self.room_list = {}
+        """{"username" : User}"""
         self.server = safeserver.SocketServer("127.0.0.1", 25555, heart_time=5, debug=_debug_)
+
+    def back_msg(self, message: dict, feedback: str):
+        # TODO:"ACK"/"NAK"
+        pass
 
     @staticmethod
     def check(user: str, password: str) -> bool:
@@ -91,7 +105,7 @@ class ServerMain:
             self.server.send(messageAdr, sendMsg)
         else:
             sendMsg = messageMsg
-            sendMsg["stauts"] = "NAK"
+            sendMsg["status"] = "NAK"
             self.server.send(messageAdr, sendMsg)
             self.server.close(messageAdr)
 
@@ -102,16 +116,14 @@ class ServerMain:
         """
         messageAdr, messageMsg = message
         user = messageMsg["user"]
-        if not (user in self.user_list):
-            print(self.user_list)
-            print(user)
+        if user not in self.user_list:
             sendMsg = messageMsg
             sendMsg["status"] = "NAK"
             sendMsg["roomid"] = None
             self.server.send(messageAdr, sendMsg)
         else:
             roomid = str(uuid.uuid1())
-            newroom = Room(roomid, messageMsg["user"])
+            newroom = Room(roomid, self.user_list[user])
             self.room_list[roomid] = newroom
             sendMsg = messageMsg
             sendMsg["status"] = "ACK"
@@ -165,12 +177,11 @@ class ServerMain:
         connections = self.server.get_connection()
         to_del = []  # 即将删除的连接
         # print(connections)
-        for user in self.user_list:
-            userAdd = self.user_list[user].address
-            if not (userAdd in connections):
+        for name, user in self.user_list.items():
+            if not (user.get_address() not in connections):
                 if _debug_:
-                    print("[debug info]user {0} is unused".format((userAdd, self.user_list[userAdd].name)))
-                to_del.append(userAdd)
+                    print("[debug info]user {0} is unused".format((name, user.get_address())))
+                to_del.append(name)
         for item in to_del:
             print("[game info]user {0} left the game".format((item, self.user_list[item].name)))
             self.user_list.pop(item)

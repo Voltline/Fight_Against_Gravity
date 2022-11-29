@@ -74,23 +74,26 @@ class SocketClient:
         return msg
 
     def message_handler(self):
-        while True:
-            lenth = 1024
-            recv = self.__socket.recv(lenth).decode()
-            # 粘连包切片
-            tmpmsg = self.decode(recv)
-            for item in tmpmsg:
-                msg = None
-                try:
-                    msg = json.loads(item)
-                    if msg["opt"] != 0:
-                        self.que.put(msg)
-                except Exception as err:
-                    if self.warnig:
-                        print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
-                    self.que.put(item)
-                if self.debug:
-                    print("[debug]", msg)
+        try:
+            while True:
+                lenth = 1024
+                recv = self.__socket.recv(lenth).decode()
+                # 粘连包切片
+                tmpmsg = self.decode(recv)
+                for item in tmpmsg:
+                    msg = None
+                    try:
+                        msg = json.loads(item)
+                        if msg["opt"] != 0:
+                            self.que.put(msg)
+                    except Exception as err:
+                        if self.warnig:
+                            print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
+                        self.que.put(item)
+                    if self.debug:
+                        print("[debug]", msg)
+        except:
+            print("[client info]client closed")
 
     def beating(self):
         while True:
@@ -107,7 +110,10 @@ class SocketClient:
             message = json.dumps(message)
         # base64
         message = self.encode(message)
-        self.__socket.sendall(message.encode())
+        try:
+            self.__socket.sendall(message.encode())
+        except Exception as err:
+            print("[client info]client closed")
 
     def receive(self):
         """
