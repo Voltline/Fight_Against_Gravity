@@ -45,7 +45,6 @@ class ClientMain:
         else:
             print("NAK")
             print("登陆失败 请重新启动游戏")
-            input("回车以继续")
             return False
 
     def creatroom(self):
@@ -83,15 +82,20 @@ class ClientMain:
         password = input("input the pass word")
         if not self.login(self.user, password):
             self.client.close()
-            exit(0)
+            exit(-1)
         while True:
             opt = int(input())
+            if opt == 0:
+                break
             if opt == 1:
                 print("get1")
                 print(self.creatroom())
             if opt == 2:
                 print("get2")
                 print(self.deleteroom())
+        self.client.close()
+        print("[client info] exit")
+        exit(0)
 
 
 if __name__ == "__main__":

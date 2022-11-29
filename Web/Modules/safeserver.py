@@ -135,9 +135,9 @@ class SocketServer:
                 msg = recv.decode()
                 # 粘连包切片
                 tmpmsg = self.decode(msg)
-                if self.debug:
-                    print("[debug info]{recv %d lenth msg from%s}:%s" % (lenth, address, msg))
                 for msg in tmpmsg:
+                    if self.debug:
+                        print("[debug info]{recv %d lenth msg from%s}:%s" % (lenth, address, msg))
                     try:
                         msg = json.loads(msg)
                         if msg["opt"] != 0:
@@ -187,9 +187,9 @@ class SocketServer:
             client = self.conn_poll[address]
             if type(msg) == dict:
                 msg = json.dumps(msg)
-            msg = self.encode(msg)
             if self.debug:
                 print("[debug info]sending", msg)
+            msg = self.encode(msg)
             # lenth = len(msg)
             # client.sendall(("%04d" % lenth).encode())
             client.sendall(msg.encode())
