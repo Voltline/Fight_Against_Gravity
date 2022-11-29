@@ -22,7 +22,7 @@ class IdentifyClient:
         :返回：服务器返回验证码
         """
         msg_opt1 = {
-            "opt": 1,
+            "opt": OptType.sendCheckCode,
             "user": username,
             "email": email
         }
@@ -40,7 +40,7 @@ class IdentifyClient:
         :返回：服务器返回结果
         """
         msg_opt2 = {
-            "opt": 2,
+            "opt": OptType.sendAllInformation,
             "user": username,
             "email": email,
             "password": password

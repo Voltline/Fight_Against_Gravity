@@ -23,6 +23,25 @@ class OptType:
         "password" : "str"
     }
     """
+    sendCheckCode = 4
+    """
+    用户发送用户名与密码请求发送验证码
+    {
+        "opt" : 4
+        "user": "str",
+        "email": "str"
+    }
+    """
+    sendAllInformation = 5
+    """
+    用户发送所有注册信息
+    {
+        "opt" : 5
+        "user": "str",
+        "email": "str",
+        "password": "str"
+    }
+    """
     creatRoom = 11
     """
     用户创建房间
