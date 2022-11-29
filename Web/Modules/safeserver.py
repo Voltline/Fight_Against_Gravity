@@ -18,7 +18,7 @@ class SocketServer:
     }
     """
 
-    def __init__(self, ip: str, port: int, heart_time: int = -1, debug: bool = False, warning = False):
+    def __init__(self, ip: str, port: int, heart_time: int = -1, debug: bool = False, warning=False):
         """
         初始化socketserver
         ip:绑定服务器ip
@@ -81,10 +81,10 @@ class SocketServer:
         return list
         """
         res = []
-        msg_list = re.findall("-S-[^-]*-E-", msg)
+        msg_list = re.findall("-S-([^-]*?)-E-", msg)
         # print(msg_list)
         for item in msg_list:
-            msg = item[3:len(item) - 3]
+            msg = item[:]
             # print(msg)
             msg = base64.b64decode(msg)
             # print(msg.decode())
@@ -200,7 +200,7 @@ class SocketServer:
 if __name__ == "__main__":
     ip = "localhost"
     port = 25555
-    server = SocketServer(ip, port, heart_time=5, debug=True)
+    server = SocketServer(ip, port, heart_time=5, debug=True, warning=True)
     server.start()
     while True:
         messages = server.get_message()
