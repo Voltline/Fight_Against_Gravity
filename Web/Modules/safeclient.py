@@ -136,8 +136,9 @@ if __name__ == "__main__":
             "info": a
         }
         print(msg)
-        client.send(msg)
-        for i in range(5):
+        for i in range(3):
+            client.send(msg)
+        for j in range(5):
             msg = client.receive()
             print(msg)
         # time.sleep(0.01)
