@@ -1,6 +1,9 @@
 import Web.Modules.safeclient as safeclient
+import Web.Modules.OptType as OptType
 import json
 import os
+
+OptType = OptType.OptType
 
 class IdentifyClient:
     def __init__(self, reg_ip: str, reg_port: int,
@@ -11,7 +14,7 @@ class IdentifyClient:
         :返回：服务器返回验证码
         """
         self.__reg_client = safeclient.SocketClient(reg_ip, reg_port)
-        self.__game_client = safeclient.SocketClient(game_ip, game_port)
+        self.__game_client = safeclient.SocketClient(game_ip, game_port, heart_beat=5)
 
     def get_check_code(self, username: str, email: str) -> str:
         """验证客户端对象获取验证码
@@ -58,17 +61,16 @@ class IdentifyClient:
         :返回：服务器返回结果
         """
         msg_opt = {
-            "opt": 3,
+            "opt": OptType.login,
             "user": username,
             "password": password
         }
         self.__game_client.send(json.dumps(msg_opt))
-        status = self.__game_client.receive()
-        if status == "ERROR":
-            return False
-        elif status == "ACCEPT":
+        status = self.__game_client.receive()['status']
+        if status == "ACK":
             return True
         else:
+            print(status)
             print("ServerReturnError!")
             return False
 
