@@ -46,7 +46,7 @@ class Client:
         map_name = '静止双星系统'
         player_names = ['player1']
         gf.button_start_game_click(self.net, room_id, map_name, player_names)
-        print('开始游戏')  # TODO: debug
+        print('开始游戏')
         # 游戏开始
         self.game(room_id, map_name, player_names)
 
@@ -58,31 +58,36 @@ class Client:
         traces = []
 
         clock = pygame.time.Clock()  # 准备时钟
-        printed_ms = 0  # 测试用，上次输出调试信息的时间
+        printed_sec = 0  # 测试用，上次输出调试信息的时间
+        sended_sec = 0  # 上次发送ctrlmsg的时间
         physics_dt = self.settings.physics_dt
         surplus_dt = 0  # 这次delta_t被physics_dt消耗剩下的时间
 
         # 校时
-        print('开始校时')  # TODO: debug
+        print('开始校时')
         lag_time = self.get_lag_time(room_id)
+        print('校时成功,lag_time=', lag_time, '开始获取游戏开始时间')  # TODO: debug
         server_start_time = self.get_server_start_game_time(room_id)
+        print('游戏开始时间获取成功:', server_start_time)  # TODO: debug
         start_time = server_start_time - lag_time
         surplus_dt += gf.get_time() - start_time
 
         is_run = [True]
         while is_run[0]:
             delta_t = clock.tick(self.settings.max_fps) / 1000  # 获取delta_time(sec)并限制最大帧率
-            now_ms = gf.get_time()  # 测试用，当前时间
-            if now_ms - printed_ms >= 2000:  # 每2秒输出一次fps等信息
-                printed_ms = now_ms
+            now_sec = gf.get_time()  # 测试用，当前时间
+            if now_sec - printed_sec > 2:  # 每2秒输出一次fps等信息
+                printed_sec = now_sec
                 print('fps:', clock.get_fps())
                 print('飞船信息:')
                 for ship in gm.ships:
                     print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length())
                 print('子弹总数:', len(gm.bullets))
 
+            ctrl_msg0 = gf.find_player_ship(gm.ships, PlayerInfo.player_name).make_ctrl_msg()
             self.check_events(gm, camera, is_run)  # 检查键鼠活动
-            self.send_ctrl_msg(gm, room_id, now_ms/1000)  # 发送控制消息
+            if ctrl_msg0 != gf.find_player_ship(gm.ships, PlayerInfo.player_name).make_ctrl_msg():  # 每0.1s发一次ctrlmsg
+                self.send_ctrl_msg(gm, room_id, now_sec)  # 发送控制消息
 
             surplus_dt += delta_t
             while surplus_dt >= physics_dt:
@@ -93,20 +98,17 @@ class Client:
 
             self.deal_msg(gm)  # 接收并处理消息
             if not is_run[0]:  # 如果游戏结束
-                self.send_stop_game_msg(room_id, now_ms/1000)
+                self.send_stop_game_msg(room_id, now_sec)
 
-            gf.add_traces(self.settings, gm, traces, now_ms)
+            gf.add_traces(self.settings, gm, traces, now_sec*1000)
 
             surplus_ratio = surplus_dt / physics_dt
             gf.update_screen(self.settings, gm, camera, traces, surplus_ratio)
 
     def send_ctrl_msg(self, gm, room_id, now_sec):
         """发送玩家控制消息"""
-        ctrl_msg = []
-        for ship in gm.ships:
-            if ship.player_name == PlayerInfo.player_name:
-                ctrl_msg = ship.make_ctrl_msg()
-                break
+        ship = gf.find_player_ship(gm.ships, PlayerInfo.player_name)
+        ctrl_msg = ship.make_ctrl_msg()
         msg = {
             'type': MsgType.PlayerCtrl,
             'time': now_sec,
@@ -126,7 +128,9 @@ class Client:
 
     def deal_msg(self, gm):
         """接收并处理消息"""
+        print('开始接收消息')
         msg = self.net.receive()
+        print('开始处理消息')
         if msg:
             mtype = msg['type']
             if msg['time']:
@@ -144,6 +148,7 @@ class Client:
                 gm.client_update(all_ships_msg=args)
             elif mtype == MsgType.Bullets:
                 gm.client_update(bullets_msg=args[0])
+        print('结束处理消息')
 
     def get_lag_time(self, room_id):
         """
@@ -197,6 +202,7 @@ class Client:
         """响应键盘和鼠标事件"""
         self.mouse_loc.update(pygame.mouse.get_pos())
         self.mouse_d_loc.update(pygame.mouse.get_rel())
+        camera.mouse_loc.update(self.mouse_loc)
 
         event = pygame.event.poll()
         while event:

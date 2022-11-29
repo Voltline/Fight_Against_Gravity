@@ -17,14 +17,15 @@ class Camera:
         self.mode_num = 2
         self.player_ship = gf.find_player_ship(ships, player_name)  # 对应的玩家飞船
         self.d_loc = Vector2(0, 0)  # 鼠标上次移动的向量
+        self.mouse_loc = Vector2(0, 0)  # 鼠标位置
         self.d_zoom = 0  # 鼠标滚轮上次移动的量
 
-    def move(self, mouse_loc: Vector2):
+    def move(self):
         """视角的移动和缩放"""
         # 改变缩放
         if self.d_zoom != 0:
             zoom0 = self.zoom
-            mouse_real_loc = Vector2(self.screen_to_real(mouse_loc))  # 鼠标对应的真实坐标
+            mouse_real_loc = Vector2(self.screen_to_real(self.mouse_loc))  # 鼠标对应的真实坐标
             self.zoom *= self.zoom_spd ** self.d_zoom
             if self.zoom > self.zoom_max:
                 self.zoom = self.zoom_max

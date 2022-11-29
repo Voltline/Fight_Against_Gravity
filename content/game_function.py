@@ -66,6 +66,7 @@ def check_events(settings, gm, camera, is_run):
     global mouse_loc, mouse_d_loc
     mouse_loc.x, mouse_loc.y = pygame.mouse.get_pos()
     mouse_d_loc.x, mouse_d_loc.y = pygame.mouse.get_rel()
+    camera.mouse_loc.update(mouse_loc)
 
     event = pygame.event.poll()
     while event:
@@ -94,16 +95,13 @@ def check_events(settings, gm, camera, is_run):
 
 def update_screen(settings, gm, camera, traces: list, surplus_ratio):
     """更新屏幕"""
-
-    global mouse_loc
-
     # 重新绘制
     camera.screen.fill(settings.bg_color)  # 屏幕clear
 
     for objs in gm.ships, gm.bullets, gm.planets:
         for obj in objs:
             obj.rect.center = surplus_ratio*obj.loc + (1-surplus_ratio)*obj.loc0
-    camera.move(mouse_loc)  # 要先更新飞船的rect再更新camera的位置
+    camera.move()  # 要先更新飞船的rect再更新camera的位置
 
     # 先绘制尾迹，因为尾迹应该在最下层
     for trace in traces:

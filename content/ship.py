@@ -107,14 +107,6 @@ class Ship(SpaceObj):
         self.hp -= damage
         self.check_alive(ships, dead_ships)
 
-    def make_msg(self) -> list:
-        """重载，飞船还需要传输player_name和angle"""
-        msg = super().make_msg()
-        msg.append(self.angle)
-        msg.append(self.player_name)
-
-        return msg
-
     def make_ctrl_msg(self) -> list:
         """返回飞船操作状态信息"""
         return [self.is_go_ahead, self.is_go_back,
@@ -129,5 +121,5 @@ class Ship(SpaceObj):
     def update_by_msg(self, msg: list):
         """通过消息更新自身状态"""
         super().update_by_msg(msg)
-        msg = ObjMsg(msg)
+        msg = ObjMsg(obj_msg=msg)
         self.angle = msg.angle

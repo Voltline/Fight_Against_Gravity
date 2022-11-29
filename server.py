@@ -1,17 +1,9 @@
-import pygame
-from pygame import Vector2
 import threading
+import pygame
 
 from all_settings import Settings
-from content import game_function as gf
-from content.game_manager import GameManager
-from content.ship import Ship
-from content.planet import Planet
-from content.camera import Camera
-from content.maps.map_obj import Map
-from content.player_info import PlayerInfo
 from content.msg_type import MsgType
-from Web.Modules.safeserver import SocketSever
+from Web.Modules.safeserver import SocketServer
 from game_room import GameRoom
 
 
@@ -21,7 +13,7 @@ class Server:
     port = 25555
 
     def __init__(self):
-        self.net = SocketSever(Server.ip, Server.port)  # 负责收发信息
+        self.net = SocketServer(Server.ip, Server.port)  # 负责收发信息
         self.settings = Settings()  # 初始化设置类
         self.rooms = {}  # {id(int): game_room}
         self.threads = {}  # {id(int): room_thread}
@@ -33,11 +25,12 @@ class Server:
         # 模拟时收集信息步骤省略
 
         self.net.start()
+        clock = pygame.time.Clock()  # 准备时钟
 
         # 不断接收消息
         is_run = [True]
         while is_run[0]:
-            self.clean_rooms()
+            clock.tick(self.settings.max_fps)
             self.deal_msg()
 
     def deal_msg(self):
@@ -65,13 +58,6 @@ class Server:
             elif mtype == MsgType.CheckClock:
                 room_id, player_name = args
                 self.rooms[room_id].send_check_clock_msg(player_name, address)
-
-    def clean_rooms(self):
-        """把已经结束的room从rooms里清除"""
-        for room_id, room in self.rooms.copy().items():
-            if not room.is_run[0]:  # 房间没在运行
-                del self.rooms[room_id]
-                del self.threads[room_id]
 
     def start_game(self, room_id, map_name, player_names):
         """开始一局新的room_game"""

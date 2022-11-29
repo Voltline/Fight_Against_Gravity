@@ -83,7 +83,7 @@ class SpaceObj(pygame.sprite.Sprite):
 
     def update_by_msg(self, msg: list):
         """通过消息更新自身状态"""
-        msg = ObjMsg(msg)
+        msg = ObjMsg(obj_msg=msg)
         self.loc.update(msg.locx, msg.locy)
         self.spd.update(msg.spdx, msg.spdy)
         self.acc.update(msg.accx, msg.accy)
