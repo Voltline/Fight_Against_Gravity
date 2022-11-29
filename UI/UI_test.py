@@ -6,6 +6,8 @@ import sys
 import os
 from Web import identify_client as ic
 from all_settings import Settings
+
+
 class UI:
     def __init__(self):
         pygame.init()
@@ -24,19 +26,30 @@ class UI:
             'align': 1,
             'valign': 1
         }  # 黑字用于白底
-        self.r_font ={
+        self.r_font = {
             'font': pygame.font.Font(self.font_path_normal, 16),
             'tc': (169, 183, 198),
             'bc': None,
             'align': 0,
             'valign': 0
         }  # 白字用于黑底
+        self.menu_font = {
+            'font': pygame.font.Font(self.font_path_normal, 60),
+            'tc': (36, 41, 47),
+            'bc': None,
+            'align': 1,
+            'valign': 1
+        }
+        self.switcher = 0
         self.START = pygame.USEREVENT + 1
         self.BACK = pygame.USEREVENT + 2
         self.REGISTER = pygame.USEREVENT + 3
         self.SENDREGISTER = pygame.USEREVENT + 4
         self.LOGIN = pygame.USEREVENT + 5
         self.SENDCHECK = pygame.USEREVENT + 6
+        self.LOCAL = pygame.USEREVENT + 7
+        self.ONLINE = pygame.USEREVENT + 8
+        self.SETTING = pygame.USEREVENT + 9
         # CONFIRM = pygame.USEREVENT + 7
 
     def load_start(self):
@@ -102,12 +115,34 @@ class UI:
         buttons = [r_button, r_check_button]
         return {'label': labels, 'box': boxes, 'button': buttons}
 
+    def load_menu(self):
+        """点击登录之后进入游戏主菜单"""
+        os.chdir(self.fag_directory)
+        labels = None
+        boxes = None
+
+        menu_local_rect = pygame.Rect(455, 200, 290, 80)
+        menu_local_button = Button('local game', self.LOCAL, menu_local_rect,
+                                   self.btbg_light, 0, '本地游戏', self.menu_font)
+        menu_online_rect = pygame.Rect(455, 360, 290, 80)
+        menu_online_button = Button('online game', self.ONLINE, menu_online_rect,
+                                    self.btbg_light, 0, '线上房间', self.menu_font)
+        menu_local_button.add_img(self.btbg_light_pressed)
+        menu_online_button.add_img(self.btbg_light_pressed)
+        buttons = [menu_local_button, menu_online_button]
+        return {'label': labels, 'box': boxes, 'button': buttons}
+
     def update_event(self, loaded, e):
         """将对应页面加载了的组件全部进行状态更新，会post新的event"""
         if loaded['button'] is not None:
             for bt in loaded['button']:
                 bt.update(e)
         if loaded['box'] is not None:
+            if e.type == pygame.KEYDOWN:
+                if e.key == pygame.K_TAB:
+                    loaded['box'][self.switcher].active = False
+                    self.switcher = (self.switcher + 1) % len(loaded['box'])
+                    loaded['box'][self.switcher].active = True
             for bx in loaded['box']:
                 bx.deal_event(e)
 
@@ -150,6 +185,7 @@ class UI:
         elements_1 = self.load_start()  # 开始界面的
         elements_2 = self.load_login()  # 登录界面
         elements_3 = self.load_register()  # 注册界面
+        elements_4 = self.load_menu()  # 主界面
         os.chdir(self.UI_current_directory)
         """与客户端交流的组件"""
         check_code = ''
@@ -157,6 +193,14 @@ class UI:
         """全局组件，返回按钮和设置按钮"""
         back_rect = pygame.Rect(20, 20, 45, 45)
         back = Button("back", self.BACK, back_rect, "UI/Img/back.png", 1)
+
+        set_rect = pygame.Rect(1050, 700, 60, 60)
+        set_button = Button('setting', self.SETTING, set_rect, "UI/Img/setting_light.png", 1)
+        set_button.add_img("UI/Img/setting_light_pressed.png")
+        """
+        单个按钮状态切换使用update以及check_move
+        对于页面组件按钮状态切换使用update_event和bt_color_switch
+        """
         while running:
             """背景"""
             if self.page_status == 0:
@@ -173,6 +217,8 @@ class UI:
                         self.page_status += 1
                 elif self.page_status == 1:
                     back.update(event)
+                    set_button.update(event)
+                    set_button.check_move(event)
                     self.update_event(elements_2, event)
                     self.bt_color_switch(elements_2, event)
                     if event.type == self.BACK:
@@ -180,6 +226,7 @@ class UI:
                         self.page_status -= 1
                     elif event.type == self.REGISTER:
                         self.page_status += 1
+                        self.switcher = 0  # 重置输入框Switch
                         self.hide_bt(elements_2)
                         self.show_bt(elements_3)
                     elif event.type == self.LOGIN:
@@ -188,6 +235,8 @@ class UI:
                         answer = identify_client.login(userid, userpw)
                         if answer:
                             print("登录成功")
+                            self.hide_bt(elements_2)
+                            self.page_status = 3  # 转到游戏主界面
                         else:
                             print("failed")
                 elif self.page_status == 2:
@@ -196,6 +245,7 @@ class UI:
                     self.update_event(elements_3, event)
                     if event.type == self.BACK:
                         self.page_status -= 1
+                        self.switcher = 0  # 重置输入框Switch
                         self.hide_bt(elements_3)
                         self.show_bt(elements_2)
                     elif event.type == self.SENDREGISTER:
@@ -209,15 +259,29 @@ class UI:
                                     print('成功')
                                 else:
                                     print("注册失败")
-                        print(elements_3['box'][1].text,
-                              '\n', elements_3['box'][0].text,
-                              '\n', elements_3['box'][2].text)
+                                    print(elements_3['box'][1].text +
+                                          '\n' + elements_3['box'][0].text,
+                                          '\n' + elements_3['box'][2].text)
+                                    self.page_status -= 1
                         # ic.send_all_information(r_email_box.text, r_id_box.text, r_password_box.text)
                     elif event.type == self.SENDCHECK:  # 发送验证码
                         username = elements_3['box'][1].text
                         print(username)
                         email = elements_3['box'][0].text
                         check_code = identify_client.get_check_code(username, email)
+                elif self.page_status == 3:
+                    back.update(event)
+                    self.update_event(elements_4, event)
+                    self.bt_color_switch(elements_4, event)
+                    if event.type == self.BACK:
+                        self.hide_bt(elements_4)
+                        self.show_bt(elements_2)
+                        self.page_status = 1
+                    elif event.type == self.LOCAL:
+                        os.chdir(self.fag_directory)
+                        pygame.quit()
+                        os.system('main.py')
+                        running = False
                 if event.type == pygame.QUIT:
                     running = False
                     pygame.quit()
@@ -229,17 +293,22 @@ class UI:
                 pygame.draw.rect(screen, (46, 46, 46), (300, 150, 600, 400), border_radius=15)
                 self.draw_elements(elements_2, screen)
                 back.render(screen)
+                set_button.render(screen)
             elif self.page_status == 2:
                 pygame.draw.rect(screen, (46, 46, 46), (300, 150, 600, 400), border_radius=15)
                 back.render(screen)
                 self.draw_elements(elements_3, screen)
+            elif self.page_status == 3:
+                pygame.draw.rect(screen, (46, 46, 46), (300, 150, 600, 400), border_radius=15)
+                back.render(screen)
+                self.draw_elements(elements_4, screen)
             # setting.render(screen)
             pygame.display.flip()
 
 
-
 page_manager = UI()
 page_manager.createPage()
+
 
 # """页面状态"""
 # page_status = 0
