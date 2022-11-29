@@ -87,7 +87,7 @@ class SocketClient:
                 except Exception as err:
                     if self.warnig:
                         print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
-                    self.que.put(msg)
+                    self.que.put(item)
                 if self.debug:
                     print("[debug]", msg)
 
