@@ -1,16 +1,7 @@
-import pygame
-from pygame import Vector2
 import threading
-import sys
+import pygame
 
 from all_settings import Settings
-from content import game_function as gf
-from content.game_manager import GameManager
-from content.ship import Ship
-from content.planet import Planet
-from content.camera import Camera
-from content.maps.map_obj import Map
-from content.player_info import PlayerInfo
 from content.msg_type import MsgType
 from Web.Modules.safeserver import SocketServer
 from game_room import GameRoom
@@ -27,10 +18,6 @@ class Server:
         self.rooms = {}  # {id(int): game_room}
         self.threads = {}  # {id(int): room_thread}
 
-        # 鼠标位置信息，每帧实时更新
-        self.mouse_loc = Vector2(0, 0)
-        self.mouse_d_loc = Vector2(0, 0)
-
     def main(self):
         """服务端主函数"""
         # 开启一局游戏的步骤：
@@ -38,11 +25,12 @@ class Server:
         # 模拟时收集信息步骤省略
 
         self.net.start()
+        clock = pygame.time.Clock()  # 准备时钟
 
         # 不断接收消息
         is_run = [True]
         while is_run[0]:
-            self.clean_rooms()
+            clock.tick(self.settings.max_fps)
             self.deal_msg()
 
     def deal_msg(self):
@@ -71,13 +59,6 @@ class Server:
                 room_id, player_name = args
                 self.rooms[room_id].send_check_clock_msg(player_name, address)
 
-    def clean_rooms(self):
-        """把已经结束的room从rooms里清除"""
-        for room_id, room in self.rooms.copy().items():
-            if not room.is_run[0]:  # 房间没在运行
-                del self.rooms[room_id]
-                del self.threads[room_id]
-
     def start_game(self, room_id, map_name, player_names):
         """开始一局新的room_game"""
         print('开始start_game')  # TODO: debug
@@ -87,29 +68,6 @@ class Server:
         self.threads[room_id] = new_thread
         new_thread.start()
         print('结束start_game')  # TODO: debug
-
-    def check_events(self, gm, camera, is_run):
-        """响应键盘和鼠标事件"""
-        self.mouse_loc.update(pygame.mouse.get_pos())
-        self.mouse_d_loc.update(pygame.mouse.get_rel())
-
-        event = pygame.event.poll()
-        while event:
-            if event.type == pygame.QUIT:
-                is_run[0] = False
-                sys.exit()
-
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 2:  # 是否按下鼠标中键
-                    camera.change_mode()
-            elif event.type == pygame.MOUSEMOTION:
-                mouse_keys = pygame.mouse.get_pressed()
-                if mouse_keys[2]:  # 如果鼠标右键被按下
-                    camera.d_loc.update(self.mouse_d_loc)
-            elif event.type == pygame.MOUSEWHEEL:
-                camera.d_zoom = event.y
-
-            event = pygame.event.poll()
 
 
 if __name__ == '__main__':

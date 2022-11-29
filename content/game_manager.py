@@ -98,16 +98,21 @@ class GameManager:
             for name in dead_players_name:
                 for ship in self.ships:
                     if name == ship.player_name:
-                        ship.die()
+                        ship.die(self.ships, self.dead_ships)
                         break
             i = 0
             for ship in self.ships:
                 ship.update_by_msg(ships_msg[i])
                 i += 1
         if bullets_msg:  # 更新bullets
+            print('new_bullets:', bullets_msg)
             self.bullets.empty()
             for msg in bullets_msg:
-                self.bullets.add(Bullet(self.settings).update_by_msg(msg))
+                print('new_bullet:', msg)
+                new_bullet = Bullet(self.settings)
+                new_bullet.update_by_msg(msg)
+                self.bullets.add(new_bullet)
+                print('bullet add done')
 
     @staticmethod
     def group_make_msg(objs: pygame.sprite.Group) -> list:
