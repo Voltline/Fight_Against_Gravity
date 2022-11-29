@@ -3,13 +3,13 @@
 
 class MsgType:
     """
-    传输时,msg={
-        "type":msg_type(int)
-        "time":second(float)
-        "args":msg_args(list)
-        "kwargs":msg_kwargs(dict)
-    }
-    同时不包含复杂数据结构
+        传输时,msg={
+            "type":msg_type(int)
+            "time":second(float)
+            "args":msg_args(list)
+            "kwargs":msg_kwargs(dict)
+        }
+        同时不包含复杂数据结构
     """
     # 客户端接收信息：space_objs信息(以防万一放着，一般不使用)
     # msg_args=[space_objs_msg]

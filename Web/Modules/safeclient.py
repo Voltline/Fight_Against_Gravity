@@ -80,6 +80,7 @@ class SocketClient:
             # 粘连包切片
             tmpmsg = self.decode(recv)
             for item in tmpmsg:
+                msg = None
                 try:
                     msg = json.loads(item)
                     if msg["opt"] != 0:
