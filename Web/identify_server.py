@@ -13,7 +13,7 @@ class IdentifyServer:
         :参数: ip: 服务器ip， port: 端口， heart_time: 心跳时间（默认-1），debug: 调试模式
         :返回: 无返回
         """
-        self.server = safeserver.SocketSever(ip, port, heart_time, debug)
+        self.server = safeserver.SocketServer(ip, port, heart_time, debug)
         self.all_reg_acc = database_operate.get_all_reg_acc() # 服务器对象内置所有账户的字典
         self.server.start()
 

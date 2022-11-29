@@ -5,15 +5,17 @@ from math import cos
 from math import degrees
 from content.space_obj import SpaceObj
 from content.bullet import Bullet
+from content.obj_msg import ObjMsg
 
 
 class Ship(SpaceObj):
     """玩家操控的飞船"""
+
     # TODO:添加尾焰等特效
     def __init__(self, settings,
                  loc0: Vector2 = Vector2(0, 0), spd0: Vector2 = Vector2(0, 0),
                  angle: float = 0, player_name='?Unknown Player?'):
-        super().__init__(settings, 1*loc0, 1*spd0)
+        super().__init__(settings, 1 * loc0, 1 * spd0)
         self.image0 = self.image
         self.angle = angle
         self.update_image()
@@ -25,11 +27,11 @@ class Ship(SpaceObj):
         self.fire_rate = settings.ship_fire_rate  # 飞船射速(发/秒)
 
         # 主动状态
-        self.is_go_ahead = False    # 是否在前进
-        self.is_go_back = False     # 是否在后退
-        self.is_turn_left = False   # 是否在左转
+        self.is_go_ahead = False  # 是否在前进
+        self.is_go_back = False  # 是否在后退
+        self.is_turn_left = False  # 是否在左转
         self.is_turn_right = False  # 是否在右转
-        self.is_fire = False        # 是否在开火
+        self.is_fire = False  # 是否在开火
 
         # 被动状态
         self.is_alive = True  # 是否或者
@@ -43,7 +45,7 @@ class Ship(SpaceObj):
         acc0 = self.acc
         self.acc.update(0, 0)
         if self.is_go_ahead:
-            self.acc += (self.go_acc*cos(self.angle), self.go_acc*sin(self.angle))
+            self.acc += (self.go_acc * cos(self.angle), self.go_acc * sin(self.angle))
         if self.is_go_back:
             self.acc -= (self.go_acc * cos(self.angle), self.go_acc * sin(self.angle))
 
@@ -78,7 +80,7 @@ class Ship(SpaceObj):
             if now_time - self.fired_time >= 1 / self.fire_rate:  # 限制射速
                 self.fired_time = now_time
                 ship_dir = Vector2(cos(self.angle), sin(self.angle))
-                new_bullet_loc = self.loc + 0.6*self.image0.get_width()*ship_dir
+                new_bullet_loc = self.loc + 0.6 * self.image0.get_width() * ship_dir
                 new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
                 new_bullet = Bullet(settings, new_bullet_loc, new_bullet_spd)
                 bullets.add(new_bullet)
@@ -104,3 +106,20 @@ class Ship(SpaceObj):
         # TODO:加入被击中的特效
         self.hp -= damage
         self.check_alive(ships, dead_ships)
+
+    def make_ctrl_msg(self) -> list:
+        """返回飞船操作状态信息"""
+        return [self.is_go_ahead, self.is_go_back,
+                self.is_turn_left, self.is_turn_right,
+                self.is_fire]
+
+    def load_ctrl_msg(self, msg):
+        self.is_go_ahead, self.is_go_back, \
+            self.is_turn_left, self.is_turn_right, \
+            self.is_fire = msg
+
+    def update_by_msg(self, msg: list):
+        """通过消息更新自身状态"""
+        super().update_by_msg(msg)
+        msg = ObjMsg(obj_msg=msg)
+        self.angle = msg.angle

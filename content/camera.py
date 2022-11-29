@@ -1,6 +1,7 @@
 import pygame.sprite
 from pygame import Vector2
 from typing import Tuple
+import content.game_function as gf
 
 
 class Camera:
@@ -14,23 +15,17 @@ class Camera:
         self.zoom_max = settings.camera_zoom_max  # 缩放倍数上限(过高会导致fps过低)
         self.mode = 0  # 视角移动模式: 0:自由移动 1:跟随飞船
         self.mode_num = 2
-        self.player_ship = self.find_player_ship(player_name, ships)  # 对应的玩家飞船
+        self.player_ship = gf.find_player_ship(ships, player_name)  # 对应的玩家飞船
         self.d_loc = Vector2(0, 0)  # 鼠标上次移动的向量
+        self.mouse_loc = Vector2(0, 0)  # 鼠标位置
         self.d_zoom = 0  # 鼠标滚轮上次移动的量
 
-    @staticmethod
-    def find_player_ship(player_name: str, ships: pygame.sprite.Group):
-        for ship in ships:
-            if ship.player_name == player_name:
-                return ship
-        return None
-
-    def move(self, mouse_loc: Vector2):
+    def move(self):
         """视角的移动和缩放"""
         # 改变缩放
         if self.d_zoom != 0:
             zoom0 = self.zoom
-            mouse_real_loc = Vector2(self.screen_to_real(mouse_loc))  # 鼠标对应的真实坐标
+            mouse_real_loc = Vector2(self.screen_to_real(self.mouse_loc))  # 鼠标对应的真实坐标
             self.zoom *= self.zoom_spd ** self.d_zoom
             if self.zoom > self.zoom_max:
                 self.zoom = self.zoom_max
@@ -45,7 +40,8 @@ class Camera:
             self.loc.update(self.player_ship.rect.center)
 
     def change_mode(self):
-        self.mode = (self.mode + 1) % self.mode_num
+        if self.player_ship:
+            self.mode = (self.mode + 1) % self.mode_num
 
     def real_to_screen(self, obj_real_loc: Vector2) -> Tuple[float, float]:
         screen_center = self.screen.get_rect().center
