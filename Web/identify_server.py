@@ -1,8 +1,10 @@
 import Web.Modules.safeserver as safeserver
 import Web.Modules.database_operate as database_operate
 import Web.Modules.send_email as send_email
+import Web.Modules.OptType as OptType
 import time
 
+OptType = OptType.OptType
 email_sent = {}
 user_list = []  # {"username" : address}
 
@@ -17,7 +19,7 @@ class IdentifyServer:
         self.all_reg_acc = database_operate.get_all_reg_acc() # 服务器对象内置所有账户的字典
         self.server.start()
 
-    def opt1(self, username: str, email: str, addr: tuple):
+    def sendCheckCode_opt(self, username: str, email: str, addr: tuple):
         """发送验证码操作
         :参数: username：用户名，email：邮箱，addr：地址元组
         :返回: 无返回
@@ -27,7 +29,7 @@ class IdentifyServer:
         send_email.send_email(username, email, id_code)
         self.server.send(addr, id_code)
 
-    def opt2(self, username: str, email: str, rmessage: dict, addr: tuple):
+    def register_opt(self, username: str, email: str, rmessage: dict, addr: tuple):
         """接受并写入数据库操作
         :参数: username：用户名，email：邮箱，rmessage：传入的各种信息字典，addr：地址元组
         :返回: 无返回
@@ -41,7 +43,7 @@ class IdentifyServer:
             self.server.send(addr, "ERROR")
         self.server.close(addr)
 
-    def opt3(self, rmessage: dict, addr: tuple):
+    def login_opt(self, rmessage: dict, addr: tuple):
         """登录时的服务器操作
         :参数: rmessage：传入的各种信息元组，addr：地址元组
         :返回: 无返回
@@ -67,19 +69,19 @@ class IdentifyServer:
                 rmessage = message[1]
                 user_list.append({rmessage["user"]: message[0]})
                 all_reg_acc = database_operate.get_all_reg_acc()
-                if rmessage["opt"] != 3:
+                if rmessage["opt"] != OptType.loginTransfer:
                     username, email = rmessage["user"], rmessage["email"]
                     if database_operate.check_duplicate(username):
                         self.server.send(addr, "DUPLICATE")
                     else:
-                        if rmessage["opt"] == 1:
-                            self.opt1(username, email, addr)
-                        elif rmessage["opt"] == 2:
-                            self.opt2(username, email, rmessage, addr)
+                        if rmessage["opt"] == OptType.sendCheckCode:
+                            self.sendCheckCode_opt(username, email, addr)
+                        elif rmessage["opt"] == OptType.sendAllInformation:
+                            self.register_opt(username, email, rmessage, addr)
                         else:
                             print("[Error] unexpected opt")
                 else:
-                    self.opt3(rmessage, addr)
+                    self.login_opt(rmessage, addr)
 
 
 if __name__ == "__main__":
