@@ -3,7 +3,8 @@ import socket
 from threading import Thread
 import queue
 import time
-
+import base64
+import re
 
 class SocketServer:
     """
@@ -122,7 +123,7 @@ class SocketServer:
                             # 0是heart beat 不存入消息队列
                             self.que.put((address, msg))
                     except Exception as err:
-                        print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
+                        # print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
                         if self.debug:
                             exit(-1)
                         self.que.put((address, msg))
