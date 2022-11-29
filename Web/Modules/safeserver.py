@@ -2,9 +2,9 @@ import json
 import socket
 from threading import Thread
 import queue
-import time
 import base64
 import re
+
 
 class SocketServer:
     """
@@ -18,7 +18,7 @@ class SocketServer:
     }
     """
 
-    def __init__(self, ip: str, port: int, heart_time: int = -1, debug: bool = False):
+    def __init__(self, ip: str, port: int, heart_time: int = -1, debug: bool = False, warning = False):
         """
         初始化socketserver
         ip:绑定服务器ip
@@ -41,6 +41,8 @@ class SocketServer:
         """消息接收线程"""
         self.debug = debug
         """debug选项"""
+        self.warning = warning
+        """warning选项"""
         try:
             self.__socket.bind((self.__host, self.__port))
             self.__socket.listen(5)
@@ -71,6 +73,32 @@ class SocketServer:
             thread_message = Thread(target=self.message_handle, args=(client, address))
             thread_message.setDaemon(True)
             thread_message.start()
+
+    @staticmethod
+    def decode(msg: str):
+        """
+        mathch all messsage in the msg
+        return list
+        """
+        res = []
+        msg_list = re.findall("-S-[^-]*-E-", msg)
+        # print(msg_list)
+        for item in msg_list:
+            msg = item[3:len(item) - 3]
+            # print(msg)
+            msg = base64.b64decode(msg)
+            # print(msg.decode())
+            res.append(msg.decode())
+        return res
+
+    @staticmethod
+    def encode(msg: str):
+        msg = base64.b64encode(msg.encode())
+        msg = msg.decode()
+        # print(msg)
+        msg = "-S-" + msg + "-E-"
+        # print(msg)
+        return msg
 
     def message_handle(self, client: socket.socket, address):
         """
@@ -106,14 +134,7 @@ class SocketServer:
             else:
                 msg = recv.decode()
                 # 粘连包切片
-                tmpmsg = []
-                cutpos = [0]
-                for i in range(1, len(msg)):
-                    if msg[i - 1] == '}' and msg[i] == '{':
-                        cutpos.append(i)
-                cutpos.append(len(msg))
-                for i in range(1, len(cutpos)):
-                    tmpmsg.append(msg[cutpos[i - 1]:cutpos[i]])
+                tmpmsg = self.decode(msg)
                 if self.debug:
                     print("[debug info]{recv %d lenth msg from%s}:%s" % (lenth, address, msg))
                 for msg in tmpmsg:
@@ -123,7 +144,8 @@ class SocketServer:
                             # 0是heart beat 不存入消息队列
                             self.que.put((address, msg))
                     except Exception as err:
-                        # print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
+                        if self.warning:
+                            print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
                         if self.debug:
                             exit(-1)
                         self.que.put((address, msg))
@@ -165,6 +187,7 @@ class SocketServer:
             client = self.conn_poll[address]
             if type(msg) == dict:
                 msg = json.dumps(msg)
+            msg = self.encode(msg)
             if self.debug:
                 print("[debug info]sending", msg)
             # lenth = len(msg)
