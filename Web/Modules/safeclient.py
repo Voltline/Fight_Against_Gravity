@@ -3,6 +3,8 @@ import socket
 import time
 from threading import Thread
 import queue
+import base64
+import re
 
 
 class SocketClient:
@@ -40,6 +42,28 @@ class SocketClient:
             self.heart_thread = Thread(target=self.beating)
             self.heart_thread.setDaemon(True)
             self.heart_thread.start()
+
+    @staticmethod
+    def decode(msg: str):
+        """
+        mathch all messsage in the msg
+        return list
+        """
+        msg_list = re.findall("-S-[^-]*-E-", msg)
+        print(msg_list)
+        for item in msg_list:
+            msg = item[3:len(item) - 3]
+            print(msg)
+            msg = base64.b64decode(msg)
+            print(msg.decode())
+
+    @staticmethod
+    def encode(msg: str):
+        msg = base64.b64encode(msg.encode())
+        msg = msg.decode()
+        print(msg)
+        msg = "-S-" + msg + "-E-"
+        print(msg)
 
     def message_handler(self):
         while True:
@@ -79,9 +103,9 @@ class SocketClient:
         """
         if type(message) == dict:
             message = json.dumps(message)
-        # lenth = len(message)
-        # lenth = "%04d" % lenth
-        # self.__socket.sendall(lenth.encode())
+        # base64
+        # TODO:message
+        message
         self.__socket.sendall(message.encode())
 
     def receive(self):
