@@ -16,8 +16,12 @@ class Room:
     def __init__(self, roomid, owner):
         self.roomid = roomid
         self.owner = owner
+        self.roomname = None
         self.userlist = [owner]
         pass
+    # TODO：修改 用成员函数
+    # TODO:选择地图 踢出多余的人 room大厅 开始游戏/准备 start
+    # TODO：get_message
 
 
 class User:
@@ -94,6 +98,7 @@ class ServerMain:
     def creatroom(self, message):
         """
         创建房间
+        #TODO:roomname roommap
         """
         messageAdr, messageMsg = message
         user = messageMsg["user"]
