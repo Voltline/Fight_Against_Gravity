@@ -12,7 +12,7 @@ class SocketClient:
     使用TCP连接的socket函数封装
     """
 
-    def __init__(self, ip: str, port: int, heart_beat: int = -1):
+    def __init__(self, ip: str, port: int, heart_beat: int = -1, debug=False, warning = False):
         """
         ip:服务端ip地址
         port:服务端端口
@@ -26,6 +26,10 @@ class SocketClient:
         """服务器端口"""
         self.__host = ip
         """服务器ip"""
+        self.debug = debug
+        """debug选项"""
+        self.warnig = warning
+        """是否开启warning"""
         self.heart_beat = heart_beat
         """心跳检测"""
         self.que = queue.Queue()
@@ -49,46 +53,43 @@ class SocketClient:
         mathch all messsage in the msg
         return list
         """
+        res = []
         msg_list = re.findall("-S-[^-]*-E-", msg)
-        print(msg_list)
+        # print(msg_list)
         for item in msg_list:
             msg = item[3:len(item) - 3]
-            print(msg)
+            # print(msg)
             msg = base64.b64decode(msg)
-            print(msg.decode())
+            # print(msg.decode())
+            res.append(msg.decode())
+        return res
 
     @staticmethod
     def encode(msg: str):
         msg = base64.b64encode(msg.encode())
         msg = msg.decode()
-        print(msg)
+        # print(msg)
         msg = "-S-" + msg + "-E-"
-        print(msg)
+        # print(msg)
+        return msg
 
     def message_handler(self):
         while True:
             lenth = 1024
-            # lenth = self.__socket.recv(4)
-            # lenth = int(lenth.decode())
             recv = self.__socket.recv(lenth).decode()
             # 粘连包切片
-            tmpmsg = []
-            cutpos = [0]
-            for i in range(1, len(recv)):
-                if recv[i - 1] == '}' and recv[i] == '{':
-                    cutpos.append(i)
-            cutpos.append(len(recv))
-            for i in range(1, len(cutpos)):
-                tmpmsg.append(recv[cutpos[i - 1]:cutpos[i]])
+            tmpmsg = self.decode(recv)
             for item in tmpmsg:
                 try:
                     msg = json.loads(item)
                     if msg["opt"] != 0:
                         self.que.put(msg)
                 except Exception as err:
-                    print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
+                    if self.warnig:
+                        print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
                     self.que.put(msg)
-                # print("[debug]", msg)
+                if self.debug:
+                    print("[debug]", msg)
 
     def beating(self):
         while True:
@@ -104,8 +105,7 @@ class SocketClient:
         if type(message) == dict:
             message = json.dumps(message)
         # base64
-        # TODO:message
-        message
+        message = self.encode(message)
         self.__socket.sendall(message.encode())
 
     def receive(self):
@@ -125,10 +125,10 @@ class SocketClient:
 if __name__ == "__main__":
     ip = "localhost"
     port = 25555
-    client = SocketClient(ip, port, 5)
+    client = SocketClient(ip, port, 5, True)
     cnt = 0
-    a = input()
     while True:
+        a = input()
         if a == "0":
             break
         msg = {
@@ -140,5 +140,5 @@ if __name__ == "__main__":
         for i in range(5):
             msg = client.receive()
             print(msg)
-        time.sleep(0.01)
+        # time.sleep(0.01)
     client.close()
