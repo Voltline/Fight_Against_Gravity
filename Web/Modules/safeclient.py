@@ -12,7 +12,7 @@ class SocketClient:
     使用TCP连接的socket函数封装
     """
 
-    def __init__(self, ip: str, port: int, heart_beat: int = -1, debug=False, warning = False):
+    def __init__(self, ip: str, port: int, heart_beat: int = -1, debug=False, warning=False):
         """
         ip:服务端ip地址
         port:服务端端口
@@ -54,10 +54,10 @@ class SocketClient:
         return list
         """
         res = []
-        msg_list = re.findall("-S-[^-]*-E-", msg)
+        msg_list = re.findall("-S-([^-]*?)-E-", msg)
         # print(msg_list)
         for item in msg_list:
-            msg = item[3:len(item) - 3]
+            msg = item[:]
             # print(msg)
             msg = base64.b64decode(msg)
             # print(msg.decode())
@@ -136,8 +136,9 @@ if __name__ == "__main__":
             "info": a
         }
         print(msg)
-        client.send(msg)
-        for i in range(5):
+        for i in range(3):
+            client.send(msg)
+        for j in range(5):
             msg = client.receive()
             print(msg)
         # time.sleep(0.01)
