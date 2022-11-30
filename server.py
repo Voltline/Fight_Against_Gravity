@@ -2,7 +2,7 @@ import threading
 import pygame
 
 from all_settings import Settings
-from content.msg_type import MsgType
+from Web.Modules.OptType import OptType
 from Web.Modules.safeserver import SocketServer
 from game_room import GameRoom
 
@@ -38,7 +38,7 @@ class Server:
         messages = self.net.get_message()
         for address, msg in messages:
             print(address, msg)
-            mtype = msg['type']
+            mopt = msg['opt']
             if msg['time']:
                 time = msg['time']
             if msg['args']:
@@ -46,16 +46,18 @@ class Server:
             if msg['kwargs']:
                 kwargs = msg['kwargs']
 
-            if mtype == MsgType.StartGame:
+            if mopt == OptType.StartGame:
                 room_id, map_name, player_names = args
                 self.start_game(room_id, map_name, player_names)
-            elif mtype == MsgType.StopGame:
+            elif mopt == OptType.StopGame:
                 room_id = args[0]
                 self.rooms[room_id].is_run[0] = False
-            elif mtype == MsgType.PlayerCtrl:
+            elif mopt == OptType.PlayerCtrl:
                 room_id, player_name, ctrl_msg = args
+                if True in ctrl_msg:
+                    print('ctrl:', ctrl_msg)
                 self.rooms[room_id].load_ctrl_msg(player_name, ctrl_msg)
-            elif mtype == MsgType.CheckClock:
+            elif mopt == OptType.CheckClock:
                 room_id, player_name = args
                 self.rooms[room_id].send_check_clock_msg(player_name, address)
 

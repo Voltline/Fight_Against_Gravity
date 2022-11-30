@@ -10,7 +10,7 @@ from content.planet import Planet
 from content.camera import Camera
 from content.maps.map_obj import Map
 from content.player_info import PlayerInfo
-from content.msg_type import MsgType
+from Web.Modules.OptType import OptType
 from Web.Modules.safeclient import SocketClient
 
 
@@ -76,8 +76,10 @@ class Client:
         while is_run[0]:
             delta_t = clock.tick(self.settings.max_fps) / 1000  # 获取delta_time(sec)并限制最大帧率
             now_sec = gf.get_time()  # 测试用，当前时间
-            if now_sec - printed_sec > 2:  # 每2秒输出一次fps等信息
+            if now_sec - printed_sec > 1:  # 每1秒输出一次fps等信息
                 printed_sec = now_sec
+                print('now:', now_sec)
+                print('now-start:', now_sec - start_time)
                 print('fps:', clock.get_fps())
                 print('飞船信息:')
                 for ship in gm.ships:
@@ -110,7 +112,7 @@ class Client:
         ship = gf.find_player_ship(gm.ships, PlayerInfo.player_name)
         ctrl_msg = ship.make_ctrl_msg()
         msg = {
-            'type': MsgType.PlayerCtrl,
+            'opt': OptType.PlayerCtrl,
             'time': now_sec,
             'args': [room_id, PlayerInfo.player_name, ctrl_msg],
             'kwargs': {}
@@ -119,7 +121,7 @@ class Client:
 
     def send_stop_game_msg(self, room_id, now_sec):
         msg = {
-            'type': MsgType.StopGame,
+            'opt': OptType.StopGame,
             'time': now_sec,
             'args': [room_id],
             'kwargs': {}
@@ -128,11 +130,9 @@ class Client:
 
     def deal_msg(self, gm):
         """接收并处理消息"""
-        print('开始接收消息')
         msg = self.net.receive()
-        print('开始处理消息')
         if msg:
-            mtype = msg['type']
+            mopt = msg['opt']
             if msg['time']:
                 time = msg['time']
             if msg['args']:
@@ -140,15 +140,14 @@ class Client:
             if msg['kwargs']:
                 kwargs = msg['kwargs']
 
-            if mtype == MsgType.AllObjs:
+            if mopt == OptType.AllObjs:
                 gm.client_update(args[0], args[1], args[2])
-            elif mtype == MsgType.Planets:
+            elif mopt == OptType.Planets:
                 gm.client_update(planets_msg=args[0])
-            elif mtype == MsgType.AllShips:
+            elif mopt == OptType.AllShips:
                 gm.client_update(all_ships_msg=args)
-            elif mtype == MsgType.Bullets:
+            elif mopt == OptType.Bullets:
                 gm.client_update(bullets_msg=args[0])
-        print('结束处理消息')
 
     def get_lag_time(self, room_id):
         """
@@ -164,7 +163,7 @@ class Client:
         for cnt in range(check_num):
             time_a = gf.get_time()
             msg = {
-                'type': MsgType.CheckClock,
+                'opt': OptType.CheckClock,
                 'time': time_a,
                 'args': [room_id, PlayerInfo.player_name],
                 'kwargs': {}
@@ -175,14 +174,14 @@ class Client:
             while not msg:
                 msg = self.net.receive()
                 if msg:
-                    if msg['type'] == MsgType.CheckClock:
+                    if msg['opt'] == OptType.CheckClock:
                         if msg['args'][1] != PlayerInfo.player_name:
                             msg = None
                     else:
                         msg = None
             time_b = msg['time']
             time_c = gf.get_time()
-            lag_time_sum += (time_a + time_c)/2 - time_b
+            lag_time_sum += time_b - (time_a + time_c)/2
         return lag_time_sum/check_num
 
     def get_server_start_game_time(self, room_id):
@@ -191,7 +190,7 @@ class Client:
         while not msg:
             msg = self.net.receive()
             if msg:
-                if msg['type'] == MsgType.ServerStartGameTime:
+                if msg['opt'] == OptType.ServerStartGameTime:
                     if msg['args'][0] != room_id:
                         msg = None
                 else:

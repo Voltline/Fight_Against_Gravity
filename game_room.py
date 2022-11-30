@@ -6,7 +6,7 @@ import sys
 from content.game_manager import GameManager
 from content.maps.map_obj import Map
 from content.camera import Camera
-from content.msg_type import MsgType
+from Web.Modules.OptType import OptType
 from Web.Modules.safeserver import SocketServer
 import content.game_function as gf
 
@@ -98,7 +98,7 @@ class GameRoom:
     def send_start_game_time(self, start_time):
         """向所有玩家广播游戏开始时间"""
         msg = {
-            'type': MsgType.ServerStartGameTime,
+            'opt': OptType.ServerStartGameTime,
             'time': start_time,
             'args': [self.id],
             'kwargs': {}
@@ -108,7 +108,7 @@ class GameRoom:
     def send_gm_msg(self):
         """向房间所有玩家广播当前gm最新状态"""
         msg = {
-            'type': MsgType.AllObjs,
+            'opt': OptType.AllObjs,
             'time': gf.get_time(),
             'args': [self.gm.make_planets_msg(),
                      [self.gm.make_ships_msg(), self.gm.make_dead_players_name_msg()],
@@ -129,7 +129,7 @@ class GameRoom:
         self.players_address[player_name] = addr
 
         msg = {
-            'type': MsgType.CheckClock,
+            'opt': OptType.CheckClock,
             'time': gf.get_time(),
             'args': [self.id, player_name],
             'kwargs': {}
