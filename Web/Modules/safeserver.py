@@ -212,6 +212,5 @@ if __name__ == "__main__":
                 "info": item
             }
             print(msg)
-            for i in range(5):
-                server.send(address, msg)
+            server.send(address, msg)
         lt = server.get_connection()

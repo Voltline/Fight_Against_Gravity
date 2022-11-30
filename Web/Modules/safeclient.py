@@ -39,6 +39,7 @@ class SocketClient:
             self.__socket.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
         except Exception as err:
             print(err, "无法连接到服务器")
+            return 0
         self.message_thread = Thread(target=self.message_handler)
         self.message_thread.setDaemon(True)
         self.message_thread.start()
@@ -117,11 +118,28 @@ class SocketClient:
 
     def receive(self):
         """
-        返回数据
+        返回数据(阻塞方式）
+        """
+        res = self.que.get()
+        return res
+
+    def get_message(self):
+        """
+        获取消息（非阻塞）
+        若无消息返回None
         """
         if self.que.empty():
             return None
         res = self.que.get()
+        return res
+
+    def get_message_list(self):
+        """
+        获取消息队列
+        """
+        res = []
+        while not self.que.empty():
+            res.append(self.que.get())
         return res
 
     def close(self):
@@ -138,6 +156,7 @@ if __name__ == "__main__":
     cnt = 0
     while True:
         a = input()
+        a = "a" * int(a)
         if a == "0":
             break
         msg = {
@@ -145,10 +164,7 @@ if __name__ == "__main__":
             "info": a
         }
         print(msg)
-        for i in range(3):
-            client.send(msg)
-        for j in range(5):
-            msg = client.receive()
-            print(msg)
-        # time.sleep(0.01)
+        client.send(msg)
+        recv = client.receive()
+        print(recv)
     client.close()
