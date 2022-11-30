@@ -5,6 +5,7 @@ from threading import Thread
 import queue
 import base64
 import re
+from Crypto.Cipher import AES
 
 
 class SocketClient:
@@ -12,7 +13,8 @@ class SocketClient:
     使用TCP连接的socket函数封装
     """
 
-    def __init__(self, ip: str, port: int, heart_beat: int = -1, debug=False, warning=False):
+    def __init__(self, ip: str, port: int, heart_beat: int = -1, debug=False, warning=False, msg_len: int = 1024,
+                 password: str = None):
         """
         ip:服务端ip地址
         port:服务端端口
@@ -34,6 +36,12 @@ class SocketClient:
         """心跳检测"""
         self.que = queue.Queue()
         """消息队列"""
+        self.msg_len = msg_len
+        """消息长"""
+        self.password = password.encode()
+        """加密选项,如需加密请直接输入秘钥"""
+        if (password is not None) and (len(password) != 16):
+            raise ValueError("秘钥长度非16")
         try:
             self.__socket.connect((self.__host, self.__port))
             self.__socket.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
@@ -42,11 +50,25 @@ class SocketClient:
             return 0
         self.message_thread = Thread(target=self.message_handler)
         self.message_thread.setDaemon(True)
+        self.message_thread.setName("message_thread")
         self.message_thread.start()
         if heart_beat > 0:
             self.heart_thread = Thread(target=self.beating)
             self.heart_thread.setDaemon(True)
+            self.heart_thread.setName("heart_beat_thread")
             self.heart_thread.start()
+
+    def encrypt(self, message: str) -> bytes:
+        message = message.encode()
+        lenth = len(message) % 16
+        message = message + b'$' * (16 - lenth)
+        e = AES.new(self.password, AES.MODE_ECB).encrypt(message)
+        return e
+
+    def decrypt(self, msg: bytes) -> str:
+        d = AES.new(self.password, AES.MODE_ECB).decrypt(msg)
+        d = d.strip(b'$')
+        return d.decode()
 
     @staticmethod
     def decode(msg: str):
@@ -56,45 +78,50 @@ class SocketClient:
         """
         res = []
         msg_list = re.findall("-S-([^-]*?)-E-", msg)
-        # print(msg_list)
         for item in msg_list:
             msg = item[:]
-            # print(msg)
             msg = base64.b64decode(msg)
-            # print(msg.decode())
             res.append(msg.decode())
         return res
 
     @staticmethod
-    def encode(msg: str):
-        msg = base64.b64encode(msg.encode())
-        msg = msg.decode()
-        # print(msg)
-        msg = "-S-" + msg + "-E-"
-        # print(msg)
-        return msg
+    def encode(message: str):
+        message = base64.b64encode(message.encode())
+        message = message.decode()
+        message = "-S-" + message + "-E-"
+        return message
 
     def message_handler(self):
         try:
             while True:
-                lenth = 1024
-                recv = self.__socket.recv(lenth).decode()
-                # 粘连包切片
-                tmpmsg = self.decode(recv)
-                for item in tmpmsg:
-                    msg = None
+                recv_segment = self.__socket.recv(self.msg_len)
+                if self.password:
                     try:
-                        msg = json.loads(item)
-                        if msg["opt"] != 0:
-                            self.que.put(msg)
+                        recv_segment = self.decrypt(recv_segment)
+                    except UnicodeError:
+                        print("[client info]消息解密失败,请检查与服务端的秘钥是否一致")
+                        continue
+                else:
+                    recv_segment = recv_segment.decode()
+                # 粘连包切片
+                tmpmsg = self.decode(recv_segment)
+                for item in tmpmsg:
+                    message = None
+                    try:
+                        message = json.loads(item)
+                        if message["opt"] != 0:
+                            self.que.put(message)
                     except Exception as err:
                         if self.warnig:
-                            print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
+                            print("[warning info]消息{}不是json格式报文,未解析".format(message), err)
                         self.que.put(item)
                     if self.debug:
-                        print("[debug]", msg)
-        except:
-            print("[client info]client closed")
+                        if len(item) <= 150:
+                            print("[debug info] receive", item, len(item))
+                        else:
+                            print("[debug info] receive msg, lenth", len(item))
+        except Exception as err:
+            print("[client info]client closed", err)
 
     def beating(self):
         while True:
@@ -109,12 +136,15 @@ class SocketClient:
         """
         if type(message) == dict:
             message = json.dumps(message)
-        # base64
-        message = self.encode(message)
-        try:
-            self.__socket.sendall(message.encode())
-        except Exception as err:
-            print("[client info]client closed")
+        message = self.encode(message)  # base64
+        if self.debug:
+            print("[debug info]lenth of message after encode is", len(message))
+        if self.password:
+            message = self.encrypt(message)
+        else:
+            message = message.encode()
+        print("test")
+        self.__socket.sendall(message)
 
     def receive(self):
         """
@@ -152,19 +182,26 @@ class SocketClient:
 if __name__ == "__main__":
     ip = "localhost"
     port = 25555
-    client = SocketClient(ip, port, 5, True)
+    online = False
+    if online:
+        ip = "124.70.162.60"
+    client = SocketClient(ip, port, -1, debug=False, msg_len=8192, password="1234567887654321")
     cnt = 0
     while True:
         a = input()
-        a = "a" * int(a)
+        # a = "a" * a
         if a == "0":
             break
         msg = {
             "opt": -1,
             "info": a
         }
-        print(msg)
+        # print(msg)
         client.send(msg)
-        recv = client.receive()
+        recv = client.get_message()
+        while recv is None:
+            recv = client.get_message()
+
         print(recv)
+        time.sleep(0.02)
     client.close()
