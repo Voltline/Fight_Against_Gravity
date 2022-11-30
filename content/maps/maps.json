@@ -6,7 +6,9 @@
         "locy": 0,
         "spdx": 0,
         "spdy": 0,
-        "mass": 1e19
+        "mass": 1e19,
+        "index": 1,
+        "ratio": 1
       }
     ],
     "ships_info": [
@@ -33,14 +35,18 @@
         "locy": 0,
         "spdx": 0,
         "spdy": 60,
-        "mass": 1e19
+        "mass": 1e19,
+        "index": 1,
+        "ratio": 2
       },
       {
         "locx": 2000,
         "locy": 0,
         "spdx": 0,
         "spdy": -600,
-        "mass": 1e18
+        "mass": 1e18,
+        "index": 8,
+        "ratio": 0.8
       }
     ],
     "ships_info": [

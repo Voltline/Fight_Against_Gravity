@@ -11,14 +11,17 @@ class Planet(SpaceObj):
     """
     def __init__(self, settings,
                  loc0: Vector2 = Vector2(0, 0), spd0: Vector2 = Vector2(0, 0),
-                 mass: float = 1):
+                 mass: float = 1, img_index: int = 1, ratio: float = 1.0):
+        self.img_index = img_index
+        self.ratio = ratio
         super().__init__(settings, 1*loc0, 1*spd0)
         self.mass = mass
         self.radius = self.image.get_rect().width/2
         self.acc0 = Vector2(0, 0)  # 由于星球计算要并行，所以要存储之前的acc
 
     def __get_image__(self, settings):
-        return pygame.image.load(settings.planet_image_path).convert_alpha()
+        return pygame.transform.rotozoom(pygame.image.load(settings.make_planet_image_path(self.img_index)),
+                                         0, self.ratio).convert_alpha()
 
     def update_spd(self, dt):
         self.spd += (self.acc0 + self.acc) / 2 * dt
