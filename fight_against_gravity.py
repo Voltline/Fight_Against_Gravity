@@ -41,6 +41,9 @@ def local_game():
     gm.planets.add(planet2)
     # gm.planets.add(planet3)
 
+    gm.load_map(Map('静止双星系统'), ['1', '2'])
+    print(gm.center_v, gm.max_dis)
+
     # 设置camera
     camera = Camera(screen, settings, ship1.player_name, gm.ships)
     traces = []  # 保存所有尾迹

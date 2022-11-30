@@ -2,7 +2,7 @@ import threading
 import pygame
 
 from all_settings import Settings
-from content.msg_type import MsgType
+from Web.Modules.OptType import OptType
 from Web.Modules.safeserver import SocketServer
 from game_room import GameRoom
 
@@ -23,7 +23,6 @@ class Server:
         # 开启一局游戏的步骤：
         # 房主点击开始游戏按钮，服务器收集{房间id,所有玩家id,地图名字}并调用创建游戏函数
         # 模拟时收集信息步骤省略
-
         self.net.start()
         clock = pygame.time.Clock()  # 准备时钟
 
@@ -38,7 +37,7 @@ class Server:
         messages = self.net.get_message()
         for address, msg in messages:
             print(address, msg)
-            mtype = msg['type']
+            mopt = msg['opt']
             if msg['time']:
                 time = msg['time']
             if msg['args']:
@@ -46,16 +45,16 @@ class Server:
             if msg['kwargs']:
                 kwargs = msg['kwargs']
 
-            if mtype == MsgType.StartGame:
+            if mopt == OptType.StartGame:
                 room_id, map_name, player_names = args
                 self.start_game(room_id, map_name, player_names)
-            elif mtype == MsgType.StopGame:
+            elif mopt == OptType.StopGame:
                 room_id = args[0]
                 self.rooms[room_id].is_run[0] = False
-            elif mtype == MsgType.PlayerCtrl:
+            elif mopt == OptType.PlayerCtrl:
                 room_id, player_name, ctrl_msg = args
                 self.rooms[room_id].load_ctrl_msg(player_name, ctrl_msg)
-            elif mtype == MsgType.CheckClock:
+            elif mopt == OptType.CheckClock:
                 room_id, player_name = args
                 self.rooms[room_id].send_check_clock_msg(player_name, address)
 

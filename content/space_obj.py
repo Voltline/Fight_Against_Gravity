@@ -2,6 +2,7 @@
 import pygame
 from pygame import Vector2
 from content.physics import gvt_acc
+from content.physics import G
 from content.obj_msg import ObjMsg
 
 
@@ -85,5 +86,19 @@ class SpaceObj(pygame.sprite.Sprite):
         """通过消息更新自身状态"""
         msg = ObjMsg(obj_msg=msg)
         self.loc.update(msg.locx, msg.locy)
+        self.rect.center = self.loc
         self.spd.update(msg.spdx, msg.spdy)
         self.acc.update(msg.accx, msg.accy)
+
+    def get_ep_d_m(self, planets) -> float:
+        """获取Ep/m的值(引力势能除以质量)"""
+        epdm = 0
+        for planet in planets:
+            if self is not planet:
+                epdm -= G*planet.mass/(self.loc-planet.loc).length()
+        return epdm
+
+    def get_ek_d_m(self, center_v: Vector2) -> float:
+        """获取Ek/m的值(动能除以质量)"""
+        v = self.spd - center_v
+        return 0.5*v*v

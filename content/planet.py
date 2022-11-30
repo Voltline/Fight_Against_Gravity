@@ -1,6 +1,7 @@
 import pygame
 from pygame import Vector2
 from content.space_obj import SpaceObj
+from content.physics import G
 
 
 class Planet(SpaceObj):
@@ -21,4 +22,8 @@ class Planet(SpaceObj):
 
     def update_spd(self, dt):
         self.spd += (self.acc0 + self.acc) / 2 * dt
+
+    def get_ep(self, planets) -> float:
+        """获取引力势能"""
+        return self.get_ep_d_m(planets)*self.mass
 

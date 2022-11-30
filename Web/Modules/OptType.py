@@ -96,7 +96,7 @@ class OptType:
 
     """
     传输时,msg={
-        "type":msg_type(int)
+        "opt":msg_opt(int)
         "time":second(float)
         "args":msg_args(list)
         "kwargs":msg_kwargs(dict)

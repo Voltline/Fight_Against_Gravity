@@ -109,14 +109,14 @@ class Ship(SpaceObj):
 
     def make_ctrl_msg(self) -> list:
         """返回飞船操作状态信息"""
-        return [self.is_go_ahead, self.is_go_back,
-                self.is_turn_left, self.is_turn_right,
-                self.is_fire]
+        return list(map(int, [self.is_go_ahead, self.is_go_back,
+                              self.is_turn_left, self.is_turn_right,
+                              self.is_fire]))
 
-    def load_ctrl_msg(self, msg):
+    def load_ctrl_msg(self, msg: list):
         self.is_go_ahead, self.is_go_back, \
             self.is_turn_left, self.is_turn_right, \
-            self.is_fire = msg
+            self.is_fire = map(bool, msg)
 
     def update_by_msg(self, msg: list):
         """通过消息更新自身状态"""

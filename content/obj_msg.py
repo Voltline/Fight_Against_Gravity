@@ -3,6 +3,9 @@
 
 class ObjMsg:
     """传输的太空对象信息"""
+
+    R = 4  # 保留的小数位数
+
     def __init__(self, obj=None, obj_msg=None):
         """
         obj:SpaceObj 各类太空对象，从太空对象中获取数据
@@ -34,15 +37,18 @@ class ObjMsg:
             except IndexError as e:
                 pass
 
+    @staticmethod
+    def init(settings):
+        ObjMsg.R = settings.obj_msg_r
+
     def make_msg(self):
         """生成用于传输的消息"""
-        msg = [
-            self.locx, self.locy,
-            self.spdx, self.spdy,
-            self.accx, self.accy
-        ]
+        msg = []
+        for num in self.locx, self.locy, self.spdx, self.spdy, self.accx, self.accy:
+            msg.append(round(num, ObjMsg.R))
+        # msg = [locx, locy, spdx, spdy, accx, accy]
         try:
-            msg.append(self.angle)
+            msg.append(round(self.angle, ObjMsg.R))
             msg.append(self.player_name)
         except AttributeError as e:
             pass
