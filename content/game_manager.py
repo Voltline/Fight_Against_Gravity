@@ -89,11 +89,13 @@ class GameManager:
             player_name = player_names[i]
             ship = Ship(self.settings, loc, spd, angle=angle, player_name=player_name)
             self.ships.add(ship)
-        for planet_info in game_map.planets_info:
+        for planet_info in game_map.planets_info: # 加载星球
             loc = planet_info.loc
             spd = planet_info.spd
             mass = planet_info.mass
-            planet = Planet(self.settings, loc, spd, mass=mass)
+            index = planet_info.index
+            ratio = planet_info.ratio
+            planet = Planet(self.settings, loc, spd, mass, index, ratio)
             self.planets.add(planet)
 
         self.update_center_v_and_max_dis()   # 计算center_v和max_dis

@@ -8,6 +8,7 @@ from content.bullet import Bullet
 
 class Settings:
     """保存游戏的各类设置"""
+
     def __init__(self):
         with open("game_settings.json", "r") as f:
             inf = json.load(f)
@@ -102,12 +103,16 @@ class Settings:
         Bullet.init(self)
 
     def make_bullet_image(self):
-        image = pygame.Surface((2*self.bullet_radius+1, 2*self.bullet_radius+1))
+        image = pygame.Surface((2 * self.bullet_radius + 1, 2 * self.bullet_radius + 1))
         image.set_colorkey(self.bullet_color_key)  # 设置透明色
         image.fill(self.bullet_color_key)  # 用透明色填充图片
         pygame.draw.circle(image, self.bullet_color,  # 用实际色画实心圆
-                           (self.bullet_radius+1, self.bullet_radius+1), self.bullet_radius)
+                           (self.bullet_radius + 1, self.bullet_radius + 1), self.bullet_radius)
         return image
+
+    @staticmethod
+    def make_planet_image_path(index: int) -> str:
+        return "assets/texture/planet" + str(index) + ".png"
 
     def change_window(self, new_width: int, new_height: int, new_fps: int):
         """修改分辨率
