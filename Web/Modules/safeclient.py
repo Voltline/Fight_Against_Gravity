@@ -143,7 +143,6 @@ class SocketClient:
             message = self.encrypt(message)
         else:
             message = message.encode()
-        print("test")
         self.__socket.sendall(message)
 
     def receive(self):
@@ -185,7 +184,7 @@ if __name__ == "__main__":
     online = False
     if online:
         ip = "124.70.162.60"
-    client = SocketClient(ip, port, -1, debug=False, msg_len=8192, password="1234567887654321")
+    client = SocketClient(ip, port, 1, debug=False, msg_len=8192, password="1234567887654321")
     cnt = 0
     while True:
         a = input()

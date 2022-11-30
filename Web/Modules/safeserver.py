@@ -65,13 +65,15 @@ class SocketServer:
         except Exception as err:
             print("[err info] ", err, "Fail to build a socked listener")
 
-    def start(self):
-        """
-        开始接收连接
-        """
-        self.accept_thread = Thread(target=self.accept_client)
-        self.accept_thread.setDaemon(True)
-        self.accept_thread.start()
+        def start():
+            """
+            开始接收连接
+            """
+            self.accept_thread = Thread(target=self.accept_client)
+            self.accept_thread.setDaemon(True)
+            self.accept_thread.start()
+
+        start()
 
     def accept_client(self):
         """
@@ -238,9 +240,8 @@ if __name__ == "__main__":
     online = False
     if online:
         ip = "192.168.0.57"
-    server = SocketServer(ip, port, heart_time=-1, debug=False, warning=False, msg_len=8192,
+    server = SocketServer(ip, port, heart_time=1, debug=False, warning=False, msg_len=8192,
                           password="1234567887654321")
-    server.start()
     while True:
         messages = server.get_message()
         for item in messages:
