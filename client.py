@@ -90,6 +90,7 @@ class Client:
             self.check_events(gm, camera, is_run)  # 检查键鼠活动
             if ctrl_msg0 != gf.find_player_ship(gm.ships, PlayerInfo.player_name).make_ctrl_msg():  # 每0.1s发一次ctrlmsg
                 self.send_ctrl_msg(gm, room_id, now_sec)  # 发送控制消息
+            self.deal_msg(gm)  # 接收并处理消息
 
             surplus_dt += delta_t
             while surplus_dt >= physics_dt:
@@ -98,7 +99,6 @@ class Client:
                 gm.all_move(physics_dt)
                 # gf.ships_fire_bullet(settings, gm)
 
-            self.deal_msg(gm)  # 接收并处理消息
             if not is_run[0]:  # 如果游戏结束
                 self.send_stop_game_msg(room_id, now_sec)
 
@@ -130,24 +130,26 @@ class Client:
 
     def deal_msg(self, gm):
         """接收并处理消息"""
-        msg = self.net.receive()
-        if msg:
+        msg = self.net.get_message()
+        while msg:
             mopt = msg['opt']
-            if msg['time']:
+            if 'time' in msg:
                 time = msg['time']
-            if msg['args']:
+            if 'args' in msg:
                 args = msg['args']
-            if msg['kwargs']:
+            if 'kwargs' in msg:
                 kwargs = msg['kwargs']
 
             if mopt == OptType.AllObjs:
                 gm.client_update(args[0], args[1], args[2])
             elif mopt == OptType.Planets:
-                gm.client_update(planets_msg=args[0])
+                gm.client_update(planets_msg=args)
             elif mopt == OptType.AllShips:
                 gm.client_update(all_ships_msg=args)
             elif mopt == OptType.Bullets:
-                gm.client_update(bullets_msg=args[0])
+                gm.client_update(bullets_msg=args)
+
+            msg = self.net.get_message()
 
     def get_lag_time(self, room_id):
         """

@@ -2,13 +2,13 @@
 import pygame
 import json
 from content.maps.map_obj import Map
+from content.obj_msg import ObjMsg
+from content.bullet import Bullet
 
 
 class Settings:
     """保存游戏的各类设置"""
     def __init__(self):
-        Map.load_maps()  # 加载maps_info
-
         with open("game_settings.json", "r") as f:
             inf = json.load(f)
         # 窗口设置
@@ -91,7 +91,15 @@ class Settings:
         # net
         self.net_clock_check_num = 10  # 校时的次数
 
+        # ObjMsg
+        self.obj_msg_r = 4  # ObjMsg中float保留的小数位数
+
         del inf
+
+        # 有需要初始化类变量的类的初始化
+        Map.load_maps()  # 加载maps_info
+        ObjMsg.init(self)
+        Bullet.init(self)
 
     def make_bullet_image(self):
         image = pygame.Surface((2*self.bullet_radius+1, 2*self.bullet_radius+1))

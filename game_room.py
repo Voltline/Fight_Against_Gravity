@@ -38,7 +38,7 @@ class GameRoom:
         pygame.display.set_caption(self.settings.game_title)  # 设置窗口标题
 
         self.gm.load_map(self.map, self.player_names)
-        # camera = Camera(self.screen, self.settings, None, self.gm.ships)
+        camera = Camera(self.screen, self.settings, None, self.gm.ships)
         traces = []
 
         clock = pygame.time.Clock()  # 准备时钟
@@ -70,7 +70,7 @@ class GameRoom:
                     print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length())
                 print('子弹总数:', len(self.gm.bullets))
 
-            # self.check_events(camera, self.is_run)
+            self.check_events(camera, self.is_run)
             # 在server.main更新玩家操作状态
 
             surplus_dt += delta_t
@@ -88,7 +88,7 @@ class GameRoom:
             # gf.add_traces(self.settings, self.gm, traces, now_sec*1000)
 
             surplus_ratio = surplus_dt / physics_dt
-            # gf.update_screen(self.settings, self.gm, camera, traces, surplus_ratio)
+            gf.update_screen(self.settings, self.gm, camera, traces, surplus_ratio)
 
     def send_all(self, msg: dict):
         """向所有玩家广播msg"""
@@ -106,14 +106,32 @@ class GameRoom:
         self.send_all(msg)
 
     def send_gm_msg(self):
-        """向房间所有玩家广播当前gm最新状态"""
+        """
+        向房间所有玩家广播当前gm最新状态
+        分开发送，避免数据包过长
+        """
+        now_time = gf.get_time()
+        # 广播planets
         msg = {
-            'opt': OptType.AllObjs,
-            'time': gf.get_time(),
-            'args': [self.gm.make_planets_msg(),
-                     [self.gm.make_ships_msg(), self.gm.make_dead_players_name_msg()],
-                     self.gm.make_bullets_msg()],
-            'kwargs': {}
+            'opt': OptType.Planets,
+            'time': now_time,
+            'args': self.gm.make_planets_msg()
+        }
+        self.send_all(msg)
+
+        # 广播all_ships
+        msg = {
+            'opt': OptType.AllShips,
+            'time': now_time,
+            'args': [self.gm.make_ships_msg(), self.gm.make_dead_players_name_msg()]
+        }
+        self.send_all(msg)
+
+        # 广播bullets
+        msg = {
+            'opt': OptType.Bullets,
+            'time': now_time,
+            'args': self.gm.make_bullets_msg()
         }
         self.send_all(msg)
 

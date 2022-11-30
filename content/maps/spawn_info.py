@@ -7,7 +7,5 @@ class SpawnInfo:
     def __init__(self, loc: Vector2, spd: Vector2, mass=0, angle=0):
         self.loc = loc.copy()
         self.spd = spd.copy()
-        if mass:  # 飞船不需要质量参数
-            self.mass = mass
-        if angle:  # 星球不需要角度参数
-            self.angle = angle
+        self.mass = mass
+        self.angle = angle
