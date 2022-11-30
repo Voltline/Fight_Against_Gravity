@@ -119,6 +119,8 @@ class SocketClient:
         """
         返回数据
         """
+        if self.que.empty():
+            return None
         res = self.que.get()
         return res
 
