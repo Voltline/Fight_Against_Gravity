@@ -38,7 +38,7 @@ class GameRoom:
         pygame.display.set_caption(self.settings.game_title)  # 设置窗口标题
 
         self.gm.load_map(self.map, self.player_names)
-        camera = Camera(self.screen, self.settings, None, self.gm.ships)
+        camera = Camera(self.screen, self.settings)
         traces = []
 
         clock = pygame.time.Clock()  # 准备时钟
@@ -138,8 +138,6 @@ class GameRoom:
     def load_ctrl_msg(self, player_name, ctrl_msg):
         """加载操作信息"""
         ship = gf.find_player_ship(self.gm.ships, player_name)
-        if True in ctrl_msg:  # TODO:debug
-            print(ctrl_msg)
         ship.load_ctrl_msg(ctrl_msg)
 
     def send_check_clock_msg(self, player_name, addr):

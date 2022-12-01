@@ -59,7 +59,6 @@ class Client:
 
         clock = pygame.time.Clock()  # 准备时钟
         printed_sec = 0  # 测试用，上次输出调试信息的时间
-        sended_sec = 0  # 上次发送ctrlmsg的时间
         physics_dt = self.settings.physics_dt
         surplus_dt = 0  # 这次delta_t被physics_dt消耗剩下的时间
 
@@ -86,10 +85,12 @@ class Client:
                     print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length())
                 print('子弹总数:', len(gm.bullets))
 
-            ctrl_msg0 = gf.find_player_ship(gm.ships, PlayerInfo.player_name).make_ctrl_msg()
-            self.check_events(gm, camera, is_run)  # 检查键鼠活动
-            if ctrl_msg0 != gf.find_player_ship(gm.ships, PlayerInfo.player_name).make_ctrl_msg():  # 每0.1s发一次ctrlmsg
-                self.send_ctrl_msg(gm, room_id, now_sec)  # 发送控制消息
+            player_ship = gf.find_player_ship(gm.ships, PlayerInfo.player_name)
+            if player_ship:
+                ctrl_msg0 = player_ship.make_ctrl_msg()
+                self.check_events(gm, camera, is_run)  # 检查键鼠活动
+                if ctrl_msg0 != player_ship.make_ctrl_msg():  # 每0.1s发一次ctrlmsg
+                    self.send_ctrl_msg(gm, room_id, now_sec)  # 发送控制消息
             self.deal_msg(gm)  # 接收并处理消息
 
             surplus_dt += delta_t

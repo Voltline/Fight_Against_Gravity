@@ -6,7 +6,7 @@ import content.game_function as gf
 
 class Camera:
     """控制玩家视角的类"""
-    def __init__(self, screen, settings, player_name: str, ships: pygame.sprite.Group):
+    def __init__(self, screen, settings, player_ship=None):
         self.screen = screen
         self.loc: Vector2 = Vector2(0, 0)  # 位置
         self.zoom = 1  # 缩放程度
@@ -15,7 +15,7 @@ class Camera:
         self.zoom_max = settings.camera_zoom_max  # 缩放倍数上限(过高会导致fps过低)
         self.mode = 0  # 视角移动模式: 0:自由移动 1:跟随飞船
         self.mode_num = 2
-        self.player_ship = gf.find_player_ship(ships, player_name)  # 对应的玩家飞船
+        self.player_ship = player_ship  # 对应的玩家飞船
         self.d_loc = Vector2(0, 0)  # 鼠标上次移动的向量
         self.mouse_loc = Vector2(0, 0)  # 鼠标位置
         self.d_zoom = 0  # 鼠标滚轮上次移动的量
