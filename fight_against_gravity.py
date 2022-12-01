@@ -43,6 +43,8 @@ def local_game():
 
     gm.load_map(Map('静止双星系统'), ['1', '2'])
     print(gm.center_v, gm.max_dis)
+    ship1 = gm.ships.sprites()[1]
+    ship2 = gm.ships.sprites()[0]
 
     # 设置camera
     camera = Camera(screen, settings, gf.find_player_ship(gm.ships, '2'))
@@ -65,7 +67,7 @@ def local_game():
                 print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length())
             print('子弹总数:', len(gm.bullets))
 
-        gf.check_events(settings, gm, camera, is_run)  # 检查键鼠活动
+        gf.check_events(settings, ship1, ship2, camera, is_run)  # 检查键鼠活动
 
         surplus_dt += delta_t
         while surplus_dt >= physics_dt:

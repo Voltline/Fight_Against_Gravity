@@ -11,57 +11,57 @@ mouse_loc = Vector2(0, 0)
 mouse_d_loc = Vector2(0, 0)
 
 
-def check_events_keydown(event, settings, gm):
+def check_events_keydown(event, settings, ship1, ship2):
     """处理按下按键"""
     if event.key == settings.ship1_k_go_ahead:
-        gm.ships.sprites()[0].is_go_ahead = True
+        ship1.is_go_ahead = True
     elif event.key == settings.ship1_k_go_back:
-        gm.ships.sprites()[0].is_go_back = True
+        ship1.is_go_back = True
     elif event.key == settings.ship1_k_turn_left:
-        gm.ships.sprites()[0].is_turn_left = True
+        ship1.is_turn_left = True
     elif event.key == settings.ship1_k_turn_right:
-        gm.ships.sprites()[0].is_turn_right = True
+        ship1.is_turn_right = True
     elif event.key == settings.ship1_k_fire:
-        gm.ships.sprites()[0].is_fire = True
+        ship1.is_fire = True
 
     elif event.key == settings.ship2_k_go_ahead:
-        gm.ships.sprites()[1].is_go_ahead = True
+        ship2.is_go_ahead = True
     elif event.key == settings.ship2_k_go_back:
-        gm.ships.sprites()[1].is_go_back = True
+        ship2.is_go_back = True
     elif event.key == settings.ship2_k_turn_left:
-        gm.ships.sprites()[1].is_turn_left = True
+        ship2.is_turn_left = True
     elif event.key == settings.ship2_k_turn_right:
-        gm.ships.sprites()[1].is_turn_right = True
+        ship2.is_turn_right = True
     elif event.key == settings.ship2_k_fire:
-        gm.ships.sprites()[1].is_fire = True
+        ship2.is_fire = True
 
 
-def check_events_keyup(event, settings, gm):
+def check_events_keyup(event, settings, ship1, ship2):
     """处理松开按键"""
     if event.key == settings.ship1_k_go_ahead:
-        gm.ships.sprites()[0].is_go_ahead = False
+        ship1.is_go_ahead = False
     elif event.key == settings.ship1_k_go_back:
-        gm.ships.sprites()[0].is_go_back = False
+        ship1.is_go_back = False
     elif event.key == settings.ship1_k_turn_left:
-        gm.ships.sprites()[0].is_turn_left = False
+        ship1.is_turn_left = False
     elif event.key == settings.ship1_k_turn_right:
-        gm.ships.sprites()[0].is_turn_right = False
+        ship1.is_turn_right = False
     elif event.key == settings.ship1_k_fire:
-        gm.ships.sprites()[0].is_fire = False
+        ship1.is_fire = False
 
     elif event.key == settings.ship2_k_go_ahead:
-        gm.ships.sprites()[1].is_go_ahead = False
+        ship2.is_go_ahead = False
     elif event.key == settings.ship2_k_go_back:
-        gm.ships.sprites()[1].is_go_back = False
+        ship2.is_go_back = False
     elif event.key == settings.ship2_k_turn_left:
-        gm.ships.sprites()[1].is_turn_left = False
+        ship2.is_turn_left = False
     elif event.key == settings.ship2_k_turn_right:
-        gm.ships.sprites()[1].is_turn_right = False
+        ship2.is_turn_right = False
     elif event.key == settings.ship2_k_fire:
-        gm.ships.sprites()[1].is_fire = False
+        ship2.is_fire = False
 
 
-def check_events(settings, gm, camera, is_run):
+def check_events(settings, ship1, ship2, camera, is_run):
     """响应键盘和鼠标事件"""
     global mouse_loc, mouse_d_loc
     mouse_loc.x, mouse_loc.y = pygame.mouse.get_pos()
@@ -86,9 +86,9 @@ def check_events(settings, gm, camera, is_run):
             camera.d_zoom = event.y
 
         elif event.type == pygame.KEYDOWN:
-            check_events_keydown(event, settings, gm)
+            check_events_keydown(event, settings, ship1, ship2)
         elif event.type == pygame.KEYUP:
-            check_events_keyup(event, settings, gm)
+            check_events_keyup(event, settings, ship1, ship2)
 
         event = pygame.event.poll()
 
