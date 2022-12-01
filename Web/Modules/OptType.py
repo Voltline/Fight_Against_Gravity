@@ -48,8 +48,10 @@ class OptType:
     {
         "opt" : 11
         "user" : "str"
-        "status" : "ACK"/"NAK"
         "roomid" : int
+        "roomname" : "str"
+        "roommap" : "str" ("静止单星系统"/"静止双星系统")
+        "status" : "ACK"/"NAK"
     }
     """
     joinRoom = 12
@@ -91,6 +93,16 @@ class OptType:
             "owner" : user
             "size" : int #玩家人数
         }]
+    }
+    """
+    startgame = 16
+    """
+    目前玩家房主没分开，且玩家start_game就是准备好了
+    {
+        "opt" : 16
+        "user" : "str"
+        "roomid" : "id"
+        "status" : "ACK" / "NAK“
     }
     """
 
