@@ -3,6 +3,8 @@
     "Reg_IP": "47.100.69.244",
     "Reg_Port": 25555,
     "Game_IP": "124.223.215.89",
+    "Game_Local_IP": "124.223.215.89",
+    "Game_Online_IP": "124.223.215.89",
     "Game_Port": 25555,
     "heart_beat": 5
   },

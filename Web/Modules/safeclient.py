@@ -19,6 +19,10 @@ class SocketClient:
         ip:服务端ip地址
         port:服务端端口
         heart_beat:心跳检测 默认0
+        debug: debug选项
+        warning: warning选项
+        msg_len: 报文长度 默认1024 实测在每秒60帧，4Mbps情况下，报文长度最高3000，否则丢包
+        password：AES加密秘钥，默认None
         初始化
         初始化后已经和服务端建立了socket连接
         """
@@ -186,10 +190,10 @@ if __name__ == "__main__":
     online = False
     if online:
         ip = "124.70.162.60"
-    client = SocketClient(ip, port, 1, debug=False, msg_len=8192)
+    client = SocketClient(ip, port, heart_beat=10, debug=False, msg_len=8192, password="0123456789abcdef")
     cnt = 0
+    a = input()
     while True:
-        a = input()
         # a = "a" * a
         if a == "0":
             break
@@ -198,6 +202,8 @@ if __name__ == "__main__":
             "info": a
         }
         # print(msg)
+        client.send(msg)
+        client.send(msg)
         client.send(msg)
         recv = client.get_message()
         while recv is None:

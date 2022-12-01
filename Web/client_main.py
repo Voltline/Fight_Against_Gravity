@@ -15,13 +15,14 @@ class ClientMain:
         os.chdir(fag_directory)
         with open("Web/Modules/settings.json", "r") as f:
             settings = json.load(f)
-        ip = settings["Client"]["Game_IP"]
+        ip = settings["Client"]["Game_Online_IP"]
         port = settings["Client"]["Game_Port"]
+        heart_beat = settings["Client"]["heart_beat"]
         if _debug_:
             ip = "localhost"
             port = 25555
 
-        self.client = safeclient.SocketClient(ip, port, heart_beat=5)
+        self.client = safeclient.SocketClient(ip, port, heart_beat=heart_beat)
         self.user = None
         self.roomid = None
 
@@ -47,10 +48,12 @@ class ClientMain:
             print("登陆失败 请重新启动游戏")
             return False
 
-    def creatroom(self):
+    def creatroom(self, roomname, roommap):
         msg = {
             "opt": OptType.creatRoom,
-            "user": self.user
+            "user": self.user,
+            "roomname": roomname,
+            "roommap": roommap
         }
         self.client.send(msg)
         recv = self.client.receive()
@@ -77,6 +80,21 @@ class ClientMain:
         else:
             pass
 
+    def startgame(self):
+        msg = {
+            "opt": OptType.startgame,
+            "user": self.user,
+            "roomid": self.roomid
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        if recv["status"] == "NAK":
+            return False
+        elif recv["status"] == "ACK":
+            return True
+        else:
+            pass
+
     def start(self):
         self.user = input("input the user name")
         password = input("input the pass word")
@@ -88,11 +106,18 @@ class ClientMain:
             if opt == 0:
                 break
             if opt == 1:
-                print("get1")
-                print(self.creatroom())
+                print("creat room")
+                roomname = input("input room name")
+                roommap = input("roommap")
+                print(self.creatroom(roomname, roommap))
             if opt == 2:
-                print("get2")
+                print("delete room")
                 print(self.deleteroom())
+            if opt == 3:
+                print("start game")
+                print(self.startgame())
+            else:
+                continue
         self.client.close()
         print("[client info] exit")
         exit(0)

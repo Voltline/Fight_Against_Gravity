@@ -63,9 +63,9 @@ class SocketServer:
         try:
             self.__socket.bind((self.__host, self.__port))
             self.__socket.listen(5)
-            # self.__socket.setsockopt(socket.SOL_SOCKET, socket.TCP_QUICKACK, True)
         except Exception as err:
             print("[err info] ", err, "Fail to build a socked listener")
+            exit(-1)
 
         def start():
             """
@@ -73,6 +73,7 @@ class SocketServer:
             """
             self.accept_thread = Thread(target=self.accept_client)
             self.accept_thread.setDaemon(True)
+            self.accept_thread.setName("accept_thread")
             self.accept_thread.start()
 
         start()
@@ -84,48 +85,48 @@ class SocketServer:
         while True:
             client, address = self.__socket.accept()
             print("[server info] client {0} connected".format(address))
+            client.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
             self.conn_poll.update({address: client})
             if self.heart_time > 0:
                 client.settimeout(self.heart_time)
-
-                client.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
             thread_message = Thread(target=self.message_handle, args=(client, address))
             thread_message.setDaemon(True)
+            thread_message.setName("message_" + str(address))
             thread_message.start()
 
-    def encrypt(self, msg: str) -> bytes:
-        msg = msg.encode()
-        lenth = len(msg) % 16
-        msg = msg + b'$' * (16 - lenth)
-        e = AES.new(self.password, AES.MODE_ECB).encrypt(msg)
+    def encrypt(self, message: str) -> bytes:
+        message = message.encode()
+        lenth = len(message) % 16
+        message = message + b'$' * (16 - lenth)
+        e = AES.new(self.password, AES.MODE_ECB).encrypt(message)
         return e
 
-    def decrypt(self, msg: bytes) -> str:
-        d = AES.new(self.password, AES.MODE_ECB).decrypt(msg)
+    def decrypt(self, message: bytes) -> str:
+        d = AES.new(self.password, AES.MODE_ECB).decrypt(message)
         d = d.strip(b'$')
         return d.decode()
 
     @staticmethod
-    def decode(msg: str):
+    def decode(message: str):
         """
         mathch all messsage in the msg
         return list
         """
         res = []
-        msg_list = re.findall("-S-([^-]*?)-E-", msg)
+        msg_list = re.findall("-S-([^-]*?)-E-", message)
         # print(msg_list)
         for item in msg_list:
-            msg = item[:]
-            msg = base64.b64decode(msg)
-            res.append(msg.decode())
+            message = item[:]
+            message = base64.b64decode(message)
+            res.append(message.decode())
         return res
 
     @staticmethod
-    def encode(msg: str):
-        msg = base64.b64encode(msg.encode())
-        msg = msg.decode()
-        msg = "-S-" + msg + "-E-"
-        return msg
+    def encode(message: str):
+        message = base64.b64encode(message.encode())
+        message = message.decode()
+        message = "-S-" + message + "-E-"
+        return message
 
     def message_handle(self, client: socket.socket, address):
         """
@@ -159,6 +160,9 @@ class SocketServer:
                 if self.password:
                     try:
                         recv = self.decrypt(recv)
+                    except ValueError as err:
+                        print("[server info]消息解密失败，请检查{}数据是否加密或秘钥是否一致".format(address), err)
+                        continue
                     except UnicodeError:
                         print("[server info]消息解密失败,请检查与{}的秘钥是否一致".format(address))
                         continue
@@ -166,23 +170,23 @@ class SocketServer:
                     recv = recv.decode()
                 # 粘连包切片
                 tmpmsg = self.decode(recv)
-                for msg in tmpmsg:
+                for message in tmpmsg:
                     if self.debug:
-                        if (len(msg) <= 50):
-                            print("[debug info]{recv %d lenth msg from%s}:%s" % (len(msg), address, msg))
+                        if len(message) <= 50:
+                            print("[debug info]{recv %d lenth msg from%s}:%s" % (len(message), address, message))
                         else:
-                            print("[debug info]{recv %d lenth msg from%s}" % (len(msg), address))
+                            print("[debug info]{recv %d lenth msg from%s}" % (len(message), address))
                     try:
-                        msg = json.loads(msg)
-                        if msg["opt"] != 0:
+                        message = json.loads(message)
+                        if message["opt"] != 0:
                             # 0是heart beat 不存入消息队列
-                            self.que.put((address, msg))
+                            self.que.put((address, message))
                     except Exception as err:
                         if self.warning:
-                            print("[warning info]消息{}不是json格式报文,未解析".format(msg), err)
+                            print("[warning info]消息{}不是json格式报文,未解析".format(message), err)
                         if self.debug:
                             exit(-1)
-                        self.que.put((address, msg))
+                        self.que.put((address, message))
 
     def get_message(self):
         """
@@ -212,26 +216,26 @@ class SocketServer:
         except Exception as err:
             print("[err info] ", err, "连接未找到")
 
-    def send(self, address, msg):
+    def send(self, address, message):
         """
         msg:支持dict（json）/str格式
         """
         try:
             client: socket
             client = self.conn_poll[address]
-            if type(msg) == dict:
-                msg = json.dumps(msg)
+            if type(message) == dict:
+                message = json.dumps(message)
             if self.debug:
-                if (len(msg) < 50):
-                    print("[debug info]sending", msg)
+                if len(message) < 50:
+                    print("[debug info]sending", message)
                 else:
-                    print("[debug info]sending %d lenth message" % len(msg))
-            msg = self.encode(msg)
+                    print("[debug info]sending %d lenth message" % len(message))
+            message = self.encode(message)
             if self.password:
-                msg = self.encrypt(msg)
+                message = self.encrypt(message)
             else:
-                msg = msg.encode()
-            client.sendall(msg)
+                message = message.encode()
+            client.sendall(message)
         except Exception as err:
             print("[err info] ", err, "发送失败")
 
@@ -242,7 +246,8 @@ if __name__ == "__main__":
     online = False
     if online:
         ip = "192.168.0.57"
-    server = SocketServer(ip, port, heart_time=1, debug=False, warning=False, msg_len=8192)
+    server = SocketServer(ip, port, heart_time=10, debug=False, warning=False, msg_len=8192,
+                          password="0123456789abcdef")
     while True:
         messages = server.get_message()
         for item in messages:
