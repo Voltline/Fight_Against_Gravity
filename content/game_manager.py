@@ -33,11 +33,9 @@ class GameManager:
         for bullet in self.bullets:
             bullet.move(delta_t, self.planets)
 
-        bullets0 = self.bullets.copy()
-        self.bullets.empty()
-        for bullet in bullets0:
-            if not bullet.check_del(self.planets, self.center_v, self.max_dis):
-                self.bullets.add(bullet)
+        for bullet in self.bullets:  # 实测这样更快
+            if bullet.check_del(self.planets, self.center_v, self.max_dis):
+                self.bullets.remove(bullet)
 
     def check_bullets_planets_collisions(self):
         """使用圆形碰撞检测"""

@@ -86,9 +86,9 @@ class Client:
                 print('子弹总数:', len(gm.bullets))
 
             player_ship = gf.find_player_ship(gm.ships, PlayerInfo.player_name)
+            self.check_events(gm, camera, is_run)  # 检查键鼠活动
             if player_ship:
                 ctrl_msg0 = player_ship.make_ctrl_msg()
-                self.check_events(gm, camera, is_run)  # 检查键鼠活动
                 if ctrl_msg0 != player_ship.make_ctrl_msg():  # 每0.1s发一次ctrlmsg
                     self.send_ctrl_msg(gm, room_id, now_sec)  # 发送控制消息
             self.deal_msg(gm)  # 接收并处理消息
