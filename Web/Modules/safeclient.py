@@ -38,8 +38,10 @@ class SocketClient:
         """消息队列"""
         self.msg_len = msg_len
         """消息长"""
-        self.password = password.encode()
+        self.password = None
         """加密选项,如需加密请直接输入秘钥"""
+        if password:
+            self.password = password.encode()
         if (password is not None) and (len(password) != 16):
             raise ValueError("秘钥长度非16")
         try:
@@ -47,7 +49,7 @@ class SocketClient:
             self.__socket.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
         except Exception as err:
             print(err, "无法连接到服务器")
-            return 0
+            exit(-1)
         self.message_thread = Thread(target=self.message_handler)
         self.message_thread.setDaemon(True)
         self.message_thread.setName("message_thread")
@@ -184,7 +186,7 @@ if __name__ == "__main__":
     online = False
     if online:
         ip = "124.70.162.60"
-    client = SocketClient(ip, port, 1, debug=False, msg_len=8192, password="1234567887654321")
+    client = SocketClient(ip, port, 1, debug=False, msg_len=8192)
     cnt = 0
     while True:
         a = input()
