@@ -36,8 +36,8 @@
         "spdx": 0,
         "spdy": 60,
         "mass": 1e19,
-        "index": 1,
-        "ratio": 2
+        "index": 9,
+        "ratio": 1.6
       },
       {
         "locx": 2000,
