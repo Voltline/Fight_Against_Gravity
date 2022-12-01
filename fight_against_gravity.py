@@ -45,7 +45,7 @@ def local_game():
     print(gm.center_v, gm.max_dis)
 
     # 设置camera
-    camera = Camera(screen, settings, '1', gm.ships)
+    camera = Camera(screen, settings, gf.find_player_ship(gm.ships, '2'))
     traces = []  # 保存所有尾迹
 
     clock = pygame.time.Clock()  # 准备时钟

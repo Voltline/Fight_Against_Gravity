@@ -23,7 +23,6 @@ class Server:
         # 开启一局游戏的步骤：
         # 房主点击开始游戏按钮，服务器收集{房间id,所有玩家id,地图名字}并调用创建游戏函数
         # 模拟时收集信息步骤省略
-        self.net.start()
         clock = pygame.time.Clock()  # 准备时钟
 
         # 不断接收消息
