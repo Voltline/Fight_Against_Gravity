@@ -26,7 +26,7 @@
     "planet_image_path": "assets/texture/planet.png"
   },
   "Ships": {
-    "ship_image_path": "assets/texture/ship.png",
+    "ship_image_path": "assets/texture/ship3.png",
     "ship_hp": 100,
     "ship_go_acc": 50,
     "ship_turn_spd": 1.7,
