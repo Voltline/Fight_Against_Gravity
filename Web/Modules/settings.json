@@ -12,5 +12,5 @@
     "SMTP_Server": "smtp.yeah.net",
     "SMTP_Port": 465
   },
-  "AES_Public_Key": "I4YYTad9pvg2Wg9W"
+  "AES_Key": "I4YYTad9pvg2Wg9W"
 }

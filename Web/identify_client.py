@@ -8,12 +8,12 @@ OptType = OptType.OptType
 class IdentifyClient:
     def __init__(self, reg_ip: str, reg_port: int,
                  game_ip: str, game_port: int,
-                 heart_time: int = -1):
+                 password: str, heart_time: int = -1):
         """初始化
         :参数：reg_ip, reg_port：注册服务器与端口，game_ip, game_port：游戏服务器与端口, hear_time：心跳时间
         :返回：服务器返回验证码
         """
-        self.__reg_client = safeclient.SocketClient(reg_ip, reg_port)
+        self.__reg_client = safeclient.SocketClient(reg_ip, reg_port,  password=password)
         self.__game_client = safeclient.SocketClient(game_ip, game_port, heart_beat=5)
 
     def get_check_code(self, username: str, email: str) -> str:
@@ -89,8 +89,9 @@ def createIdentifyClient() -> IdentifyClient:
     reg_port = information["Client"]["Reg_Port"]
     log_ip = information["Client"]["Game_IP"]
     log_port = information["Client"]["Game_Port"]
+    password = information["AES_Key"]
     information = ""
-    client = IdentifyClient(reg_ip, reg_port, log_ip, log_port)
+    client = IdentifyClient(reg_ip, reg_port, log_ip, log_port, password=password)
     return client
 
 if __name__ == "__main__":

@@ -73,13 +73,14 @@ class ServerMain:
             information = json.load(f)
         reg_ip = information["Client"]["Reg_IP"]
         reg_port = information["Client"]["Reg_Port"]
+        key = information["AES_Key"]
         information = ''
         msg = {
             "opt": OptType.loginTransfer,
             "user": user,
             "password": password
         }
-        check_client = safeclient.SocketClient(reg_ip, reg_port)
+        check_client = safeclient.SocketClient(reg_ip, reg_port, password=key)
         check_client.send(msg)
         status = check_client.receive()
         check_client.close()
@@ -189,7 +190,6 @@ class ServerMain:
             self.user_list.pop(item)
 
     def start(self):
-        self.server.start()
         print("[game info] server start")
         while True:
             # 处理消息队列

@@ -2,6 +2,7 @@ import Web.Modules.safeserver as safeserver
 import Web.Modules.database_operate as database_operate
 import Web.Modules.send_email as send_email
 import Web.Modules.OptType as OptType
+import json
 import time
 
 OptType = OptType.OptType
@@ -10,14 +11,13 @@ user_list = []  # {"username" : address}
 
 
 class IdentifyServer:
-    def __init__(self, ip: str, port: int, heart_time: int = -1, debug: bool = False):
+    def __init__(self, ip: str, port: int, password: str, heart_time: int = -1, debug: bool = False):
         """注册服务器初始化
         :参数: ip: 服务器ip， port: 端口， heart_time: 心跳时间（默认-1），debug: 调试模式
         :返回: 无返回
         """
-        self.server = safeserver.SocketServer(ip, port, heart_time, debug)
         self.all_reg_acc = database_operate.get_all_reg_acc() # 服务器对象内置所有账户的字典
-        self.server.start()
+        self.server = safeserver.SocketServer(ip, port, heart_time, debug, password=password)
 
     def sendCheckCode_opt(self, username: str, email: str, addr: tuple):
         """发送验证码操作
@@ -85,12 +85,14 @@ class IdentifyServer:
 
 
 if __name__ == "__main__":
+    with open("Modules/settings.json", 'r') as f:
+        information = json.load(f)
     ip = ""
     port = 25555
+    password = information["AES_Key"]
     debug = True
-    server = IdentifyServer(ip, port, debug=debug)
-    while True:
-        try:
-            server.start()
-        except Exception as e:
-            print(f"[Error] {time.ctime()} : {e}")
+    try:
+        server = IdentifyServer(ip, port, debug=debug, password=password)
+        server.start()
+    except Exception as e:
+        print(f"[Error] {time.ctime()} : {e}")
