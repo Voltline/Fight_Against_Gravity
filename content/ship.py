@@ -17,6 +17,7 @@ class Ship(SpaceObj):
                  angle: float = 0, player_name='?Unknown Player?'):
         super().__init__(settings, 1 * loc0, 1 * spd0)
         self.image0 = self.image
+        self.rect0 = self.image0.get_rect()
         self.angle = angle
         self.update_image()
         self.player_name = player_name  # 飞船所属玩家的名字
@@ -80,9 +81,10 @@ class Ship(SpaceObj):
             if now_time - self.fired_time >= 1 / self.fire_rate:  # 限制射速
                 self.fired_time = now_time
                 ship_dir = Vector2(cos(self.angle), sin(self.angle))
-                new_bullet_loc = self.loc + 0.6 * self.image0.get_width() * ship_dir
+                new_bullet_loc = self.loc + 0.6 * self.rect0.width * ship_dir
                 new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
                 new_bullet = Bullet(settings, new_bullet_loc, new_bullet_spd)
+                new_bullet.loc0 = self.loc0 + 0.6 * self.rect0.width * ship_dir
                 bullets.add(new_bullet)
 
     def die(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):
