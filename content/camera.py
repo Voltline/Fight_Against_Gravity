@@ -6,7 +6,7 @@ import content.game_function as gf
 
 class Camera:
     """控制玩家视角的类"""
-    def __init__(self, screen, settings, player_ship=None):
+    def __init__(self, settings, screen, player_ship=None):
         self.screen = screen
         self.loc: Vector2 = Vector2(0, 0)  # 位置
         self.zoom = 1  # 缩放程度
@@ -78,4 +78,3 @@ class Camera:
         pos0_screen = list(map(int, self.real_to_screen(loc0_real)))  # 转换后screen上的坐标，为二元组
         pos1_screen = list(map(int, self.real_to_screen(loc1_real)))
         pygame.draw.line(self.screen, color, pos0_screen, pos1_screen)
-

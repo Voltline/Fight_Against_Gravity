@@ -6,7 +6,7 @@ class ObjMsg:
 
     R = 4  # 保留的小数位数
 
-    def __init__(self, obj=None, obj_msg=None):
+    def __init__(self, obj=None, msg=None):
         """
         obj:SpaceObj 各类太空对象，从太空对象中获取数据
         msg:list 传输的消息，从消息中获取数据
@@ -24,16 +24,16 @@ class ObjMsg:
             except AttributeError as e:
                 pass
 
-        elif obj_msg:
-            self.locx = obj_msg[0]
-            self.locy = obj_msg[1]
-            self.spdx = obj_msg[2]
-            self.spdy = obj_msg[3]
-            self.accx = obj_msg[4]
-            self.accy = obj_msg[5]
+        elif msg:
+            self.locx = msg[0]
+            self.locy = msg[1]
+            self.spdx = msg[2]
+            self.spdy = msg[3]
+            self.accx = msg[4]
+            self.accy = msg[5]
             try:  # 如果是飞船消息
-                self.angle = obj_msg[6]
-                self.player_name = obj_msg[7]
+                self.angle = msg[6]
+                self.player_name = msg[7]
             except IndexError as e:
                 pass
 
@@ -58,5 +58,5 @@ class ObjMsg:
 
 if __name__ == '__main__':
     msg = [0, 1, 2, 3, 4, 5]
-    obj_msg = ObjMsg(obj_msg=msg)
+    obj_msg = ObjMsg(msg=msg)
     print(obj_msg)

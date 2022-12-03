@@ -75,7 +75,6 @@ def check_events(settings, ship1, ship2, camera, is_run):
             sys.exit()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
-
             if event.button == 2:  # 是否按下鼠标中键
                 camera.change_mode()
         elif event.type == pygame.MOUSEMOTION:
@@ -123,12 +122,6 @@ def update_screen(settings, gm, camera, traces: list, surplus_ratio):
     pygame.display.flip()
 
 
-def ships_fire_bullet(settings, gm):
-    for ship in gm.ships:
-        if ship.is_alive and ship.is_fire:
-            ship.fire_bullet(settings, gm.bullets)
-
-
 def add_traces(settings, gm, traces, now_ms):
     """在traces里添加尾迹"""
     for objs in gm.ships, gm.planets:
@@ -160,3 +153,12 @@ def find_player_ship(ships, player_name):
                 return ship
     return None
 
+
+def init_pygame_window(settings) -> pygame.Surface:
+    """初始化pygame窗口，返回screen"""
+    pygame.init()
+    icon = pygame.image.load(settings.icon_img_path)
+    pygame.display.set_icon(icon)
+    screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))  # 设置窗口大小
+    pygame.display.set_caption(settings.game_title)  # 设置窗口标题
+    return screen
