@@ -34,7 +34,7 @@ class GameManager:
             bullet.move(delta_t, self.planets)
 
         for bullet in self.bullets:  # 实测这样更快
-            if bullet.check_del(self.planets, self.center_v, self.max_dis):
+            if bullet.check_del(self.planets, self.ships, self.center_v, self.max_dis):
                 self.bullets.remove(bullet)
 
     def check_bullets_planets_collisions(self):
