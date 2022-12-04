@@ -22,7 +22,7 @@ class GameRoom:
         self.player_names = player_names
         self.gm = GameManager(self.settings)
         self.screen = None
-        self.players_address = {}  # {player_name: address}
+        self.addresses = {}  # {player_name: address}
         self.is_run = [True]
 
         # 鼠标位置信息，每帧实时更新
@@ -38,7 +38,7 @@ class GameRoom:
         pygame.display.set_caption(self.settings.game_title)  # 设置窗口标题
 
         self.gm.load_map(self.map, self.player_names)
-        camera = Camera(self.screen, self.settings)
+        camera = Camera(self.settings, self.screen)
         traces = []
 
         clock = pygame.time.Clock()  # 准备时钟
@@ -49,15 +49,15 @@ class GameRoom:
 
         print('开始校时')
         # 校时并确定每个player对应的address
-        while len(self.players_address) != len(self.player_names):
-            print(self.players_address)
+        while len(self.addresses) != len(self.player_names):
+            # print(self.addresses)
             pass
         print('完成校时')
         time.sleep(5)
         print('开始发送游戏开始时间')
-        self.send_start_game_time(gf.get_time()+5)  # 等五秒之后开始游戏
+        self.send_start_game_time(gf.get_time()+3)  # 等3秒之后开始游戏
         print('游戏开始时间发送成功')
-        surplus_dt -= 5
+        surplus_dt -= 3
 
         while self.is_run[0]:
             delta_t = clock.tick(self.settings.max_fps) / 1000  # 获取delta_time(sec)并限制最大帧率
@@ -78,7 +78,7 @@ class GameRoom:
                 surplus_dt -= physics_dt
                 self.gm.check_collisions()
                 self.gm.all_move(physics_dt)
-                gf.ships_fire_bullet(self.settings, self.gm)
+                self.gm.ships_fire_bullet()
 
             # 向房间所有玩家广播当前gm最新状态
             if now_sec - sended_sec > 0.01:
@@ -92,7 +92,7 @@ class GameRoom:
 
     def send_all(self, msg: dict):
         """向所有玩家广播msg"""
-        for address in self.players_address.values():
+        for address in self.addresses.values():
             self.net.send(address, msg)
 
     def send_start_game_time(self, start_time):
@@ -142,7 +142,7 @@ class GameRoom:
 
     def send_check_clock_msg(self, player_name, addr):
         """对玩家发送校时消息"""
-        self.players_address[player_name] = addr
+        self.addresses[player_name] = addr
 
         msg = {
             'opt': OptType.CheckClock,
@@ -150,7 +150,7 @@ class GameRoom:
             'args': [self.id, player_name],
             'kwargs': {}
         }
-        self.net.send(self.players_address[player_name], msg)
+        self.net.send(self.addresses[player_name], msg)
 
     def check_events(self, camera, is_run):
         """响应键盘和鼠标事件"""

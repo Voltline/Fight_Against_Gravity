@@ -1,5 +1,10 @@
 """程序入口"""
+import pygame
+
+import content.game_function as gf
 from fight_against_gravity import local_game
+from local_game import LocalGame
+from all_settings import Settings
 
 """
 游戏操作：
@@ -13,4 +18,9 @@ u：玩家2的发射子弹u
 鼠标滚轮：视角缩放
 """
 
-local_game()
+# local_game()
+
+settings = Settings()  # 初始化设置类
+screen = gf.init_pygame_window(settings)
+game = LocalGame(settings, screen, '静止双星系统')
+game.main()

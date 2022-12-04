@@ -49,6 +49,6 @@ class Bullet(SpaceObj):
         if edm > 0 and min_dis > max_dis\
                 or edm > -1e-5 and min_dis > max_dis*2\
                 or edm > -1e-2 and min_dis > max_dis*3\
-                or min_dis > max_dis*5:
+                or min_dis > max_dis*4:
             return True
         return False

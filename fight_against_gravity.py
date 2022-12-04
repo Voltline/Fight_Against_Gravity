@@ -1,6 +1,5 @@
 import pygame
 from pygame import Vector2
-import threading  # 处理输入事件与绘制图形要和处理运动与碰撞分开，不然拖窗口会一起卡死
 
 from all_settings import Settings
 from content import game_function as gf
@@ -47,7 +46,7 @@ def local_game():
     ship2 = gm.ships.sprites()[0]
 
     # 设置camera
-    camera = Camera(screen, settings, gf.find_player_ship(gm.ships, '2'))
+    camera = Camera(settings, screen, gf.find_player_ship(gm.ships, '2'))
     traces = []  # 保存所有尾迹
 
     clock = pygame.time.Clock()  # 准备时钟
@@ -74,7 +73,8 @@ def local_game():
             surplus_dt -= physics_dt
             gm.check_collisions()
             gm.all_move(physics_dt)
-            gf.ships_fire_bullet(settings, gm)
+            gm.ships_fire_bullet()
+        gm.bullets_disappear()
         gf.add_traces(settings, gm, traces, now_ms)
 
         surplus_ratio = surplus_dt / physics_dt

@@ -33,6 +33,8 @@ class GameManager:
         for bullet in self.bullets:
             bullet.move(delta_t, self.planets)
 
+    def bullets_disappear(self):
+        """让对战斗不会再有影响的子弹消失，从而节省性能"""
         for bullet in self.bullets:  # 实测这样更快
             if bullet.check_del(self.planets, self.ships, self.center_v, self.max_dis):
                 self.bullets.remove(bullet)
@@ -87,7 +89,7 @@ class GameManager:
             player_name = player_names[i]
             ship = Ship(self.settings, loc, spd, angle=angle, player_name=player_name)
             self.ships.add(ship)
-        for planet_info in game_map.planets_info: # 加载星球
+        for planet_info in game_map.planets_info:  # 加载星球
             loc = planet_info.loc
             spd = planet_info.spd
             mass = planet_info.mass
@@ -112,7 +114,6 @@ class GameManager:
             other_m = sum_m - planet.mass
             other_mv = sum_mv - planet.spd * planet.mass
             other_v = other_mv / other_m
-            other_r = (sum_mr - planet.mass * planet.loc) / other_m
             v = planet.spd - other_v
             ek = 0.5 * planet.mass * v * v  # 动能
             ep = planet.get_ep(self.planets)  # 势能
@@ -171,3 +172,9 @@ class GameManager:
 
     def make_bullets_msg(self) -> list:
         return GameManager.group_make_msg(self.bullets)
+
+    def ships_fire_bullet(self):
+        """飞船发射子弹"""
+        for ship in self.ships:
+            if ship.is_alive and ship.is_fire:
+                ship.fire_bullet(self.settings, self.bullets)

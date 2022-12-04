@@ -54,7 +54,7 @@ class Client:
         """在线游戏，本地端的游戏函数"""
         gm = GameManager(self.settings)
         gm.load_map(Map(map_name), player_names)
-        camera = Camera(self.screen, self.settings, PlayerInfo.player_name, gm.ships)
+        camera = Camera(self.settings, self.screen, gf.find_player_ship(gm.ships, PlayerInfo.player_name))
         traces = []
 
         clock = pygame.time.Clock()  # 准备时钟
@@ -88,9 +88,7 @@ class Client:
             player_ship = gf.find_player_ship(gm.ships, PlayerInfo.player_name)
             self.check_events(gm, camera, is_run)  # 检查键鼠活动
             if player_ship:
-                ctrl_msg0 = player_ship.make_ctrl_msg()
-                if ctrl_msg0 != player_ship.make_ctrl_msg():  # 每0.1s发一次ctrlmsg
-                    self.send_ctrl_msg(gm, room_id, now_sec)  # 发送控制消息
+                self.send_ctrl_msg(gm, room_id, now_sec)  # 发送控制消息
             self.deal_msg(gm)  # 接收并处理消息
 
             surplus_dt += delta_t
