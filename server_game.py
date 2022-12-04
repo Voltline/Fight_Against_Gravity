@@ -59,12 +59,12 @@ class ServerGame(OnlineGame):
         self.gm.all_move(self.physics_dt)
         self.gm.ships_fire_bullet()
 
-    def send_msg(self):
+    def send_msgs(self):
         """发送消息"""
         # 向房间所有玩家广播当前gm最新状态
         if self.now_time - self.sended_time > 0.01:
-            self.sended_time = self.now_time
             self.send_gm_msg()
+            self.sended_time = self.now_time
 
     def send_gm_msg(self):
         """

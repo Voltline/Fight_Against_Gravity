@@ -54,14 +54,14 @@
         "locx": 500,
         "locy": 0,
         "spdx": 0,
-        "spdy": -900,
+        "spdy": -1060,
         "angle": 3.14159
       },
       {
         "locx": 2240,
         "locy": 0,
         "spdx": 0,
-        "spdy": -1100,
+        "spdy": -1135,
         "angle": 0
       }
     ]

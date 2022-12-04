@@ -19,11 +19,11 @@ class OnlineGame(FAGGame):
 
     def physic_loop(self):
         """物理dt更新的循环，在线游戏每次物理循环之前先收发、处理消息"""
-        self.send_msg()
+        self.send_msgs()
         self.deal_msgs()
         super().physic_loop()
 
-    def send_msg(self):
+    def send_msgs(self):
         """发送消息"""
         pass
 

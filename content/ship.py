@@ -125,3 +125,4 @@ class Ship(SpaceObj):
         super().update_by_msg(msg)
         msg = ObjMsg(msg=msg)
         self.angle = msg.angle
+        self.hp = msg.hp

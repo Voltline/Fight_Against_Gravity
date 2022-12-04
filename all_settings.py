@@ -85,7 +85,7 @@ class Settings:
 
         # Trace
         trace = inf['Trace']
-        self.trace_life_ms = trace['trace_life_ms']  # 尾迹保留时间
+        self.trace_life_sec = trace['trace_life_sec']  # 尾迹保留时间
         self.trace_color = trace['trace_color']  # 尾迹颜色
         del trace
 

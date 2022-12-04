@@ -21,10 +21,10 @@ class Client:
     port = 25555
 
     def __init__(self):
-        self.net = SocketClient(Client.ip, Client.port)  # 负责收发信息
+        self.net = SocketClient(Client.ip, Client.port, msg_len=4096)  # 负责收发信息
         self.settings = Settings()  # 初始化设置类
         self.screen = gf.init_pygame_window(self.settings)
-        self.game = None
+        self.game = ClientGame
 
     def main(self):
         """客户端主函数"""
@@ -98,7 +98,7 @@ class Client:
             if not is_run[0]:  # 如果游戏结束
                 self.send_stop_game_msg(room_id, now_sec)
 
-            gf.add_traces(self.settings, gm, traces, now_sec*1000)
+            gf.add_traces(self.settings, gm, traces, now_sec)
 
             surplus_ratio = surplus_dt / physics_dt
             gf.update_screen(self.settings, gm, camera, traces, surplus_ratio)

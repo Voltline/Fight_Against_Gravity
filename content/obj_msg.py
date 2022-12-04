@@ -1,6 +1,3 @@
-"""传输的太空对象信息"""
-
-
 class ObjMsg:
     """传输的太空对象信息"""
 
@@ -18,11 +15,10 @@ class ObjMsg:
             self.spdy = obj.spd.y
             self.accx = obj.acc.x
             self.accy = obj.acc.y
-            try:  # 如果是飞船
+            if hasattr(obj, 'angle'):  # 如果是飞船消息(这样子判断是为了避免循环import)
                 self.angle = obj.angle
+                self.hp = obj.hp
                 self.player_name = obj.player_name
-            except AttributeError as e:
-                pass
 
         elif msg:
             self.locx = msg[0]
@@ -31,11 +27,10 @@ class ObjMsg:
             self.spdy = msg[3]
             self.accx = msg[4]
             self.accy = msg[5]
-            try:  # 如果是飞船消息
+            if len(msg) == 9:  # 如果是飞船消息
                 self.angle = msg[6]
-                self.player_name = msg[7]
-            except IndexError as e:
-                pass
+                self.hp = msg[7]
+                self.player_name = msg[8]
 
     @staticmethod
     def init(settings):
@@ -49,6 +44,7 @@ class ObjMsg:
         # msg = [locx, locy, spdx, spdy, accx, accy]
         try:
             msg.append(round(self.angle, ObjMsg.R))
+            msg.append(self.hp)
             msg.append(self.player_name)
         except AttributeError as e:
             pass

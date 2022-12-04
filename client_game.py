@@ -132,7 +132,7 @@ class ClientGame(OnlineGame):
         elif event.key == self.settings.ship1_k_fire:
             self.player_ship.is_fire = False
 
-    def send_msg(self):
+    def send_msgs(self):
         """发送玩家控制消息"""
         ctrl_msg = self.player_ship.make_ctrl_msg()
         msg = {
@@ -187,6 +187,9 @@ class ClientGame(OnlineGame):
 
             msg = self.net.get_message()
 
+        # print(planets_msg)
+        # print(all_ships_msg)
+        # print(bullets_msg)
         self.gm.client_update(planets_msg=planets_msg, tick=planets_msg_tick)
         self.gm.client_update(all_ships_msg=all_ships_msg, tick=all_ships_msg_tick)
         self.gm.client_update(bullets_msg=bullets_msg, tick=bullets_msg_tick)
@@ -204,12 +207,12 @@ class ClientGame(OnlineGame):
         if not self.is_run:
             self.send_stop_game_msg(self.room_id, self.now_time)
         super().physic_loop()
-        gf.add_traces(self.settings, self.gm, self.traces, self.now_time*1000)
+        gf.add_traces(self.settings, self.gm, self.traces, self.now_time)
 
     def display(self):
         """更新屏幕"""
         surplus_ratio = self.surplus_dt / self.physics_dt
-        gf.update_screen(self.settings, self.gm, self.camera, self.traces, surplus_ratio)
+        gf.update_screen(self.settings, self.gm, self.camera, self.traces, surplus_ratio, self.now_time)
 
     def send_stop_game_msg(self, room_id, now_sec):
         msg = {
