@@ -122,7 +122,7 @@ class GameManager:
             if dis > self.max_dis:
                 self.max_dis = dis
 
-    def client_update(self, planets_msg=None, all_ships_msg=None, bullets_msg=None):
+    def client_update(self, planets_msg=None, all_ships_msg=None, bullets_msg=None, tick=-1):
         """通过msg更新gm"""
         if planets_msg:  # 更新planets
             i = 0

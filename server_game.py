@@ -71,11 +71,10 @@ class ServerGame(OnlineGame):
         向房间所有玩家广播当前gm最新状态
         分开发送，避免数据包过长
         """
-        now_time = gf.get_time()
         # 广播planets
         msg = {
             'opt': OptType.Planets,
-            'time': now_time,
+            'tick': self.now_tick,
             'args': self.gm.make_planets_msg()
         }
         self.send_all(msg)
@@ -83,7 +82,7 @@ class ServerGame(OnlineGame):
         # 广播all_ships
         msg = {
             'opt': OptType.AllShips,
-            'time': now_time,
+            'tick': self.now_tick,
             'args': [self.gm.make_ships_msg(), self.gm.make_dead_players_name_msg()]
         }
         self.send_all(msg)
@@ -91,7 +90,7 @@ class ServerGame(OnlineGame):
         # 广播bullets
         msg = {
             'opt': OptType.Bullets,
-            'time': now_time,
+            'tick': self.now_tick,
             'args': self.gm.make_bullets_msg()
         }
         self.send_all(msg)
@@ -101,12 +100,24 @@ class ServerGame(OnlineGame):
         ship = gf.find_player_ship(self.gm.ships, player_name)
         ship.load_ctrl_msg(ctrl_msg)
 
+    def send_check_clock_msg(self, player_name, addr):
+        """对玩家发送校时消息"""
+        self.addresses[player_name] = addr
+
+        msg = {
+            'opt': OptType.CheckClock,
+            'time': gf.get_time(),
+            'args': [self.room_id, player_name],
+            'kwargs': {}
+        }
+        self.net.send(self.addresses[player_name], msg)
+
     def check_events(self):
         """服务器不需要处理消息"""
         # TODO：调试完成后把此函数pass
         self.mouse_loc.update(pygame.mouse.get_pos())
         self.mouse_d_loc.update(pygame.mouse.get_rel())
-        self.camera.mouse_loc.physic_update(self.mouse_loc)
+        self.camera.mouse_loc.update(self.mouse_loc)
 
         event = pygame.event.poll()
         while event:
@@ -119,7 +130,7 @@ class ServerGame(OnlineGame):
             elif event.type == pygame.MOUSEMOTION:
                 mouse_keys = pygame.mouse.get_pressed()
                 if mouse_keys[2]:  # 如果鼠标右键被按下
-                    self.camera.d_loc.physic_update(self.mouse_d_loc)
+                    self.camera.d_loc.update(self.mouse_d_loc)
             elif event.type == pygame.MOUSEWHEEL:
                 self.camera.d_zoom = event.y
 

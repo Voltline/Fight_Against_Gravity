@@ -163,7 +163,15 @@ class ClientGame(OnlineGame):
                 kwargs = msg['kwargs']
 
             if opt == OptType.AllObjs:
-                self.gm.client_update(args[0], args[1], args[2])
+                if not planets_msg or planets_msg_tick < tick:
+                    planets_msg_tick = tick
+                    planets_msg = args[0]
+                if not all_ships_msg or all_ships_msg_tick < tick:
+                    all_ships_msg_tick = tick
+                    all_ships_msg = args[1]
+                if not bullets_msg or bullets_msg_tick < tick:
+                    bullets_msg_tick = tick
+                    bullets_msg = args[2]
             elif opt == OptType.Planets:
                 if not planets_msg or planets_msg_tick < tick:
                     planets_msg_tick = tick
