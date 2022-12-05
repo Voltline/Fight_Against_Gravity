@@ -16,7 +16,7 @@ class GameManager:
         self.dead_ships = pygame.sprite.Group()  # 死亡的飞船会加入这个group
         self.planets = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
-        self.center_v = 0  # 质心的速度
+        self.center_v = Vector2(0, 0)  # 质心的速度
         self.max_dis = 3e3  # 判断子弹消失的距离
 
     def all_move(self, delta_t):

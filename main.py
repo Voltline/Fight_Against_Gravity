@@ -22,5 +22,5 @@ u：玩家2的发射子弹u
 
 settings = Settings()  # 初始化设置类
 screen = gf.init_pygame_window(settings)
-game = LocalGame(settings, screen, '静止双星系统')
+game = LocalGame(settings, screen, '双星系统')
 game.main()
