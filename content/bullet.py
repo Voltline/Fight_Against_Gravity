@@ -1,6 +1,7 @@
 import pygame
 from pygame import Vector2
 from content.space_obj import SpaceObj
+from content.obj_msg import ObjMsg
 
 
 class Bullet(SpaceObj):
@@ -52,3 +53,8 @@ class Bullet(SpaceObj):
                 or min_dis > max_dis*4:
             return True
         return False
+
+    def update_by_msg(self, msg: list, planets):
+        super().update_by_msg(msg, planets)
+        msg = ObjMsg(msg)
+        self.id = msg.id

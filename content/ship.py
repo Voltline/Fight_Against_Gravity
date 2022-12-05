@@ -24,8 +24,6 @@ class Ship(SpaceObj):
         self.hp = settings.ship_hp  # 生命值
         self.go_acc = settings.ship_go_acc  # 引擎的加速度
         self.turn_spd = settings.ship_turn_spd  # 转向的角速度
-        self.fired_time = 0  # 上次发射子弹的时间戳(s)
-        self.fire_rate = settings.ship_fire_rate  # 飞船射速(发/秒)
 
         # 主动状态
         self.is_go_ahead = False  # 是否在前进
@@ -75,17 +73,14 @@ class Ship(SpaceObj):
         self.mask = pygame.mask.from_surface(self.image)  # 更新mask
 
     def fire_bullet(self, settings, bullets):
-        """发射子弹"""
+        """发射子弹，射速就是物理帧精度"""
         if self.is_fire:
-            now_time = pygame.time.get_ticks() / 1000  # 当前时间戳(秒)
-            if now_time - self.fired_time >= 1 / self.fire_rate:  # 限制射速
-                self.fired_time = now_time
-                ship_dir = Vector2(cos(self.angle), sin(self.angle))
-                new_bullet_loc = self.loc + 0.6 * self.rect0.width * ship_dir
-                new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
-                new_bullet = Bullet(settings, new_bullet_loc, new_bullet_spd)
-                new_bullet.loc0 = self.loc0 + 0.6 * self.rect0.width * ship_dir
-                bullets.add(new_bullet)
+            ship_dir = Vector2(cos(self.angle), sin(self.angle))
+            new_bullet_loc = self.loc + 0.6 * self.rect0.width * ship_dir
+            new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
+            new_bullet = Bullet(settings, new_bullet_loc, new_bullet_spd)
+            new_bullet.loc0 = self.loc0 + 0.6 * self.rect0.width * ship_dir
+            bullets.add(new_bullet)
 
     def die(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):
         """死亡时"""
@@ -120,9 +115,9 @@ class Ship(SpaceObj):
             self.is_turn_left, self.is_turn_right, \
             self.is_fire = map(bool, msg)
 
-    def update_by_msg(self, msg: list):
+    def update_by_msg(self, msg: list, planets):
         """通过消息更新自身状态"""
-        super().update_by_msg(msg)
+        super().update_by_msg(msg, planets)
         msg = ObjMsg(msg=msg)
         self.angle = msg.angle
         self.hp = msg.hp

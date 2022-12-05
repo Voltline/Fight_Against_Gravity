@@ -82,13 +82,13 @@ class SpaceObj(pygame.sprite.Sprite):
         msg = ObjMsg(self)
         return msg.make_msg()
 
-    def update_by_msg(self, msg: list):
+    def update_by_msg(self, msg: list, planets):
         """通过消息更新自身状态"""
         msg = ObjMsg(msg=msg)
         self.loc.update(msg.locx, msg.locy)
         self.rect.center = self.loc
         self.spd.update(msg.spdx, msg.spdy)
-        self.acc.update(msg.accx, msg.accy)
+        self.update_acc(planets)
 
     def get_ep_d_m(self, planets) -> float:
         """获取Ep/m的值(引力势能除以质量)"""
