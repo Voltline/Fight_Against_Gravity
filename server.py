@@ -13,7 +13,7 @@ class Server:
     port = 25555
 
     def __init__(self):
-        self.net = SocketServer(Server.ip, Server.port)  # 负责收发信息
+        self.net = SocketServer(Server.ip, Server.port, msg_len=4096)  # 负责收发信息
         self.settings = Settings()  # 初始化设置类
         self.rooms = {}  # {id(int): game_room}
         self.threads = {}  # {id(int): room_thread}
@@ -36,11 +36,13 @@ class Server:
         messages = self.net.get_message()
         for address, msg in messages:
             mopt = msg['opt']
-            if msg['time']:
+            if 'time' in msg:
                 time = msg['time']
-            if msg['args']:
+            if 'tick' in msg:
+                tick = msg['tick']
+            if 'args' in msg:
                 args = msg['args']
-            if msg['kwargs']:
+            if 'kwargs' in msg:
                 kwargs = msg['kwargs']
 
             if mopt == OptType.StartGame:
@@ -48,19 +50,19 @@ class Server:
                 self.start_game(room_id, map_name, player_names)
             elif mopt == OptType.StopGame:
                 room_id = args[0]
-                self.rooms[room_id].is_run[0] = False
+                self.rooms[room_id].game.is_run = False
             elif mopt == OptType.PlayerCtrl:
                 room_id, player_name, ctrl_msg = args
-                self.rooms[room_id].load_ctrl_msg(player_name, ctrl_msg)
+                self.rooms[room_id].game.load_ctrl_msg(player_name, ctrl_msg)
             elif mopt == OptType.CheckClock:
                 room_id, player_name = args
-                self.rooms[room_id].send_check_clock_msg(player_name, address)
+                self.rooms[room_id].game.send_check_clock_msg(player_name, address)
 
     def start_game(self, room_id, map_name, player_names):
         """开始一局新的room_game"""
         print('开始start_game')  # TODO: debug
         new_room = GameRoom(self.settings, self.net, room_id, map_name, player_names)
-        new_thread = threading.Thread(target=new_room.main)
+        new_thread = threading.Thread(target=new_room.game.main)
         self.rooms[room_id] = new_room
         self.threads[room_id] = new_thread
         new_thread.start()

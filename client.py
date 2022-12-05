@@ -12,6 +12,7 @@ from content.maps.map_obj import Map
 from content.player_info import PlayerInfo
 from Web.Modules.OptType import OptType
 from Web.Modules.safeclient import SocketClient
+from client_game import ClientGame
 
 
 class Client:
@@ -20,17 +21,10 @@ class Client:
     port = 25555
 
     def __init__(self):
-        self.net = SocketClient(Client.ip, Client.port)  # 负责收发信息
+        self.net = SocketClient(Client.ip, Client.port, msg_len=4096)  # 负责收发信息
         self.settings = Settings()  # 初始化设置类
-        pygame.init()
-        icon = pygame.image.load(self.settings.icon_img_path)
-        pygame.display.set_icon(icon)
-        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))  # 设置窗口大小
-        pygame.display.set_caption(self.settings.game_title)  # 设置窗口标题
-
-        # 鼠标位置信息，每帧实时更新
-        self.mouse_loc = Vector2(0, 0)
-        self.mouse_d_loc = Vector2(0, 0)
+        self.screen = gf.init_pygame_window(self.settings)
+        self.game = ClientGame
 
     def main(self):
         """客户端主函数"""
@@ -48,7 +42,10 @@ class Client:
         gf.button_start_game_click(self.net, room_id, map_name, player_names)
         print('开始游戏')
         # 游戏开始
-        self.game(room_id, map_name, player_names)
+        self.game =\
+            ClientGame(self.settings, self.net, room_id, map_name,
+                       player_names, self.screen, PlayerInfo.player_name)
+        self.game.main()
 
     def game(self, room_id, map_name, player_names):
         """在线游戏，本地端的游戏函数"""
@@ -101,7 +98,7 @@ class Client:
             if not is_run[0]:  # 如果游戏结束
                 self.send_stop_game_msg(room_id, now_sec)
 
-            gf.add_traces(self.settings, gm, traces, now_sec*1000)
+            gf.add_traces(self.settings, gm, traces, now_sec)
 
             surplus_ratio = surplus_dt / physics_dt
             gf.update_screen(self.settings, gm, camera, traces, surplus_ratio)

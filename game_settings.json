@@ -10,7 +10,7 @@
     "icon_img_path": "assets/texture/icon1.png"
   },
   "Physics": {
-    "physics_dt": 0.015625
+    "physics_dt": 0.025
   },
   "SpaceObj": {
     "space_obj_image_path": "assets/texture/space_obj.png"
@@ -29,8 +29,7 @@
     "ship_image_path": "assets/texture/ship3.png",
     "ship_hp": 100,
     "ship_go_acc": 50,
-    "ship_turn_spd": 1.7,
-    "ship_fire_rate": 100
+    "ship_turn_spd": 1.7
   },
   "Ship1": {
     "k_go_ahead": "pygame.K_w",
@@ -53,7 +52,7 @@
     "camera_k_change_mode": "pygame.K_LCTRL"
   },
   "Trace": {
-    "trace_life_ms": 3000,
+    "trace_life_sec": 3,
     "trace_color": [200, 200, 200]
   }
 }

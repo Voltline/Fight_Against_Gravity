@@ -53,7 +53,6 @@ class Settings:
         self.ship_hp = ships["ship_hp"]  # 飞船初始血量
         self.ship_go_acc = ships["ship_go_acc"]  # 飞船前进/后退的加速度
         self.ship_turn_spd = ships["ship_turn_spd"]  # 飞船转弯的角速度(弧度制)
-        self.ship_fire_rate = ships["ship_fire_rate"]  # 飞船射速(发/秒)
         del ships
 
         # Ship1
@@ -85,7 +84,7 @@ class Settings:
 
         # Trace
         trace = inf['Trace']
-        self.trace_life_ms = trace['trace_life_ms']  # 尾迹保留时间
+        self.trace_life_sec = trace['trace_life_sec']  # 尾迹保留时间
         self.trace_color = trace['trace_color']  # 尾迹颜色
         del trace
 

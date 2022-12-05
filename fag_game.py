@@ -8,13 +8,14 @@ import content.game_function as gf
 
 class FAGGame:
     """一局游戏，作为基类使用"""
-    def __init__(self, settings, screen, map_name, player_names):
+    def __init__(self, settings, screen, map_name, player_names, time_scale=1):
         self.settings = settings
         self.screen = screen
         self.map = Map(map_name)
         self.player_names = player_names
         self.gm = GameManager(self.settings)
         self.clock = pygame.time.Clock()  # 准备时钟
+        self.time_scale = time_scale
 
         # 鼠标位置信息，每帧实时更新
         self.mouse_loc = Vector2(0, 0)
@@ -60,7 +61,7 @@ class FAGGame:
 
     def main_update(self):
         """主循环每轮要做的事情"""
-        self.delta_t = self.clock.tick(self.max_fps) / 1000  # 获取delta_time(sec)并限制最大帧率
+        self.delta_t = self.time_scale*self.clock.tick(self.max_fps)/1000  # 获取delta_time(sec)并限制最大帧率
         self.surplus_dt += self.delta_t
         self.check_events()
         self.physic_loop()
@@ -69,7 +70,7 @@ class FAGGame:
     def print_debug(self):
         """输出调试的信息"""
         print('now:', self.now_time, '; tick:', self.now_tick)
-        print('fps:', self.clock.get_fps())
+        print('fps:', 1/self.delta_t)
         print('飞船信息:')
         for ship in self.gm.ships:
             print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length())
