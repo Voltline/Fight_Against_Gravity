@@ -57,8 +57,6 @@ class Ship(SpaceObj):
             self.angle -= self.turn_spd * delta_t
         if self.is_turn_right:
             self.angle += self.turn_spd * delta_t
-        if self.is_turn_left ^ self.is_turn_right:
-            self.update_image()
 
     def move(self, delta_t, planets: pygame.sprite.Group):
         """重载，因为飞船的move还需要update_angle"""
@@ -71,6 +69,10 @@ class Ship(SpaceObj):
         self.rect = self.image.get_rect()
         self.rect.center = self.loc
         self.mask = pygame.mask.from_surface(self.image)  # 更新mask
+
+    def display(self, camera):
+        self.update_image()
+        super().display(camera)
 
     def fire_bullet(self, settings, bullets):
         """发射子弹，射速就是物理帧精度"""
