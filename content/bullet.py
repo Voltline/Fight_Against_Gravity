@@ -56,5 +56,5 @@ class Bullet(SpaceObj):
 
     def update_by_msg(self, msg: list, planets):
         super().update_by_msg(msg, planets)
-        msg = ObjMsg(msg)
+        msg = ObjMsg(msg=msg)
         self.id = msg.id
