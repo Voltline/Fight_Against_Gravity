@@ -72,13 +72,13 @@
         "locx": 0,
         "locy": 0,
         "spdx": 0,
-        "spdy": 20,
+        "spdy": 0.4,
         "mass": 1e19,
         "index": 10,
         "ratio": 2
       },
       {
-        "locx": 3000,
+        "locx": 4000,
         "locy": 0,
         "spdx": 0,
         "spdy": -400,
