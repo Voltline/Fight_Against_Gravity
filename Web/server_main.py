@@ -123,7 +123,7 @@ class ServerMain:
             self.server.send(messageAdr, sendMsg)
         try:
             self.get_map_size(roommap)
-        except ValueError as err:
+        except Exception as err:
             # 创建的房间地图错误
             sendMsg = messageMsg
             sendMsg["status"] = "NAK"
