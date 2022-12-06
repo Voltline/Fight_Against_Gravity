@@ -59,10 +59,10 @@ class ServerMain:
         """
         真的去注册服务器 进行check
         """
-        if _debug_:
-            print("[debug info]ACK user", user)
-            return True
-        with open("Modules/settings.json", 'r') as f:
+        # if _debug_:
+        #     print("[debug info]ACK user", user)
+        #     return True
+        with open("Web/Modules/settings.json", 'r') as f:
             information = json.load(f)
         reg_ip = information["Client"]["Reg_IP"]
         reg_port = information["Client"]["Reg_Port"]
@@ -147,7 +147,6 @@ class ServerMain:
         """
         删除房间
         """
-        OptType.deleteRoom
         messageAdr, messageMsg = message
         roomid = messageMsg["roomid"]
         username = messageMsg["user"]
@@ -186,7 +185,7 @@ class ServerMain:
             if not game_user.get_ready() and game_user != room.get_owener():
                 self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
                 return False
-        room.start()
+        room.start(self.server)
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
 
     def ready(self, message):

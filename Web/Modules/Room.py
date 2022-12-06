@@ -2,8 +2,10 @@ import Web.Modules.User as User
 import server_game
 import queue
 import threading
+import Web.Modules.safeserver as safeserver
+import all_settings
 
-_debug_ = 1
+_debug_ = 0
 
 
 class Room:
@@ -21,14 +23,14 @@ class Room:
         self.message_queue = queue.Queue()
         self.started = False
 
-    def start(self):
+    def start(self, server_: safeserver.SocketServer):
         self.started = True
         if _debug_:
             print("[room debug info]{}{}started".format(self.roomname, self.roomid))
             return True
         self.game = server_game.ServerGame(
-            settings=[],
-            net=self.message_queue,
+            settings=all_settings.Settings(),
+            net=server_,
             room_id=self.roomid,
             map_name=self.roommap,
             player_names=self.get_userlist()
