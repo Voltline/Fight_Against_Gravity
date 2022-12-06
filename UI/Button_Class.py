@@ -124,10 +124,15 @@ class Button(Control):
 
     # update :按钮更新状态，并上传事件
     def update(self, event):
-        if self.check_click(event):
+        if self.check_click(event):  # 响应点击
             data = {"from_ui": self.name, "status": self.status}
             ev = pygame.event.Event(self.event_id, data)
             pygame.event.post(ev)
+        if event.type == pygame.MOUSEMOTION:  # 响应鼠标移动
+            if self.is_over(event.pos):
+                self.status = 1
+            else:
+                self.status = 0
 
 
 class CheckBox(Control):
