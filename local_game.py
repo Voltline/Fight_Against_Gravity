@@ -7,8 +7,8 @@ from content.camera import Camera
 
 class LocalGame(FAGGame):
     """本地游戏"""
-    def __init__(self, settings, screen, map_name):
-        super().__init__(settings, screen, map_name, ['player1', 'player2'])
+    def __init__(self, settings, screen, map_name, time_scale=1):
+        super().__init__(settings, screen, map_name, ['player1', 'player2'], time_scale)
         self.ship1 = None
         self.ship2 = None
         self.camera = Camera(settings, screen)
