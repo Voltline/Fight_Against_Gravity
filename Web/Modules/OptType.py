@@ -60,7 +60,8 @@ class OptType:
     {
         "opt" : 12
         "user" : "str"
-        "roomid" : "id"
+        "roomname" : "str"
+        "roomid" : "str"
         "status" : "ACK"/"NAK"
     }
     """
@@ -84,7 +85,7 @@ class OptType:
         "status" : "ACK" / "NAK"
     }
     """
-    getRoom = 15
+    getRoomlist = 15
     """
     {
         "opt" : 15
@@ -92,12 +93,13 @@ class OptType:
             "roomid" : roomid
             "owner" : user
             "size" : int #玩家人数
+            "maxsize" : int 最多玩家人数
+            "started" : "YES" / "NO"
         }]
     }
     """
     startgame = 16
     """
-    目前玩家房主没分开，且玩家start_game就是准备好了
     {
         "opt" : 16
         "user" : "str"
@@ -105,7 +107,47 @@ class OptType:
         "status" : "ACK" / "NAK“
     }
     """
-
+    changemap = 17
+    """
+    房主更改游戏地图
+    {
+        "opt" : 17
+        "user" : "str"
+        "roomid" : "id"
+        “roommap” : "str"
+        "status" : "ACK" / "NAK“
+    }
+    """
+    userready = 18
+    """
+    玩家准备完毕/取消准备
+    {
+        “opt” ： 18
+        "user" : "str"
+        "roomid" : "id"
+        "ready" : "YES" / “NO”
+        "status" : "ACK" / "NAK“
+    }
+    """
+    getRoom = 19
+    """
+    获取单个房间信息
+    {
+        "opt" : 19
+        "user" : "str"
+        "roomid" : "id“
+        "status" : "ACK" / "NAK"
+        "room" : {
+            roomid : "str"
+            roomname : "str"
+            owner: "str"
+            roommap: "str"
+            userlist : {
+                user:ready
+            }
+        }
+    }
+    """
     """
     传输时,msg={
         "opt":msg_opt(int)

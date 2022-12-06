@@ -76,11 +76,47 @@ class ClientMain:
         if recv["status"] == "NAK":
             return False
         elif recv["status"] == "ACK":
+            self.roomid = None
             return True
         else:
             pass
 
+    def joinroom(self, roomid):
+        if self.roomid:
+            # 已经在房间了
+            return False
+        msg = {
+            "opt": OptType.joinRoom,
+            "user": self.user,
+            "roomid": roomid
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        if recv["status"] == "ACK":
+            self.roomid = recv["roomid"]
+            return True
+        elif recv["status"] == "NAK":
+            return False
+
+    def leftroom(self):
+        if self.roomid is None:
+            return False
+        msg = {
+            "opt": OptType.leftRoom,
+            "user": self.user,
+            "roomid": self.roomid
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        if recv["status"] == "ACK":
+            self.roomid = None
+            return True
+        elif recv["status"] == "NAK":
+            return False
+
     def startgame(self):
+        if self.roomid is None:
+            return False
         msg = {
             "opt": OptType.startgame,
             "user": self.user,
@@ -95,14 +131,70 @@ class ClientMain:
         else:
             pass
 
+    def getroom(self):
+        if self.roomid is None:
+            return False
+        msg = {
+            "opt": OptType.getRoom,
+            "roomid": self.roomid
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        if recv["status"] == "NAK":
+            return False
+        res = recv["room"]
+        return res
+
+    def getroomlist(self):
+        msg = {
+            "opt": OptType.getRoomlist,
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        print(recv)
+        return recv["roomlist"]
+
+    def ready(self):
+        if self.roomid is None:
+            return False
+        msg = {
+            "opt": OptType.userready,
+            "user": self.user,
+            "roomid": self.roomid,
+            "ready": "YES",
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        return recv["status"] == "ACK"
+
+    def dready(self):
+        if self.roomid is None:
+            return False
+        msg = {
+            "opt": OptType.userready,
+            "user": self.user,
+            "roomid": self.roomid,
+            "ready": "NO",
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        return recv["status"] == "ACK"
+
     def start(self):
-        self.user = input("input the user name")
-        password = input("input the pass word")
+        # self.user = input("input the user name")
+        self.user = "test1"
+        # password = input("input the pass word")
+        password = "123456"
         if not self.login(self.user, password):
             self.client.close()
             exit(-1)
         while True:
-            opt = int(input())
+            ints = input()
+            opt = -1
+            if ints.isdigit():
+                opt = int(ints)
+            else:
+                pass
             if opt == 0:
                 break
             if opt == 1:
@@ -116,6 +208,25 @@ class ClientMain:
             if opt == 3:
                 print("start game")
                 print(self.startgame())
+            if opt == 4:
+                print("join room")
+                roomname = input("roomid：")
+                print(self.joinroom(roomname))
+            if opt == 5:
+                print("get room", self.roomid)
+                print(self.getroom())
+            if opt == 6:
+                print("get roomlist")
+                print(self.getroomlist())
+            if opt == 7:
+                print("left room")
+                print(self.leftroom())
+            if opt == 8:
+                print("ready")
+                print(self.ready())
+            if opt == 9:
+                print("deready")
+                print(self.dready())
             else:
                 continue
         self.client.close()
