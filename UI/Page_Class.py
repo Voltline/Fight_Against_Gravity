@@ -1,6 +1,6 @@
 import pygame
 from Label_Class import Label
-from Button_class import Button
+from Button_Class import Button
 from InputBox_Class import InputBox
 
 """管理所有控件的页面类，一个Page代表一个屏幕画面"""

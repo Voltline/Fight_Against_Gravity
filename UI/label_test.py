@@ -1,6 +1,6 @@
 import pygame
 from Label_Class import Label
-from Button_class import Button
+from Button_Class import Button
 from all_settings import Settings
 import sys
 
