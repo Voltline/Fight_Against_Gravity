@@ -13,7 +13,7 @@ class Server:
     port = 25555
 
     def __init__(self):
-        self.net = SocketServer(Server.ip, Server.port, msg_len=4096)  # 负责收发信息
+        self.net = SocketServer(Server.ip, Server.port, msg_len=1048576)  # 负责收发信息
         self.settings = Settings()  # 初始化设置类
         self.rooms = {}  # {id(int): game_room}
         self.threads = {}  # {id(int): room_thread}

@@ -26,7 +26,6 @@ class ServerGame(OnlineGame):
             # print(self.addresses)
             pass
         print('完成校时')
-        time.sleep(3)
 
         super().main()
 
@@ -62,7 +61,7 @@ class ServerGame(OnlineGame):
     def send_msgs(self):
         """发送消息"""
         # 向房间所有玩家广播当前gm最新状态
-        if self.now_time - self.sended_time > 0.01:
+        if self.now_time - self.sended_time > self.physics_dt:
             self.send_gm_msg()
             self.sended_time = self.now_time
 
@@ -71,14 +70,6 @@ class ServerGame(OnlineGame):
         向房间所有玩家广播当前gm最新状态
         分开发送，避免数据包过长
         """
-        # 广播planets
-        msg = {
-            'opt': OptType.Planets,
-            'tick': self.now_tick,
-            'args': self.gm.make_planets_msg()
-        }
-        self.send_all(msg)
-
         # 广播all_ships
         msg = {
             'opt': OptType.AllShips,
