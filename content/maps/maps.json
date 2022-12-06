@@ -28,7 +28,7 @@
       }
     ]
   },
-  "静止双星系统": {
+  "地月系统": {
     "planets_info": [
       {
         "locx": 0,
@@ -54,14 +54,72 @@
         "locx": 500,
         "locy": 0,
         "spdx": 0,
-        "spdy": -900,
+        "spdy": -1060,
         "angle": 3.14159
       },
       {
         "locx": 2240,
         "locy": 0,
         "spdx": 0,
-        "spdy": -1100,
+        "spdy": -1135,
+        "angle": 0
+      }
+    ]
+  },
+  "双星系统": {
+    "planets_info": [
+      {
+        "locx": 0,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": 0.4,
+        "mass": 1e19,
+        "index": 10,
+        "ratio": 2
+      },
+      {
+        "locx": 4000,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -400,
+        "mass": 1e16,
+        "index": 11,
+        "ratio": 0.7
+      }
+    ],
+    "ships_info": [
+      {
+        "locx": 600,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -1200,
+        "angle": 3.14159
+      },
+      {
+        "locx": -600,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": 1200,
+        "angle": 0
+      }
+    ]
+  },
+    "虚空": {
+    "planets_info": [
+    ],
+    "ships_info": [
+      {
+        "locx": 1200,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": 0,
+        "angle": 3.14159
+      },
+      {
+        "locx": -1200,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": 0,
         "angle": 0
       }
     ]

@@ -9,6 +9,7 @@ from content.camera import Camera
 from Web.Modules.OptType import OptType
 from Web.Modules.safeserver import SocketServer
 import content.game_function as gf
+from server_game import ServerGame
 
 
 class GameRoom:
@@ -20,14 +21,8 @@ class GameRoom:
         self.map_name = map_name
         self.map = Map(map_name)
         self.player_names = player_names
-        self.gm = GameManager(self.settings)
-        self.screen = None
         self.addresses = {}  # {player_name: address}
-        self.is_run = [True]
-
-        # 鼠标位置信息，每帧实时更新
-        self.mouse_loc = Vector2(0, 0)
-        self.mouse_d_loc = Vector2(0, 0)
+        self.game = ServerGame(self.settings, self.net, self.id, self.map_name, self.player_names)
 
     def main(self):
         """开始游戏"""

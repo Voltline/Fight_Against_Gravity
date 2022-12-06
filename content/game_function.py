@@ -92,7 +92,7 @@ def check_events(settings, ship1, ship2, camera, is_run):
         event = pygame.event.poll()
 
 
-def update_screen(settings, gm, camera, traces: list, surplus_ratio):
+def update_screen(settings, gm, camera, traces: list, surplus_ratio, now_sec=-1):
     """更新屏幕"""
     # 重新绘制
     camera.screen.fill(settings.bg_color)  # 屏幕clear
@@ -112,8 +112,8 @@ def update_screen(settings, gm, camera, traces: list, surplus_ratio):
             obj.rect.center = obj.loc
 
     # 更新traces，删除其中应该消失的元素
-    for trace in traces.copy():
-        if trace.is_alive():
+    for trace in traces[:]:
+        if trace.is_alive(now_sec):
             break
         else:
             traces.remove(trace)
@@ -122,11 +122,11 @@ def update_screen(settings, gm, camera, traces: list, surplus_ratio):
     pygame.display.flip()
 
 
-def add_traces(settings, gm, traces, now_ms):
+def add_traces(settings, gm, traces, now_sec):
     """在traces里添加尾迹"""
     for objs in gm.ships, gm.planets:
         for obj in objs:
-            traces.append(Trace(settings, obj.loc00, obj.loc, now_ms))
+            traces.append(Trace(settings, obj.loc00, obj.loc, now_sec))
             obj.loc00.update(obj.loc)
 
 

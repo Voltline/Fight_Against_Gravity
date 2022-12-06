@@ -102,9 +102,9 @@ class LocalGame(FAGGame):
         """在基类的物理循环之后要删除子弹，添加尾迹"""
         super().physic_loop()
         self.gm.bullets_disappear()
-        gf.add_traces(self.settings, self.gm, self.traces, self.now_time*1000)
+        gf.add_traces(self.settings, self.gm, self.traces, self.now_time)
 
     def display(self):
         """更新屏幕"""
         surplus_ratio = self.surplus_dt / self.physics_dt
-        gf.update_screen(self.settings, self.gm, self.camera, self.traces, surplus_ratio)
+        gf.update_screen(self.settings, self.gm, self.camera, self.traces, surplus_ratio, self.now_time)

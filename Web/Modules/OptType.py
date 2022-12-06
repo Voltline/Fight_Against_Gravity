@@ -152,6 +152,7 @@ class OptType:
     传输时,msg={
         "opt":msg_opt(int)
         "time":second(float)
+        "tick":tick(int)
         "args":msg_args(list)
         "kwargs":msg_kwargs(dict)
     }

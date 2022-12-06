@@ -16,8 +16,8 @@ class GameManager:
         self.dead_ships = pygame.sprite.Group()  # 死亡的飞船会加入这个group
         self.planets = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
-        self.center_v = 0  # 质心的速度
-        self.max_dis = 1e1  # 判断子弹消失的距离
+        self.center_v = Vector2(0, 0)  # 质心的速度
+        self.max_dis = 3e3  # 判断子弹消失的距离
 
     def all_move(self, delta_t):
         """所有objs的移动"""
@@ -109,25 +109,26 @@ class GameManager:
             sum_m += planet.mass
             sum_mv += planet.mass * planet.spd
             sum_mr += planet.mass * planet.loc
-        self.center_v = sum_mv / sum_m
-        for planet in self.planets:
-            other_m = sum_m - planet.mass
-            other_mv = sum_mv - planet.spd * planet.mass
-            other_v = other_mv / other_m
-            v = planet.spd - other_v
-            ek = 0.5 * planet.mass * v * v  # 动能
-            ep = planet.get_ep(self.planets)  # 势能
-            e = ek + ep  # 机械能
-            dis = - G * other_m * planet.mass / e
-            if dis > self.max_dis:
-                self.max_dis = dis
+        if sum_m > 0:
+            self.center_v = sum_mv / sum_m
+            for planet in self.planets:
+                other_m = sum_m - planet.mass
+                other_mv = sum_mv - planet.spd * planet.mass
+                other_v = other_mv / other_m
+                v = planet.spd - other_v
+                ek = 0.5 * planet.mass * v * v  # 动能
+                ep = planet.get_ep(self.planets)  # 势能
+                e = ek + ep  # 机械能
+                dis = - G * other_m * planet.mass / e
+                if dis > self.max_dis:
+                    self.max_dis = dis
 
-    def client_update(self, planets_msg=None, all_ships_msg=None, bullets_msg=None):
+    def client_update(self, planets_msg=None, all_ships_msg=None, bullets_msg=None, tick=-1):
         """通过msg更新gm"""
         if planets_msg:  # 更新planets
             i = 0
             for planet in self.planets:
-                planet.update_by_msg(planets_msg[i])
+                planet.update_by_msg(planets_msg[i], self.planets)
                 i += 1
         if all_ships_msg:  # 更新ships和dead_ships
             ships_msg = all_ships_msg[0]
@@ -139,13 +140,13 @@ class GameManager:
                         break
             i = 0
             for ship in self.ships:
-                ship.update_by_msg(ships_msg[i])
+                ship.update_by_msg(ships_msg[i], self.planets)
                 i += 1
         if bullets_msg:  # 更新bullets
             self.bullets.empty()
             for msg in bullets_msg:
                 new_bullet = Bullet(self.settings)
-                new_bullet.update_by_msg(msg)
+                new_bullet.update_by_msg(msg, self.planets)
                 new_bullet.loc0.update(new_bullet.loc)
                 self.bullets.add(new_bullet)
 
