@@ -1,9 +1,9 @@
 """程序入口"""
-import pygame
-
+from Web import server_main
 import content.game_function as gf
 from local_game import LocalGame
 from all_settings import Settings
+import sys
 
 """
 游戏操作：
@@ -16,9 +16,11 @@ u：玩家2的发射子弹u
 鼠标中键：切换视角模式（自由移动模式or跟随飞船模式）
 鼠标滚轮：视角缩放
 """
-
-
-settings = Settings()  # 初始化设置类
-screen = gf.init_pygame_window(settings)
-game = LocalGame(settings, screen, '地月系统')
-game.main()
+if len(sys.argv) == 2 and sys.argv[1] == "--server":
+    s = server_main.ServerMain()
+    s.start()
+else:
+    settings = Settings()  # 初始化设置类
+    screen = gf.init_pygame_window(settings)
+    game = LocalGame(settings, screen, '地月系统')
+    game.main()

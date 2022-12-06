@@ -1,16 +1,14 @@
-import Web.Modules.safeserver as safeserver
-import Web.Modules.safeclient as safeclient
-import Web.Modules.OptType as OptType
-import Web.Modules.User as User_
-import Web.Modules.Room as Room_
+from Modules import safeserver
+from Modules import safeclient
+from Modules import  OptType
+from Modules.User import User
+from Modules.Room import Room
 from content.maps.map_obj import Map
 import json
 import uuid
 import os
 
 OptType = OptType.OptType
-User = User_.User
-Room = Room_.Room
 _debug_ = False  # debug选项 请勿在生产环境中开启
 
 
