@@ -181,8 +181,10 @@ class ClientMain:
         return recv["status"] == "ACK"
 
     def start(self):
-        self.user = input("input the user name")
-        password = input("input the pass word")
+        # self.user = input("input the user name")
+        self.user = "test1"
+        # password = input("input the pass word")
+        password = "123456"
         if not self.login(self.user, password):
             self.client.close()
             exit(-1)
