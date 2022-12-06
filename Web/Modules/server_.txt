@@ -1,0 +1,49 @@
+逻辑太乱了在这儿捋一下
+考虑：
+每个操作 User所有属性的更改
+每个操作 Room所有属性的更改
+操作：
+
+创建房间 √
+Room:uuid user_list roommap
+User:roomid
+
+删除房间 √
+Room：确保只有房主才行
+User：房主del roomid
+
+加入房间 √
+Room：user_list
+User: roomid
+
+退出房间 √
+Room:user_list
+User:roomid
+
+选择地图 
+确认user是owner
+确认新地图大小
+Room: roommap
+
+准备游戏
+确认user是user
+User：ready
+取消准备
+确认user是user
+User：nready
+
+开始游戏 √
+确认都isready
+
+获取房间信息（用于显示）√
+返回：玩家名，map，roomname
+
+获取房间列表：√
+所有房间的信息
+
+test1
+test1
+
+1
+room_test
+静止双星系统
