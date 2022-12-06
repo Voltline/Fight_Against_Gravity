@@ -41,7 +41,7 @@ class Room:
         map还没有进行合法性检测 可能导致服务器异常 已经在TODO了
 
         """
-        thread = threading.Thread(target=self.game.main())
+        thread = threading.Thread(target=self.game.main)
         thread.setDaemon(True)
         thread.setName("game of room {}{}".format(self.roomname, self.roomid))
         thread.start()
