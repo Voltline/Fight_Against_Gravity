@@ -1,6 +1,6 @@
 import pygame
 from InputBox_Class import InputBox
-from Button_class import Button
+from Button_Class import Button
 from Label_Class import Label
 import sys
 import os
@@ -9,6 +9,7 @@ from all_settings import Settings
 
 
 class UI:
+
     def __init__(self):
         pygame.init()
         self.page_status = 0
@@ -282,7 +283,7 @@ class UI:
                         pygame.quit()
                         os.system('main.py')
                         running = False
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT:  # 要加一个client的析构
                     running = False
                     pygame.quit()
                     sys.exit()
