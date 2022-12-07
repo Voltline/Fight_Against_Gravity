@@ -235,6 +235,6 @@ class ClientMain:
 
 
 if __name__ == "__main__":
-    _debug_ = True
+    # _debug_ = True
     s = ClientMain()
     s.start()
