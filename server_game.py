@@ -1,6 +1,5 @@
 import pygame
 import time
-
 from online_game import OnlineGame
 from content.camera import Camera
 import content.game_function as gf

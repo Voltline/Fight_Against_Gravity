@@ -1,8 +1,8 @@
-from Modules import safeserver
-from Modules import safeclient
-from Modules import  OptType
-from Modules.User import User
-from Modules.Room import Room
+from Web.Modules import safeserver
+from Web.Modules import safeclient
+from Web.Modules import OptType
+from Web.Modules.User import User
+from Web.Modules.Room import Room
 from content.maps.map_obj import Map
 import json
 import uuid
@@ -26,7 +26,12 @@ class ServerMain:
         current_path = os.getcwd()
         fag_directory = os.path.dirname(current_path)
         os.chdir(fag_directory)
-        with open("Web/Modules/settings.json", "r") as f:
+        import sys
+        run_path = sys.argv[0]
+        run_path = run_path.split("Fight_Against_Gravity")[0][:-1]
+        self.absolute_setting_path = run_path + r"\Fight_Against_Gravity\Web\Modules\settings.json"
+        print("[server info] running at", self.absolute_setting_path)
+        with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         ip = settings["Client"]["Game_Local_IP"]
         port = settings["Client"]["Game_Port"]
@@ -54,14 +59,14 @@ class ServerMain:
         return message
 
     @staticmethod
-    def check(user: str, password: str) -> bool:
+    def check(user: str, password: str, path) -> bool:
         """
         真的去注册服务器 进行check
         """
         # if _debug_:
         #     print("[debug info]ACK user", user)
         #     return True
-        with open("Web/Modules/settings.json", 'r') as f:
+        with open(path, 'r') as f:
             information = json.load(f)
         reg_ip = information["Client"]["Reg_IP"]
         reg_port = information["Client"]["Reg_Port"]
@@ -89,7 +94,7 @@ class ServerMain:
         处理用户登录请求
         """
         messageAdr, messageMsg = message
-        if self.check(messageMsg["user"], messageMsg["password"]):
+        if self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path):
             newUser = User(messageAdr, messageMsg["user"])
             self.user_list[messageMsg["user"]] = newUser
             print("[game info]user {} join the game".format(newUser.get_name()))
