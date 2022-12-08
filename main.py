@@ -16,6 +16,7 @@ u：玩家2的发射子弹u
 鼠标中键：切换视角模式（自由移动模式or跟随飞船模式）
 鼠标滚轮：视角缩放
 """
+#TODO:path
 if len(sys.argv) == 2 and sys.argv[1] == "--server":
     s = server_main.ServerMain()
     s.start()

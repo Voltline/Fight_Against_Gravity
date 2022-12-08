@@ -15,7 +15,8 @@ _debug_ = False  # debug选项 请勿在生产环境中开启
 # TODO：get_message
 # TODO:分发消息给玩家/玩家固定时间更新游戏状态
 # TODO：debugger
-
+# TODO:logging
+# TODO:map_settings
 class ServerMain:
     """
     服务器主类 运行服务器主逻辑
