@@ -87,7 +87,7 @@ def createIdentifyClient() -> IdentifyClient:
         information = json.load(f)
     reg_ip = information["Client"]["Reg_IP"]
     reg_port = information["Client"]["Reg_Port"]
-    log_ip = information["Client"]["Game_IP"]
+    log_ip = information["Client"]["Game_Online_IP"]
     log_port = information["Client"]["Game_Port"]
     password = information["AES_Key"]
     information = ""

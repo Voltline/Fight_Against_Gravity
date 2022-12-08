@@ -104,7 +104,7 @@
       }
     ]
   },
-    "虚空": {
+  "虚空": {
     "planets_info": [
     ],
     "ships_info": [
@@ -120,6 +120,91 @@
         "locy": 0,
         "spdx": 0,
         "spdy": 0,
+        "angle": 0
+      }
+    ]
+  },
+  "征途": {
+    "planets_info": [
+      {
+        "locx": 0,
+        "locy": 0,
+        "spdx": 0.2,
+        "spdy": 0.3,
+        "mass": 1e19,
+        "index": 10,
+        "ratio": 2
+      },
+      {
+        "locx": 4000,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -500,
+        "mass": 1e16,
+        "index": 11,
+        "ratio": 0.7
+      },
+      {
+        "locx": 4600,
+        "locy": 4600,
+        "spdx": -200,
+        "spdy": 200,
+        "mass": 1e16,
+        "index": 11,
+        "ratio": 0.7
+      }
+    ],
+    "ships_info": [
+      {
+        "locx": 2600,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -500,
+        "angle": 3.14159
+      },
+      {
+        "locx": 3300,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": 500,
+        "angle": 0
+      }
+    ]
+  },
+  "双子": {
+    "planets_info": [
+      {
+        "locx": -2000,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": 100,
+        "mass": 1e18,
+        "index": 1,
+        "ratio": 2
+      },
+      {
+        "locx": 2000,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -100,
+        "mass": 1e18,
+        "index": 7,
+        "ratio": 2
+      }
+    ],
+    "ships_info": [
+      {
+        "locx": 3000,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -320,
+        "angle": 3.14159
+      },
+      {
+        "locx": -3000,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": 320,
         "angle": 0
       }
     ]

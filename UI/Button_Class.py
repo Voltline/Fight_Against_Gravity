@@ -36,9 +36,9 @@ class Control:
         else:
             self.__img = pygame.image.load(img_file)
             self.__img = pygame.transform.smoothscale(self.__img, (self.rect.width, self.rect.height))
-            self.__img = self.__img.convert_alpha()
-            self.__imgList = []
-            self.__imgList.append(self.__img)
+            # self.__img = self.__img.convert_alpha()
+            self.imgList = []
+            self.imgList.append(self.__img)
 
         # sub_width是指单独一个小按钮的宽度，整个img是一串连续的小按钮，我只在这里进行裁剪
         #     img_rect = self.__img.get_rect()
@@ -60,13 +60,13 @@ class Control:
         img = pygame.image.load(file_name)
         img = pygame.transform.smoothscale(img, (self.rect.width, self.rect.height))
         img = img.convert_alpha()
-        self.__imgList.append(img)
+        self.imgList.append(img)
 
     def render(self, surface):
         if self.is_show:
             if self.__img is not None:
                 # print(self.text, self.status)
-                surface.blit(self.__imgList[self.status], (self.rect.left, self.rect.top))
+                surface.blit(self.imgList[self.status], (self.rect.left, self.rect.top))
                 # if self.status < self.img_sub:
                 #     surface.blit(self.__imgList[self.status], (self.rect.left, self.rect.top))
             if self.label is not None:
@@ -108,7 +108,7 @@ class Control:
         self.is_show = 1
 
     def change_image(self):
-        if len(self.__imgList) > 1:
+        if len(self.imgList) > 1:
             self.status = 1
 
 
@@ -127,12 +127,14 @@ class Button(Control):
         if self.check_click(event):  # 响应点击
             data = {"from_ui": self.name, "status": self.status}
             ev = pygame.event.Event(self.event_id, data)
+
             pygame.event.post(ev)
         if event.type == pygame.MOUSEMOTION:  # 响应鼠标移动
-            if self.is_over(event.pos):
-                self.status = 1
-            else:
-                self.status = 0
+            if len(self.imgList) > 1:
+                if self.is_over(event.pos):
+                    self.status = 1
+                else:
+                    self.status = 0
 
 
 class CheckBox(Control):

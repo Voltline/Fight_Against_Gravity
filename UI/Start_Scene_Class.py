@@ -1,29 +1,24 @@
 import sys
 from Scene_Class import Scene
 from Button_Class import Button
-from Login_Scene_Class import LogInScene
+from Scene_Events import SceneEvents
+from UI_Font import UIFont
 import os
 import pygame
 
 
 class StartScene(Scene):
-    def __init__(self):
+    def __init__(self, setting):
         """准备开始界面的组件, 对应页面状态 0"""
-        super().__init__()
+        super().__init__(setting)
         os.chdir(self.fag_directory)
-        start_font = {
-            'font': pygame.font.Font(self.font_path_light, 65),
-            'tc': (36, 41, 47),
-            'bc': None,
-            'align': 1,
-            'valign': 1
-        }
+        start_font = UIFont.start_font
         start_rect = pygame.Rect(455, 300, 290, 100)
         start_title = pygame.image.load("assets/texture/FAGtitle.png")  # 用作画图
         start_title = pygame.transform.smoothscale(start_title, (514, 200))
         start_title = start_title.convert_alpha()
 
-        start = Button("start", self.START, start_rect, "UI/Img/start_unpressed.png", 1, 'Start', start_font)  # 用作画图
+        start = Button("start", SceneEvents.START, start_rect, "UI/Img/start_unpressed.png", 1, 'Start', start_font)  # 用作画图
         start.add_img("UI/Img/start_press.png")
         """集合组件，loaded"""
         self.loaded = {'img': start_title, 'label': None, 'box': None, 'button': [start]}
