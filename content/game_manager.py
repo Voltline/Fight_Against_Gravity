@@ -16,6 +16,7 @@ class GameManager:
         self.dead_ships = pygame.sprite.Group()  # 死亡的飞船会加入这个group
         self.planets = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
+
         self.center_v = Vector2(0, 0)  # 质心的速度
         self.max_dis = 3e3  # 判断子弹消失的距离
 
@@ -39,37 +40,64 @@ class GameManager:
             if bullet.check_del(self.planets, self.ships, self.center_v, self.max_dis):
                 self.bullets.remove(bullet)
 
+    @staticmethod
+    def static_check_bullets_planets_collisions(bullets, planets):
+        """使用圆形碰撞检测"""
+        return pygame.sprite.groupcollide(
+            bullets, planets, True, False, pygame.sprite.collide_circle)
+
     def check_bullets_planets_collisions(self):
         """使用圆形碰撞检测"""
-        collections = pygame.sprite.groupcollide(
-            self.bullets, self.planets, True, False, pygame.sprite.collide_circle)
+        return GameManager.static_check_bullets_planets_collisions(
+            self.bullets, self.planets)
 
-    def check_ships_bullets_collisions(self):
+    @staticmethod
+    def static_check_ships_bullets_collisions(ships, bullets, dead_ships):
         """mask检测"""
         collisions = pygame.sprite.groupcollide(
-            self.ships, self.bullets, False, True, pygame.sprite.collide_mask)
+            ships, bullets, False, True, pygame.sprite.collide_mask)
         for ship, bullets in collisions.items():
             damage = 0
             for bullet in bullets:
                 damage += bullet.damage
-            ship.hit_bullet(damage, self.ships, self.dead_ships)
+            ship.hit_bullet(damage, ships, dead_ships)
+        return collisions
+
+    def check_ships_bullets_collisions(self):
+        """mask检测"""
+        return GameManager.static_check_ships_bullets_collisions(
+            self.ships, self.bullets, self.dead_ships)
+
+    @staticmethod
+    def static_check_ships_planets_collisions(ships, planets, dead_ships):
+        """mask检测"""
+        collisions = pygame.sprite.groupcollide(
+            ships, planets, False, False, pygame.sprite.collide_mask)
+        for ship in collisions.keys():
+            ship.die(ships, dead_ships)
+        return collisions
 
     def check_ships_planets_collisions(self):
         """mask检测"""
-        collisions = pygame.sprite.groupcollide(
-            self.ships, self.planets, False, False, pygame.sprite.collide_mask)
-        for ship in collisions.keys():
-            ship.die(self.ships, self.dead_ships)
+        return GameManager.static_check_ships_planets_collisions(
+            self.ships, self.planets, self.dead_ships)
 
-    def check_ships_ships_collisions(self):
+    @staticmethod
+    def static_check_ships_ships_collisions(ships, dead_ships):
         """mask检测"""
         collisions = pygame.sprite.groupcollide(
-            self.ships, self.ships, False, False, pygame.sprite.collide_mask)
+            ships, ships, False, False, pygame.sprite.collide_mask)
         for ship1, ship2s in collisions.items():
             for ship2 in ship2s:
                 if id(ship1) != id(ship2):
-                    ship1.die(self.ships, self.dead_ships)
+                    ship1.die(ships, dead_ships)
                     break
+        return collisions
+
+    def check_ships_ships_collisions(self):
+        """mask检测"""
+        return GameManager.static_check_ships_ships_collisions(
+            self.ships, self.dead_ships)
 
     def check_collisions(self):
         self.check_ships_ships_collisions()
@@ -174,8 +202,12 @@ class GameManager:
     def make_bullets_msg(self) -> list:
         return GameManager.group_make_msg(self.bullets)
 
-    def ships_fire_bullet(self):
-        """飞船发射子弹"""
+    def ships_fire_bullet(self) -> list:
+        """飞船发射子弹，返回新的子弹的列表"""
+        new_bullets = []
         for ship in self.ships:
-            if ship.is_alive and ship.is_fire:
-                ship.fire_bullet(self.settings, self.bullets)
+            if ship.is_alive:
+                new_bullet = ship.fire_bullet(self.settings, self.bullets)
+                if new_bullet:
+                    new_bullets.append(new_bullet)
+        return new_bullets
