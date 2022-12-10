@@ -66,14 +66,10 @@ class ServerGame(OnlineGame):
         self.check_collisions()
         self.gm.all_move(self.physics_dt)
         self.ships_fire_bullet()
-        self.send_simple_msg()
 
-    def send_msgs(self):
+    def send_msgs_physic_loop(self):
         """发送消息"""
-        # 向房间所有玩家广播当前gm最新状态
-        # if self.now_time - self.sended_time > self.physics_dt:
-        #     self.send_simple_msg()
-        #     self.sended_time = self.now_time
+        self.send_simple_msg()
         if self.now_time - self.sended_time > 10*self.physics_dt:
             self.send_all_bullets_msg()
             self.sended_time = self.now_time

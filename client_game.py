@@ -49,6 +49,7 @@ class ClientGame(OnlineGame):
     def get_start_time(self) -> float:
         server_start_time = self.get_server_start_game_time(self.room_id)
         print('服务器游戏开始时间获取成功:', server_start_time)  # TODO: debug
+        print(server_start_time - self.lag_time)
         return server_start_time - self.lag_time
 
     def get_lag_time(self, room_id):
@@ -150,12 +151,11 @@ class ClientGame(OnlineGame):
         elif event.key == self.settings.ship1_k_fire:
             self.player_ship.is_fire = False
 
-    def send_msgs(self):
+    def send_msgs_physic_loop(self):
         """发送玩家控制消息"""
-        if self.now_time - self.sended_time > self.physics_dt:
-            self.send_ctrl_msg()
+        self.send_ctrl_msg()
 
-    def deal_msgs(self):
+    def deal_msgs_physic_loop(self):
         """接收并处理消息"""
         all_ships_msg = None
         all_ships_msg_tick = 0
@@ -335,7 +335,7 @@ class ClientGame(OnlineGame):
     def get_snapshot_i(self, tick):
         """获取tick对应的snapshot在snapshots中的下标"""
         if tick < self.snapshots[-1].tick:  # 太古老
-            return len(self.snapshots)
+            return -1
         elif tick > self.now_tick:  # 太新
             return 0
         else:
