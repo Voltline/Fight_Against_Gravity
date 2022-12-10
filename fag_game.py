@@ -31,6 +31,7 @@ class FAGGame:
         self.physics_dt = self.settings.physics_dt
 
         self.is_run = True  # 是否仍在运行
+        self.is_pause = False  # 是否处于暂停状态
 
     def restart(self):
         """重置状态到游戏开始"""
@@ -63,7 +64,8 @@ class FAGGame:
         """主循环每轮要做的事情"""
         self.delta_t = self.time_scale*self.clock.tick(self.max_fps)/1000  # 获取delta_time(sec)并限制最大帧率
         self.surplus_dt += self.delta_t
-        self.check_events()
+        if not self.is_pause:  # 不暂停才处理pygame的events
+            self.check_events()
         self.physic_loop()
         self.display()
 
@@ -73,8 +75,9 @@ class FAGGame:
         print('fps:', 1/self.delta_t)
         print('飞船信息:')
         for ship in self.gm.ships:
-            print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length())
+            print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length(), ship.make_ctrl_msg())
         print('子弹总数:', len(self.gm.bullets))
+        print()
 
     def end(self):
         """主循环结束之后要做的事情"""
@@ -106,6 +109,7 @@ class FAGGame:
         """物理dt更新的循环"""
         while self.surplus_dt >= self.physics_dt:
             self.physic_update()
+        self.gm.bullets_disappear()
 
     def physic_update(self):
         """每个物理dt的更新行为"""

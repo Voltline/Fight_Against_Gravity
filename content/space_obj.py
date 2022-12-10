@@ -30,7 +30,7 @@ class SpaceObj(pygame.sprite.Sprite):
             acc += gvt_acc(planet.mass, planet.loc, self.loc)
         return acc
 
-    def update_acc(self, planets: pygame.sprite.Group) -> Vector2:
+    def update_acc(self, planets) -> Vector2:
         """更新飞船当前的加速度，返回上次的acc"""
         acc0 = self.acc
         self.acc = self.get_acc_from_planets(planets)
@@ -102,3 +102,11 @@ class SpaceObj(pygame.sprite.Sprite):
         """获取Ek/m的值(动能除以质量)"""
         v = self.spd - center_v
         return 0.5*v*v
+
+    def copy(self, obj):
+        """把obj复制到自己，浅拷贝"""
+        self.loc.update(obj.loc)
+        self.loc0.update(obj.loc0)
+        self.spd.update(obj.spd)
+        self.acc.update(obj.acc)
+        self.rect.center = self.loc

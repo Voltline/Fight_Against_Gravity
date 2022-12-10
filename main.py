@@ -22,5 +22,5 @@ if len(sys.argv) == 2 and sys.argv[1] == "--server":
 else:
     settings = Settings()  # 初始化设置类
     screen = gf.init_pygame_window(settings)
-    game = LocalGame(settings, screen, '地月系统')
+    game = LocalGame(settings, screen, '征途')
     game.main()

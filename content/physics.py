@@ -1,11 +1,11 @@
 """物理计算相关的函数"""
-import pygame
+from pygame import Vector2
 from math import isclose
 
 G = 6.67408e-11
 
 
-def gvt_acc(m0: float, loc0: pygame.Vector2, loc1: pygame.Vector2) -> pygame.Vector2:
+def gvt_acc(m0: float, loc0: Vector2, loc1: Vector2) -> Vector2:
     """
     计算重力加速度
     m0: 中央星球的质量,单位kg
@@ -20,3 +20,7 @@ def gvt_acc(m0: float, loc0: pygame.Vector2, loc1: pygame.Vector2) -> pygame.Vec
         ans = ans * G * m0 / ans.length()**3
 
     return ans
+
+
+def is_close(v1: Vector2, v2: Vector2) -> bool:
+    return (v1-v2).length() < 1e-2
