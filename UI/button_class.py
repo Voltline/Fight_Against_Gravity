@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pygame
-from Label_Class import Label
+from label_class import Label
 
 '''
 按钮控件，主体是一个承载图像的surface和一个承载文字的Label控件
@@ -113,11 +113,12 @@ class Control:
 
 
 class Button(Control):
-    def __init__(self, name: str, event_id, rect, img_file, img_sub, text="", font_info=None):
+    def __init__(self, name: str, clicked_function, rect, img_file, img_sub, text="", font_info=None):
         Control.__init__(self, rect, img_file, img_sub, text, font_info)
 
         self.name = name
-        self.event_id = event_id
+        # self.event_id = event_id
+        self.is_clicked = clicked_function
 
     def set_text(self, text):
         self.label.set_text(text)
@@ -125,10 +126,11 @@ class Button(Control):
     # update :按钮更新状态，并上传事件
     def update(self, event):
         if self.check_click(event):  # 响应点击
-            data = {"from_ui": self.name, "status": self.status}
-            ev = pygame.event.Event(self.event_id, data)
-
-            pygame.event.post(ev)
+            print(self.name, "clicked")
+            self.is_clicked()
+            # data = {"from_ui": self.name, "status": self.status}
+            # ev = pygame.event.Event(self.event_id, data)
+            # pygame.event.post(ev)
         if event.type == pygame.MOUSEMOTION:  # 响应鼠标移动
             if len(self.imgList) > 1:
                 if self.is_over(event.pos):

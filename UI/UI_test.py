@@ -1,7 +1,7 @@
 import pygame
-from InputBox_Class import InputBox
-from Button_Class import Button
-from Label_Class import Label
+from inputbox_class import InputBox
+from button_class import Button
+from label_class import Label
 import sys
 import os
 from Web import identify_client as ic
