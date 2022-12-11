@@ -75,7 +75,7 @@ class ServerGame(OnlineGame):
         self.send_all_ships_msg()
         self.send_add_del_bullets_msg()
 
-        self.send_part_bullets_msg()
+        # self.send_part_bullets_msg()
 
     def send_add_del_bullets_msg(self):
         """广播new_bullets和dead_bullets"""
@@ -103,7 +103,7 @@ class ServerGame(OnlineGame):
             'tick': self.now_tick,
             'args': self.make_part_bullets_msg()
         }
-        # self.send_all(msg)  # TODO:调试删除
+        self.send_all(msg)
 
     def make_part_bullets_msg(self) -> list:
         """返回部分bullets的消息，每次轮转"""
