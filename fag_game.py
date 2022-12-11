@@ -38,6 +38,7 @@ class FAGGame:
         self.gm.load_map(self.map, self.player_names)
         self.start_time = self.get_start_time()
         self.surplus_dt = gf.get_time() - self.start_time
+        self.clock.tick(self.max_fps)
         self.now_time = 0
         self.now_tick = 0
 

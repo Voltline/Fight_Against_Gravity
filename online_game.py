@@ -17,7 +17,7 @@ class OnlineGame(FAGGame):
         self.net = net
         self.room_id = room_id
 
-        self.sended_time = 0  # 上次广播gm消息的时间
+        self.sended_time = 0  # 上次广播消息的时间
 
     def restart(self):
         """重置状态到游戏开始"""
@@ -26,14 +26,23 @@ class OnlineGame(FAGGame):
 
     def physic_loop(self):
         """物理dt更新的循环，在线游戏每次物理循环之前先收发、处理消息"""
-        self.send_msgs()
-        self.deal_msgs()
+        self.send_msgs_main_loop()
         super().physic_loop()
 
-    def send_msgs(self):
-        """发送消息"""
+    def physic_update(self):
+        """每个物理dt的更新行为"""
+        self.send_msgs_physic_loop()
+        self.deal_msgs_physic_loop()
+        super().physic_update()
+
+    def send_msgs_main_loop(self):
+        """main_loop中发送消息"""
         pass
 
-    def deal_msgs(self):
-        """接收并处理消息"""
+    def send_msgs_physic_loop(self):
+        """physic_loop中发送消息"""
+        pass
+
+    def deal_msgs_physic_loop(self):
+        """physic_loop中接收并处理消息"""
         pass
