@@ -12,16 +12,20 @@ class Bullet(SpaceObj):
     next_id = 0
 
     def __init__(self, settings,
-                 loc0: Vector2 = Vector2(0, 0), spd0: Vector2 = Vector2(0, 0)):
+                 loc0: Vector2 = Vector2(0, 0), spd0: Vector2 = Vector2(0, 0),
+                 bullet_id=-1):
         super().__init__(settings, 1*loc0, 1*spd0)
         self.radius = settings.bullet_radius  # 子弹半径
         self.damage = settings.bullet_damage  # 子弹伤害
         self.id = Bullet.next_id
-        Bullet.next_id += 1
+        if bullet_id >= 0:
+            self.id = bullet_id
+        Bullet.next_id = self.id + 1
 
     @staticmethod
     def init(settings):
         Bullet.COLOR = settings.bullet_color
+        Bullet.next_id = 0
 
     def __get_image__(self, settings):
         return settings.bullet_image

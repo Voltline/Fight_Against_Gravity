@@ -94,6 +94,9 @@ class Settings:
         # ObjMsg
         self.obj_msg_r = 4  # ObjMsg中float保留的小数位数
 
+        # FagGame
+        self.snapshots_len = 80
+
         del inf
 
         # 有需要初始化类变量的类的初始化

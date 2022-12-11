@@ -17,11 +17,12 @@ class Ship(SpaceObj):
                  angle: float = 0, player_name='?Unknown Player?'):
         super().__init__(settings, 1 * loc0, 1 * spd0)
         self.image0 = self.image
-        self.rect0 = self.image0.get_rect()
+        self.rect0 = self.image0.get_rect()  # 原始图片的rect
         self.angle = angle
         self.update_image()
         self.player_name = player_name  # 飞船所属玩家的名字
         self.hp = settings.ship_hp  # 生命值
+
         self.go_acc = settings.ship_go_acc  # 引擎的加速度
         self.turn_spd = settings.ship_turn_spd  # 转向的角速度
 
@@ -66,16 +67,20 @@ class Ship(SpaceObj):
     def update_image(self):
         """根据飞船目前angle，旋转image0得到目前实际的image"""
         self.image = pygame.transform.rotate(self.image0, -degrees(self.angle))
+        center = self.rect.center
         self.rect = self.image.get_rect()
-        self.rect.center = self.loc
+        self.rect.center = center
         self.mask = pygame.mask.from_surface(self.image)  # 更新mask
 
     def display(self, camera):
         self.update_image()
         super().display(camera)
 
-    def fire_bullet(self, settings, bullets):
-        """发射子弹，射速就是物理帧精度"""
+    def fire_bullet(self, settings, bullets) -> Bullet:
+        """
+        发射子弹，射速就是物理帧精度
+        如果发射了则返回新的子弹，没发射就返回None
+        """
         if self.is_fire:
             ship_dir = Vector2(cos(self.angle), sin(self.angle))
             new_bullet_loc = self.loc + 0.6 * self.rect0.width * ship_dir
@@ -83,6 +88,9 @@ class Ship(SpaceObj):
             new_bullet = Bullet(settings, new_bullet_loc, new_bullet_spd)
             new_bullet.loc0 = self.loc0 + 0.6 * self.rect0.width * ship_dir
             bullets.add(new_bullet)
+            return new_bullet
+        else:
+            return None
 
     def die(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):
         """死亡时"""
@@ -123,3 +131,17 @@ class Ship(SpaceObj):
         msg = ObjMsg(msg=msg)
         self.angle = msg.angle
         self.hp = msg.hp
+        self.load_ctrl_msg(msg.ctrl_msg)
+
+    def copy(self, obj, cpy_ctrl=True):
+        """把obj复制到自己，浅拷贝"""
+        super().copy(obj)
+        self.angle = obj.angle
+        self.hp = obj.hp
+
+        if cpy_ctrl:
+            self.is_go_ahead = obj.is_go_ahead
+            self.is_go_back = obj.is_go_back
+            self.is_turn_left = obj.is_turn_left
+            self.is_turn_right = obj.is_turn_right
+            self.is_fire = obj.is_fire

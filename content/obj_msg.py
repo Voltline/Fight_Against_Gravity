@@ -17,6 +17,7 @@ class ObjMsg:
                 self.angle = obj.angle
                 self.hp = obj.hp
                 self.player_name = obj.player_name
+                self.ctrl_msg = obj.make_ctrl_msg()
             elif hasattr(obj, 'id'):  # 如果是子弹消息
                 self.id = obj.id
 
@@ -25,10 +26,11 @@ class ObjMsg:
             self.locy = msg[1]
             self.spdx = msg[2]
             self.spdy = msg[3]
-            if len(msg) == 7:  # 如果是飞船消息
+            if len(msg) == 8:  # 如果是飞船消息
                 self.angle = msg[4]
                 self.hp = msg[5]
                 self.player_name = msg[6]
+                self.ctrl_msg = msg[7]
             elif len(msg) == 5:  # 如果是子弹消息
                 self.id = msg[4]
 
@@ -43,6 +45,7 @@ class ObjMsg:
             msg.append(round(self.angle, ObjMsg.R))
             msg.append(self.hp)
             msg.append(self.player_name)
+            msg.append(self.ctrl_msg)
         elif hasattr(self, 'id'):  # 如果是子弹
             msg.append(self.id)
         return msg
