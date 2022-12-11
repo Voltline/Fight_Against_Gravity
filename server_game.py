@@ -13,13 +13,13 @@ class ServerGame(OnlineGame):
         self.new_bullets = []  # 上次发消息到这次发消息新增的子弹
         self.dead_bullets_id = set()  # 上次发消息到这次发消息减少的子弹
 
-        self.camera = None  # TODO：调试完成后去掉screen和camera
+        # self.camera = None  # TODO：调试完成后去掉screen和camera
         self.addresses = {}  # {player_name: address}
 
     def main(self):
         """最终要调用的函数"""
-        self.screen = gf.init_pygame_window(self.settings)
-        self.camera = Camera(self.settings, self.screen)
+        gf.init_pygame_window()
+        # self.camera = Camera(self.settings, self.screen)
 
         print('开始校时')
         # 校时并确定每个player对应的address
@@ -39,8 +39,8 @@ class ServerGame(OnlineGame):
 
     def get_start_time(self) -> float:
         print('开始发送游戏开始时间')
-        start_time = gf.get_time()+3
-        time.sleep(0.1)
+        start_time = gf.get_time()+3.5
+        time.sleep(0.5)
         self.send_start_game_time(start_time)
         print('游戏开始时间发送成功')
         return start_time
@@ -111,7 +111,8 @@ class ServerGame(OnlineGame):
     def load_ctrl_msg(self, player_name, ctrl_msg):
         """加载操作信息"""
         ship = gf.find_player_ship(self.gm.ships, player_name)
-        ship.load_ctrl_msg(ctrl_msg)
+        if ship is not None:
+            ship.load_ctrl_msg(ctrl_msg)
 
     def send_check_clock_msg(self, player_name, addr):
         """对玩家发送校时消息"""
@@ -128,6 +129,7 @@ class ServerGame(OnlineGame):
     def check_events(self):
         """服务器不需要处理消息"""
         # TODO：调试完成后把此函数pass
+        return
         self.mouse_loc.update(pygame.mouse.get_pos())
         self.mouse_d_loc.update(pygame.mouse.get_rel())
         self.camera.mouse_loc.update(self.mouse_loc)
@@ -151,6 +153,7 @@ class ServerGame(OnlineGame):
 
     def display(self):
         """更新屏幕"""
+        return
         # TODO：调试完成后本函数删除
         surplus_ratio = self.surplus_dt / self.physics_dt
         gf.update_screen(self.settings, self.gm, self.camera, [], surplus_ratio)
