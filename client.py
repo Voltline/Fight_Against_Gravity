@@ -37,7 +37,7 @@ class Client:
 
         # 在房间中，点击开始游戏按钮
         room_id = 1
-        map_name = '双星系统'
+        map_name = '地月系统'
         player_names = ['player1']
         gf.button_start_game_click(self.net, room_id, map_name, player_names)
         print('开始游戏')

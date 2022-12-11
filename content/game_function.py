@@ -164,5 +164,5 @@ def init_pygame_window(settings=None) -> pygame.Surface:
         pygame.display.set_caption(settings.game_title)  # 设置窗口标题
         return screen
     else:
-        pygame.display.set_mode((10, 10))
+        pygame.display.set_mode((20, 20))
         return None
