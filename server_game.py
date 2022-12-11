@@ -7,14 +7,17 @@ from Web.Modules.OptType import OptType
 
 
 class ServerGame(OnlineGame):
-    def __init__(self, settings, net, room_id, map_name, player_names):
+    def __init__(self, settings, net, room_id, map_name, player_names, addresses: dict={}):
         super().__init__(settings, None, net, room_id, map_name, player_names)
 
-        self.new_bullets = []  # 上次发消息到这次发消息新增的子弹
+        self.new_bullets = dict()  # 上次发消息到这次发消息新增的子弹
         self.dead_bullets_id = set()  # 上次发消息到这次发消息减少的子弹
 
         # self.camera = None  # TODO：调试完成后去掉screen和camera
-        self.addresses = {}  # {player_name: address}
+        self.addresses = addresses  # {player_name: address}
+
+        self.send_bullets_beg = 0  # 这次发送子弹消息的起始index
+        self.send_bullets_num = 50  # 每次发送多少子弹的消息
 
     def main(self):
         """最终要调用的函数"""
@@ -35,7 +38,7 @@ class ServerGame(OnlineGame):
         super().restart()
         self.new_bullets.clear()
         self.dead_bullets_id.clear()
-        self.sended_time = 20*self.physics_dt
+        self.sended_tick = 20 * self.physics_dt
 
     def get_start_time(self) -> float:
         print('开始发送游戏开始时间')
@@ -62,25 +65,30 @@ class ServerGame(OnlineGame):
 
     def physic_update(self):
         """每个物理dt的更新行为"""
-        super().physic_update()
+        super().physic_update()  # 发消息，收消息，更新时间
         self.check_collisions()
         self.gm.all_move(self.physics_dt)
         self.ships_fire_bullet()
 
     def send_msgs_physic_loop(self):
         """发送消息"""
-        self.send_simple_msg()
-        if self.now_time - self.sended_time > 10*self.physics_dt:
-            self.send_all_bullets_msg()
-            self.sended_time = self.now_time
+        self.send_all_ships_msg()
+        self.send_add_del_bullets_msg()
 
-    def send_simple_msg(self):
-        """
-        向房间所有玩家广播当前gm最新状态
-        分开发送，避免数据包过长
-        子弹只发送新增的和消除的(撞击星球而消除的不发送)
-        """
-        # 广播all_ships
+        # self.send_part_bullets_msg()
+
+    def send_add_del_bullets_msg(self):
+        """广播new_bullets和dead_bullets"""
+        msg = {
+            'opt': OptType.AddDelBullets,
+            'tick': self.now_tick,
+            'args': [self.make_new_bullets_msg(),
+                     self.make_dead_bullets_msg()]
+        }
+        self.send_all(msg)
+
+    def send_all_ships_msg(self):
+        """广播all_ships"""
         msg = {
             'opt': OptType.AllShips,
             'tick': self.now_tick,
@@ -88,25 +96,28 @@ class ServerGame(OnlineGame):
         }
         self.send_all(msg)
 
-        # 广播new_bullets和dead_bullets
-        msg = {
-            'opt': OptType.AddDelBullets,
-            'tick': self.now_tick,
-            'args': [self.make_new_bullets_msg(), self.make_dead_bullets_msg()]
-        }
-        self.send_all(msg)
-        self.new_bullets.clear()
-        self.dead_bullets_id.clear()
-
-    def send_all_bullets_msg(self):
+    def send_part_bullets_msg(self):
         """发送所有子弹的消息"""
-        # 广播bullets
         msg = {
             'opt': OptType.Bullets,
             'tick': self.now_tick,
-            'args': self.gm.make_bullets_msg()
+            'args': self.make_part_bullets_msg()
         }
         self.send_all(msg)
+
+    def make_part_bullets_msg(self) -> list:
+        """返回部分bullets的消息，每次轮转"""
+        bullets_msg = []
+        l = len(self.gm.bullets)
+        if self.send_bullets_beg >= l:
+            self.send_bullets_beg = 0
+        end = self.send_bullets_beg + self.send_bullets_num
+        if end >= l:
+            end = l - 1
+        for bullet in self.gm.bullets.sprites()[self.send_bullets_beg:end]:
+            bullets_msg.append(bullet.make_msg())
+        self.send_bullets_beg = end + 1
+        return bullets_msg
 
     def load_ctrl_msg(self, player_name, ctrl_msg):
         """加载操作信息"""
@@ -163,25 +174,40 @@ class ServerGame(OnlineGame):
         self.gm.check_ships_ships_collisions()
         self.gm.check_ships_planets_collisions()
         bulletss = self.gm.check_ships_bullets_collisions().values()
-        self.gm.check_bullets_planets_collisions()
+        bullets = self.gm.check_bullets_planets_collisions().keys()
 
+        for bullet in bullets:
+            self.dead_bullets_id.add(bullet.id)
         for bullets in bulletss:
             for bullet in bullets:
                 self.dead_bullets_id.add(bullet.id)
 
+    def bullets_disappear(self) -> list:
+        del_ids = super().bullets_disappear()
+        for del_id in del_ids:
+            self.dead_bullets_id.add(del_id)
+        return del_ids
+
     def ships_fire_bullet(self):
         """飞船发射子弹"""
-        self.new_bullets.extend(self.gm.ships_fire_bullet())
+        for bullet in self.gm.ships_fire_bullet():
+            self.new_bullets[bullet.id] = bullet
 
     def make_new_bullets_msg(self) -> list:
         """生成new_bullets消息"""
+        for new_id in self.new_bullets.keys():
+            if new_id in self.dead_bullets_id:
+                del self.new_bullets[new_id]
+                self.dead_bullets_id.remove(new_id)
         msg = []
-        for bullet in self.new_bullets:
+        for bullet in self.new_bullets.values():
             msg.append(bullet.make_msg())
+        self.new_bullets.clear()
         return msg
 
     def make_dead_bullets_msg(self) -> list:
         msg = []
         for bullet_id in self.dead_bullets_id:
             msg.append(bullet_id)
+        self.dead_bullets_id.clear()
         return msg

@@ -34,11 +34,14 @@ class GameManager:
         for bullet in self.bullets:
             bullet.move(delta_t, self.planets)
 
-    def bullets_disappear(self):
-        """让对战斗不会再有影响的子弹消失，从而节省性能"""
+    def bullets_disappear(self) -> list:
+        """让对战斗不会再有影响的子弹消失，从而节省性能。返回删除的子弹的id的列表"""
+        del_ids = []
         for bullet in self.bullets:  # 实测这样更快
             if bullet.check_del(self.planets, self.ships, self.center_v, self.max_dis):
+                del_ids.append(bullet.id)
                 self.bullets.remove(bullet)
+        return del_ids
 
     @staticmethod
     def static_check_bullets_planets_collisions(bullets, planets):
@@ -209,5 +212,6 @@ class GameManager:
             if ship.is_alive:
                 new_bullet = ship.fire_bullet(self.settings, self.bullets)
                 if new_bullet:
+                    new_bullet.update_acc(self.planets)
                     new_bullets.append(new_bullet)
         return new_bullets

@@ -164,8 +164,7 @@ class ClientGame(OnlineGame):
         new_bullets_msg = None
         new_bullets_msg_tick = 0
         dead_bullets_msg = []
-        msg = self.net.get_message()
-        while msg:
+        for msg in self.net.get_message_list():
             opt = msg['opt']
             if 'time' in msg:
                 time = msg['time']
@@ -176,7 +175,9 @@ class ClientGame(OnlineGame):
             if 'kwargs' in msg:
                 kwargs = msg['kwargs']
 
-            if opt == OptType.AllShips:
+            if tick > self.now_tick:  # 如果消息过新就塞回消息队列
+                self.net.que.put(msg)
+            elif opt == OptType.AllShips:
                 if not all_ships_msg or all_ships_msg_tick < tick:
                     all_ships_msg_tick = tick
                     all_ships_msg = args
@@ -190,8 +191,6 @@ class ClientGame(OnlineGame):
                     new_bullets_msg, dead_bullets_msg = args
                     self.add_bullets(new_bullets_msg, new_bullets_msg_tick)
                     self.del_bullets(dead_bullets_msg)
-
-            msg = self.net.get_message()
 
         if all_ships_msg:
             self.ping_ms = (self.now_tick-all_ships_msg_tick)*self.physics_dt*1000
@@ -298,7 +297,7 @@ class ClientGame(OnlineGame):
                 problem_ships.append(ship)
         return problem_ships
 
-    def get_problem_bullets(self, bullets_msg: list, snapshot: Snapshot) -> list:
+    def get_problem_bullets(self, bullets_msg: list, snapshot: Snapshot) -> (list, list):
         """事先准备好同一个tick的bullets_msg和snapshot_bullets，返回位置偏差较大的对象"""
         problem_bullets = []
         bullets_loc = snapshot.bullets_loc
@@ -322,7 +321,13 @@ class ClientGame(OnlineGame):
             bullets.append(bullet)
         all_objs = {'bullets': bullets}
         self.update_problem_objs(all_objs, tick)
-        self.gm.bullets.add(bullets)
+        for new_bullet in bullets:
+            for bullet in self.gm.bullets:
+                if bullet.id == new_bullet.id:
+                    bullet.copy(new_bullet)
+                    break
+            else:
+                self.gm.bullets.add(new_bullet)
 
     def del_bullets(self, bullets_id: list):
         """根据dead_bullets_msg删除子弹，不需要预测"""
