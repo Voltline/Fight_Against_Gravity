@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+
 import pygame
 
 '''Label 控件，用于显示文字'''
@@ -14,6 +16,7 @@ class Label:
         这个字典包含了"font"（字体），"tc"（字体颜色），"bc"（背景颜色），"align"（ 水平模式，0,1,2分别对应靠左、居中、靠右），"valign"（垂直模式，0,1,2分别代表）
         align和valign用于调整对齐
         """
+        print('label work dir', os.getcwd())
         if font_info is None:
             font_info = {
                 'font': pygame.font.Font("UI/Font/SourceHanSans-Normal.ttc", 21),  # 11/25 14:23日，文件路径添加前缀UI，可能还要回滚
@@ -63,7 +66,7 @@ class Label:
             self.bc = bc
         self.text_surface = self.font.render(self.text, True, self.tc, self.bc)
         print(self.text, ",文字大小为", self.text_surface.get_size())  # 测试用
-        # pygame.font.render方法，返回一个surface对象
+        # pygame.Font.render方法，返回一个surface对象
 
     def __get_size(self):
         """返回文字surface对象的大小，宽和高，与背景无关"""

@@ -17,12 +17,12 @@ class OnlineGame(FAGGame):
         self.net = net
         self.room_id = room_id
 
-        self.sended_time = 0  # 上次广播消息的时间
+        self.sended_tick = 0  # 上次广播消息的时间
 
     def restart(self):
         """重置状态到游戏开始"""
         super().restart()
-        self.sended_time = 0
+        self.sended_tick = 0
 
     def physic_loop(self):
         """物理dt更新的循环，在线游戏每次物理循环之前先收发、处理消息"""

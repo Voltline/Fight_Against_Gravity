@@ -1,14 +1,11 @@
 import pygame
-import os
-import sys
-from Button_Class import Button
-from Scene_Events import SceneEvents
-from Label_Class import Label
-from InputBox_Class import InputBox
-
+from button_class import Button
+from scene_events import SceneEvents
+from scene_player_class import ScenePlayer
 
 class Scene:
     pygame.init()
+
     # UI_current_directory = os.getcwd()  # UI文件夹路径
     # fag_directory = os.path.dirname(UI_current_directory)  # FAG文件夹路径
     # font_path_light = "UI/Font/SourceHanSans-Light.ttc"
@@ -38,21 +35,22 @@ class Scene:
     #     'valign': 1
     # }
 
-    """事件"""
-    switcher = 0
-
     def __init__(self, setting):
-        self.setting = setting  # 记得把所有的涉及到setting里的东西更换掉
-        self.loaded = {'img': None, 'label': None, 'box': None, 'button': None}
+        self.setting = setting  # 记得把子类所有的涉及到setting里的东西更换掉
+        self.loaded = {'img': None, 'label': None, 'box': None, 'button': None, 'panel': None}
         """全局组件，返回按钮和设置按钮"""
         back_rect = pygame.Rect(20, 20, 45, 45)
-        self.back = Button("back", SceneEvents.BACK, back_rect, "UI/Img/back.png", 1)
-        set_rect = pygame.Rect(1050, 700, 60, 60)
-        self.set_button = Button('setting', SceneEvents.SETTING, set_rect, "UI/Img/setting_light.png", 1)
-        self.set_button.add_img("UI/Img/setting_light_pressed.png")
+        self.back = Button("back", self.back_is_clicked, back_rect, "UI/Img/back.png", 1)
+        # set_rect = pygame.Rect(1050, 700, 60, 60)
+        # self.set_button = Button('setting', SceneEvents.SETTING, set_rect, "UI/Img/setting_light.png", 1)
+        # self.set_button.add_img("UI/Img/setting_light_pressed.png")
+        self.switcher = 0
 
     def update_event(self, e):
         """将对应页面加载了的组件全部进行状态更新，会post新的event"""
+        if self.loaded['panel'] is not None:
+            for pn in self.loaded['panel']:
+                pn.update(e)
         if self.loaded['button'] is not None:
             for bt in self.loaded['button']:
                 bt.update(e)
@@ -75,3 +73,16 @@ class Scene:
         if self.loaded['box'] is not None:
             for bx in self.loaded['box']:
                 bx.draw(surface)
+        if self.loaded['panel'] is not None:
+            for pn in self.loaded['panel']:
+                pn.render(surface)
+
+    def back_is_clicked(self):
+        ScenePlayer.pop()
+
+    # # 以下两个函数用于继承，适用于小提示的显示，小提示没有组件集
+    # def draw_reminder(self, surface):
+    #     pass
+    #
+    # def deal_event(self, event):
+    #     pass

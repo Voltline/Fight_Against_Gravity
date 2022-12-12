@@ -82,7 +82,7 @@ class IdentifyClient:
 def createIdentifyClient() -> IdentifyClient:
     current_path = os.getcwd()
     fag_directory = os.path.dirname(current_path)
-    os.chdir(fag_directory)
+    # os.chdir(fag_directory)
     with open("Web/Modules/settings.json", "r") as f:
         information = json.load(f)
     reg_ip = information["Client"]["Reg_IP"]

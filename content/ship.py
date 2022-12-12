@@ -62,6 +62,7 @@ class Ship(SpaceObj):
     def move(self, delta_t, planets: pygame.sprite.Group):
         """重载，因为飞船的move还需要update_angle"""
         self.update_angle(delta_t)
+        self.update_image()
         self.update_loc_spd(delta_t, planets)
 
     def update_image(self):
@@ -71,10 +72,6 @@ class Ship(SpaceObj):
         self.rect = self.image.get_rect()
         self.rect.center = center
         self.mask = pygame.mask.from_surface(self.image)  # 更新mask
-
-    def display(self, camera):
-        self.update_image()
-        super().display(camera)
 
     def fire_bullet(self, settings, bullets) -> Bullet:
         """

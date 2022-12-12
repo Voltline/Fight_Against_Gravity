@@ -110,10 +110,14 @@ class FAGGame:
         """物理dt更新的循环"""
         while self.surplus_dt >= self.physics_dt:
             self.physic_update()
-        self.gm.bullets_disappear()
+            self.bullets_disappear()
 
     def physic_update(self):
         """每个物理dt的更新行为"""
         self.surplus_dt -= self.physics_dt
         self.now_time += self.physics_dt
         self.now_tick += 1
+
+    def bullets_disappear(self) -> list:
+        """让太远离战场的子弹消失, 返回消失的子弹的id的列表"""
+        return self.gm.bullets_disappear()
