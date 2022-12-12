@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-Web/Database/
+Server/Database/
 
 
 # C extensions
@@ -133,4 +133,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-/Web/Database/
+/Server/Database/
+/Server/Database/

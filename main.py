@@ -1,9 +1,13 @@
 """程序入口"""
-from Web import server_main
-import content.game_function as gf
-from local_game import LocalGame
-from all_settings import Settings
 import sys
+import os
+path = os.path.dirname(os.path.realpath(__file__)) + '\\'
+sys.path.append(path)
+
+from Server import server_main
+import content.game.game_function as gf
+from content.game.local_game import LocalGame
+from settings.all_settings import Settings
 
 """
 游戏操作：
@@ -21,7 +25,7 @@ if len(sys.argv) == 2 and sys.argv[1] == "--server":
     s = server_main.ServerMain()
     s.start()
 else:
-    settings = Settings()  # 初始化设置类
+    settings = Settings(path)  # 初始化设置类
     screen = gf.init_pygame_window(settings)
     game = LocalGame(settings, screen, '征途')
     game.main()

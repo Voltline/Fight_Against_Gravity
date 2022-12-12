@@ -33,6 +33,6 @@
 * 主体/Main Part：pygame
 * 在线/Online Part：socket，Crypto，base64，smtplib
 * 数据/Data Part：json，sqlite3
-* 其他/Other Part: random，PIL
+* 其他/Other Part: os，sys
 ### 开源协议/Open-Source Protocol
 * General Public License 3.0
