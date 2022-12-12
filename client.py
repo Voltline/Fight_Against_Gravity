@@ -1,18 +1,9 @@
-import sys
-import pygame
-from pygame import Vector2
-
-from all_settings import Settings
-from content import game_function as gf
-from content.game_manager import GameManager
-from content.ship import Ship
-from content.planet import Planet
-from content.camera import Camera
-from content.maps.map_obj import Map
-from content.player_info import PlayerInfo
-from Web.Modules.OptType import OptType
-from Web.Modules.safeclient import SocketClient
-from client_game import ClientGame
+from settings.all_settings import Settings
+from content.game import game_function as gf
+from content.online.player_info import PlayerInfo
+from Server.Modules.safeclient import SocketClient
+from content.online.client_game import ClientGame
+import os
 
 
 class Client:
@@ -22,7 +13,9 @@ class Client:
 
     def __init__(self):
         self.net = SocketClient(Client.ip, Client.port, msg_len=1048576)  # 负责收发信息
-        self.settings = Settings()  # 初始化设置类
+        path = os.path.dirname(os.path.realpath(__file__)) + '\\'
+        self.settings = Settings(path)  # 初始化设置类
+        del path
         self.screen = gf.init_pygame_window(self.settings)
         self.game = ClientGame
 
