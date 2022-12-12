@@ -1,4 +1,5 @@
 import pygame
+import os
 from content.UI.scene_font import SceneFont
 
 
@@ -7,7 +8,8 @@ class Panel:
         """rect:一个四元组，text:panel要显示的文字，is_clicked，panel被点击后要执行的函数名"""
         self.rect = pygame.Rect(rect)
         self.color = (46, 46, 46)
-        self.font = pygame.font.Font("UI/Font/SourceHanSans-Normal.ttc", font_size)
+        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + "\\"
+        self.font = pygame.font.Font(path + "assets\\font\\SourceHanSans-Normal.ttc", font_size)
         if text is not None:
             self.text_surface = self.font.render(text, True, SceneFont.r_font['tc'], SceneFont.r_font['bc'])
         self.is_clicked = clicked_function

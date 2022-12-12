@@ -16,8 +16,9 @@ class LocalGameScene(Scene):
         super().__init__(setting)
         self.pause_panel = Panel((200, 300, 800, 200), '单击此处继续', 23, self.cancel_pause_clicked)
         pause_rect = pygame.Rect(950, 675, 50, 50)
-        pause_button = Button('pause', self.pause_is_clicked, pause_rect, 'UI/Img/pause.png', 0)
-        pause_button.add_img('UI/Img/pause_pressed.png')
+        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + "\\"
+        pause_button = Button('pause', self.pause_is_clicked, pause_rect, path + 'assets\\Img\\pause.png', 0)
+        pause_button.add_img(path + 'assets\\Img\\pause_pressed.png')
         self.loaded = {'img': None, 'label': None, 'box': None, 'button': [pause_button], 'panel': []}
 
     def pause_is_clicked(self):
