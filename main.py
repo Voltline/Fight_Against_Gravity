@@ -1,9 +1,8 @@
 """程序入口"""
 import sys
 import os
-path = os.path.dirname(os.path.realpath(__file__)) + '\\'
+path = os.path.dirname(os.path.realpath(__file__)) + '/'
 sys.path.append(path)
-
 from Server import server_main
 from Server import client_main
 import content.game.game_function as gf
@@ -21,15 +20,15 @@ u：玩家2的发射子弹u
 鼠标中键：切换视角模式（自由移动模式or跟随飞船模式）
 鼠标滚轮：视角缩放
 """
+settings = Settings(path)  # 初始化设置类
 if len(sys.argv) == 2:
     if sys.argv[1] == "--server":
-        s = server_main.ServerMain()
+        s = server_main.ServerMain(game_settings= settings)
         s.start()
     elif sys.argv[1] == "--client":
         s = client_main.ClientMain()
         s.start()
 else:
-    settings = Settings(path)  # 初始化设置类
     screen = gf.init_pygame_window(settings)
     game = LocalGame(settings, screen, '征途')
     game.main()
