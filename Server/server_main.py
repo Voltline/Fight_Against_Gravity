@@ -1,6 +1,6 @@
 from Server.Modules import OptType, safeclient, safeserver
-from Server.Modules import User
-from Server.Modules import Room
+from Server.Modules.User import User
+from Server.Modules.Room import Room
 from content.maps.map_obj import Map
 import json
 import uuid

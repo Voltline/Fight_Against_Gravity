@@ -79,8 +79,8 @@ class IdentifyClient:
 
 
 def createIdentifyClient() -> IdentifyClient:
-    path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "\\"
-    with open(path + "settings\\settings.json", "r") as f:
+    path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/"
+    with open(path + "settings/settings.json", "r") as f:
         information = json.load(f)
     reg_ip = information["Client"]["Reg_IP"]
     reg_port = information["Client"]["Reg_Port"]

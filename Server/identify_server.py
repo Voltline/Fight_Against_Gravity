@@ -1,6 +1,6 @@
 import os
 import sys
-path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "\\"
+path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/"
 sys.path.append(path)
 from Server.Modules import safeserver, database_operate, send_email, OptType
 import json
@@ -86,7 +86,7 @@ class IdentifyServer:
 
 
 if __name__ == "__main__":
-    with open(path + "settings\\settings.json", 'r') as f:
+    with open(path + "settings/settings.json", 'r') as f:
         information = json.load(f)
     ip = ""
     port = 25555
