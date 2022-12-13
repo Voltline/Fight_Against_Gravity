@@ -23,14 +23,8 @@ class InputBox:
         self.font_color = pygame.Color(169, 183, 198)
         self.is_pw = is_pw
         # self.bg = pygame.Color(52, 52, 52)
-        self.keylist = pygame.key.get_pressed()  # 获取所有案件，能够处理“按住”事件，而非单独单次的按住
 
     def deal_event(self, event: pygame.event.Event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.boxBody.collidepoint(event.pos):  # 若按下鼠标且位置在文本框
-                self.switch()
-            else:
-                self.active = False
         if self.active:
             self.color = self.color_active
             self.color_inside = self.color_inside_active
@@ -47,8 +41,6 @@ class InputBox:
                     pass
                 elif event.key == pygame.K_TAB:
                     pass
-                # elif event.key & pygame.KMOD_SHIFT:
-                #     self.text += event.unicode
                 else:
                     self.text += event.unicode
 

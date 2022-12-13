@@ -23,7 +23,7 @@ class StartScene(Scene):
                        setting.fag_directory + "assets\\Img\\start_unpressed.png", 1, 'Start', start_font)  # 用作画图
         start.add_img(setting.fag_directory + "assets\\Img\\start_press.png")
         """集合组件，loaded"""
-        self.loaded = {'img': start_title, 'label': None, 'box': None, 'button': [start], 'panel': None}
+        self.loaded = {'img': start_title, 'label': None, 'box': None, 'button': [start], 'panel': []}
 
     def start_is_clicked(self):
         ScenePlayer.push(LogInScene(self.setting))
