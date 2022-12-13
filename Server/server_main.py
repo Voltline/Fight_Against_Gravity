@@ -22,10 +22,9 @@ class ServerMain:
 
     def __init__(self):
         # 获取服务器IP和端口
-        import sys
         path = os.path.dirname(os.path.realpath(__file__))
-        path = os.path.dirname(path) + "\\"
-        self.absolute_setting_path = path + r"settings\settings.json"
+        path = os.path.dirname(path) + "/"
+        self.absolute_setting_path = path + "settings/settings.json"
         print("[server info] running at", self.absolute_setting_path)
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)

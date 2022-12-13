@@ -5,6 +5,7 @@ path = os.path.dirname(os.path.realpath(__file__)) + '\\'
 sys.path.append(path)
 
 from Server import server_main
+from Server import client_main
 import content.game.game_function as gf
 from content.game.local_game import LocalGame
 from settings.all_settings import Settings
@@ -20,10 +21,13 @@ u：玩家2的发射子弹u
 鼠标中键：切换视角模式（自由移动模式or跟随飞船模式）
 鼠标滚轮：视角缩放
 """
-#TODO:path
-if len(sys.argv) == 2 and sys.argv[1] == "--server":
-    s = server_main.ServerMain()
-    s.start()
+if len(sys.argv) == 2:
+    if sys.argv[1] == "--server":
+        s = server_main.ServerMain()
+        s.start()
+    elif sys.argv[1] == "--client":
+        s = client_main.ClientMain()
+        s.start()
 else:
     settings = Settings(path)  # 初始化设置类
     screen = gf.init_pygame_window(settings)

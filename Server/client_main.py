@@ -1,18 +1,18 @@
-from Server import Modules as safeclient, Modules as OptType
+from Server.Modules import OptType, safeclient, safeserver
 import os
 import json
 
-OptType = Server.Modules.OptType
+OptType = OptType.OptType
 _debug_ = False  # 调试选项 运行环境请勿开启
 
 
 class ClientMain:
     def __init__(self):
-        # TODO:heartbeat 服务端从json读取
-        current_path = os.getcwd()
-        fag_directory = os.path.dirname(current_path)
-        os.chdir(fag_directory)
-        with open("Server/Modules/settings.json", "r") as f:
+        path = os.path.dirname(os.path.realpath(__file__))
+        path = os.path.dirname(path) + "/"
+        self.absolute_setting_path = path + "settings/settings.json"
+        print("[server info] running at", self.absolute_setting_path)
+        with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         ip = settings["Client"]["Game_Online_IP"]
         port = settings["Client"]["Game_Port"]
