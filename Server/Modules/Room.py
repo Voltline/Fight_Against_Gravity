@@ -1,4 +1,7 @@
 import Server.Modules.User as User
+from Server.Modules import OptType
+
+OptType = OptType.OptType
 from Server import server_game
 import queue
 import threading
@@ -13,7 +16,7 @@ class Room:
     房间类 存储玩家，房间号，运行每局游戏主逻辑
     """
 
-    def __init__(self, roomid, owner: User, roomname: str, roommap: str):
+    def __init__(self, roomid, owner: User, roomname: str, roommap: str, server: safeserver.SocketServer, game_settings):
         self.roomid = roomid
         self.owner = owner
         self.roomname = roomname
@@ -22,25 +25,46 @@ class Room:
         self.game = None
         self.message_queue = queue.Queue()
         self.started = False
+        self.server_ = server
+        self.game_settings = game_settings
+    def release_message(self, message):
+        address, msg = message
+        args = None
+        mopt = msg['opt']
+        if 'time' in msg:
+            time = msg['time']
+        if 'tick' in msg:
+            tick = msg['tick']
+        if 'args' in msg:
+            args = msg['args']
+        if 'kwargs' in msg:
+            kwargs = msg['kwargs']
+        if mopt == OptType.StartGame:
+            room_id, map_name, player_names = args
+            self.start()
+        elif mopt == OptType.StopGame:
+            room_id = args[0]
+            self.game.is_run = False
+        elif mopt == OptType.PlayerCtrl:
+            room_id, player_name, ctrl_msg = args
+            self.game.load_ctrl_msg(player_name, ctrl_msg)
+        elif mopt == OptType.CheckClock:
+            room_id, player_name = args
+            self.game.send_check_clock_msg(player_name, address)
 
-    def start(self, server_: safeserver.SocketServer):
+    def start(self):
         self.started = True
         if _debug_:
-            print("[room debug info]{}{}started".format(self.roomname, self.roomid))
+            print("[room debug info]{} {}started".format(self.roomname, self.roomid))
             return True
         self.game = server_game.ServerGame(
-            settings=all_settings.Settings(),
-            net=server_,
+            settings=self.game_settings,
+            #TODO:传参
+            net=self.server_,
             room_id=self.roomid,
             map_name=self.roommap,
             player_names=self.get_userlist()
         )
-        """
-        不知道settings是什么 留空了
-        net不能从server传出，暂时不能作为参数传递
-        map还没有进行合法性检测 可能导致服务器异常 已经在TODO了
-
-        """
         thread = threading.Thread(target=self.game.main)
         thread.setDaemon(True)
         thread.setName("game of room {}{}".format(self.roomname, self.roomid))
@@ -48,21 +72,6 @@ class Room:
 
     def get_started(self):
         return self.started
-
-    def get_message(self):
-        """
-        从房间消息队列获取游戏相关消息
-        """
-        if self.message_queue.empty():
-            return None
-        res = self.message_queue.get()
-        return res
-
-    def push_message(self, message):
-        """
-        向房间消息队列push相关游戏消息
-        """
-        self.message_queue.put(message)
 
     def get_roomname(self):
         return self.roomname

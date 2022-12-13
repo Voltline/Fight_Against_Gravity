@@ -3,11 +3,11 @@ import os
 import json
 
 OptType = OptType.OptType
-_debug_ = False  # 调试选项 运行环境请勿开启
 
 
 class ClientMain:
     def __init__(self):
+        # TODO:整合login
         path = os.path.dirname(os.path.realpath(__file__))
         path = os.path.dirname(path) + "/"
         self.absolute_setting_path = path + "settings/settings_local.json"
@@ -17,9 +17,6 @@ class ClientMain:
         ip = settings["Client"]["Game_Online_IP"]
         port = settings["Client"]["Game_Port"]
         heart_beat = settings["Client"]["heart_beat"]
-        if _debug_:
-            ip = "localhost"
-            port = 25555
 
         self.client = safeclient.SocketClient(ip, port, heart_beat=heart_beat)
         self.user = None
@@ -234,6 +231,5 @@ class ClientMain:
 
 
 if __name__ == "__main__":
-    # _debug_ = True
     s = ClientMain()
     s.start()

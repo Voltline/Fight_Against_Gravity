@@ -20,11 +20,11 @@ class ServerMain:
     服务器主类 运行服务器主逻辑
     """
 
-    def __init__(self):
+    def __init__(self, game_settings):
         # 获取服务器IP和端口
         path = os.path.dirname(os.path.realpath(__file__))
         path = os.path.dirname(path)
-        self.absolute_setting_path = path + "/settings/settings_local.json"
+        self.absolute_setting_path = path + "/settings/settings.json"
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         ip = settings["Client"]["Game_Local_IP"]
@@ -34,9 +34,10 @@ class ServerMain:
         """{"username" : User}"""
         self.room_list: {str: Room} = {}
         """"{"roomid": Room}"""
-        self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, logpath=path, level=Flogger.L_INFO,
+        self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
                               folder_name="server_main")
         self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat)
+        self.game_settings = game_settings
 
     @staticmethod
     def get_map_size(mapname: str):
@@ -120,7 +121,7 @@ class ServerMain:
             self.server.send(messageAdr, sendMsg)
         else:
             roomid = str(uuid.uuid1())
-            newroom = Room(roomid, user, roomname, roommap)
+            newroom = Room(roomid, user, roomname, roommap, self.server, self.game_settings)
             self.room_list[roomid] = newroom
             user.set_roomid(roomid)
             sendMsg = messageMsg
@@ -151,8 +152,8 @@ class ServerMain:
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             return False
         room: Room = self.room_list[roomid]
-        self.logger.info("[game info]room (roomname:{},roomid:{}) was deleted".format(room.get_roomname(), room.get_roomid()))
-        # print("[game info]room ({}{}) was deleted".format(room.get_roomname(), room.get_roomid()))
+        self.logger.info(
+            "[game info]room (roomname:{},roomid:{}) was deleted".format(room.get_roomname(), room.get_roomid()))
         self.room_list.pop(roomid)
         user.set_roomid(None)
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
@@ -173,7 +174,7 @@ class ServerMain:
                 self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
                 return False
         self.logger.info("[game info]room ({}{}) start game".format(room.get_roomname(), room.get_roomid()))
-        room.start(self.server)
+        room.start()
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
 
     def ready(self, message):
@@ -243,7 +244,6 @@ class ServerMain:
         sendMsg = messageMsg
         sendMsg["status"] = "ACK"
         sendMsg["room"] = room.get_all_info()
-        # print("[debug info]", sendMsg)
         self.server.send(messageAdr, sendMsg)
 
     def getroomlist(self, message):
@@ -269,7 +269,6 @@ class ServerMain:
             )
         sendMsg = messageMsg
         sendMsg["roomlist"] = reslist[:]
-        # print(sendMsg)
         self.server.send(messageAdr, sendMsg)
 
     def clear(self):
@@ -286,7 +285,6 @@ class ServerMain:
         # 清除与掉线玩家有关的数据
         for item in to_del:
             self.logger.info("[game info]user {0} left the game".format((item, self.user_list[item].name)))
-            # print("[game info]user {0} left the game".format((item, self.user_list[item].name)))
             user: User = self.user_list[item]
             roomid = user.get_roomid()
             if roomid in self.room_list:
@@ -297,6 +295,7 @@ class ServerMain:
         # 找到空的房间列表
         for roomid, room in self.room_list.items():
             if len(room.get_userlist()) == 0:
+                # TODO:asrun
                 to_del.append(roomid)
         # 清除空房间
         for item in to_del:
@@ -305,7 +304,6 @@ class ServerMain:
 
     def start(self):
         self.logger.critical("[game info] server start")
-        # print("[game info] server start")
         while True:
             # 处理消息队列
             messages = self.server.get_message()
@@ -336,14 +334,17 @@ class ServerMain:
                     self.getroomlist(message)
                 elif opt == OptType.userready:
                     self.ready(message)
+                elif 26 <= opt <= 29:
+                    room_id = messageMsg['args'][0]
+                    room: Room = self.room_list[room_id]
+                    room.release_message(message)
                 else:
                     # TODO：消息转发到每个房间
+                    # TODO:server.py
                     self.logger.warning("unexpected opt" + str(message))
-                    # print("[warning]unexpected opt", message)
             self.clear()
 
 
 if __name__ == "__main__":
-    _debug_ = True  # 测试环境debug设置为1
     s = ServerMain()
     s.start()

@@ -6,7 +6,7 @@ import queue
 import base64
 import re
 from Crypto.Cipher import AES
-
+from Server.Modules.Flogger import Flogger
 
 class SocketClient:
     """
@@ -210,5 +210,4 @@ if __name__ == "__main__":
             recv = client.get_message()
 
         print(recv)
-        time.sleep(0.02)
     client.close()

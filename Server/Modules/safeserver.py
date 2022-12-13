@@ -5,7 +5,7 @@ import queue
 import base64
 import re
 from Crypto.Cipher import AES
-
+from Server.Modules.Flogger import Flogger
 
 class SocketServer:
     """
