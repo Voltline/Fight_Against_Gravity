@@ -18,6 +18,7 @@ class Settings:
         self.bg_color = window["bg_color"]
         self.game_title = window["game_title"]
         self.max_fps = window["max_fps"]  # 最大帧率
+        self.path = path
         del window
 
         # 开场设置
@@ -124,12 +125,12 @@ class Settings:
         self.screen_width = new_width
         self.screen_height = new_height
         self.max_fps = new_fps
-        with open("game_settings.json", "r") as f:
+        with open(self.path + "settings/game_settings.json", "r") as f:
             inf = json.load(f)
             inf["Window"]["screen_width"] = new_width
             inf["Window"]["screen_height"] = new_height
             inf["Window"]["max_fps"] = new_fps
-        with open("game_settings.json", "r") as g:
+        with open(self.path + "game_settings.json", "r") as g:
             json.dump(inf, g)
 
     def change_key(self, sector: str, target_key: str, new_key: pygame.key):
@@ -145,9 +146,9 @@ class Settings:
               new_key：新键位（pygame.key对象）
         :返回：无返回值
         """
-        with open("game_settings.json", "r") as f:
+        with open(self.path + "settings/game_settings.json", "r") as f:
             inf = json.load(f)
             inf[sector][target_key] = str(new_key)
-        with open("game_settings.json", "r") as g:
+        with open(self.path + "settings/game_settings.json", "r") as g:
             json.dump(inf, g)
         self.__init__()  # 重新调用初始化函数改变键位参数
