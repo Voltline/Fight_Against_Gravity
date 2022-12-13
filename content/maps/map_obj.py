@@ -1,5 +1,6 @@
 """地图类"""
 import json
+import os
 from pygame import Vector2
 
 from content.maps.spawn_info import SpawnInfo
@@ -73,5 +74,6 @@ class Map:
 
     @staticmethod
     def load_maps():
-        with open('./content/maps/maps.json', 'r', encoding='utf-8') as f:
+        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + "/"
+        with open(path + 'content/maps/maps.json', 'r', encoding='utf-8') as f:
             Map.maps_info = json.load(f)
