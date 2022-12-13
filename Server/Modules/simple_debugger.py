@@ -1,6 +1,8 @@
 # 这是一个用于服务端进行指令调试的debugger
 import re
-from Online.server_main import ServerMain, User, Room
+from Server.server_main import ServerMain
+from Server.Modules.User import User
+from Server.Modules.Room import Room
 
 
 def debugger(self: ServerMain):
