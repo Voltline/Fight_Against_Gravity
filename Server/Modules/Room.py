@@ -59,7 +59,6 @@ class Room:
             return True
         self.game = server_game.ServerGame(
             settings=self.game_settings,
-            #TODO:传参
             net=self.server_,
             room_id=self.roomid,
             map_name=self.roommap,

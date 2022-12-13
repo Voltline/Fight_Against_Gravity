@@ -10,11 +10,9 @@ import os
 OptType = OptType.OptType
 
 
-# TODO：get_message
 # TODO:分发消息给玩家/玩家固定时间更新游戏状态
 # TODO：debugger
 # TODO:logging
-# TODO:map_settings
 class ServerMain:
     """
     服务器主类 运行服务器主逻辑
@@ -339,8 +337,6 @@ class ServerMain:
                     room: Room = self.room_list[room_id]
                     room.release_message(message)
                 else:
-                    # TODO：消息转发到每个房间
-                    # TODO:server.py
                     self.logger.warning("unexpected opt" + str(message))
             self.clear()
 
