@@ -23,6 +23,7 @@ u：玩家2的发射子弹u
 settings = Settings(path)  # 初始化设置类
 if len(sys.argv) == 2:
     if sys.argv[1] == "--server":
+        os.environ['SDL_VIDEODRIVER'] = 'dummy'
         s = server_main.ServerMain(game_settings= settings)
         s.start()
     elif sys.argv[1] == "--client":
