@@ -10,7 +10,7 @@ class Settings:
     """保存游戏的各类设置"""
 
     def __init__(self, path: str):
-        with open(path + "settings\\game_settings.json", "r") as f:
+        with open(path + "settings/game_settings.json", "r") as f:
             inf = json.load(f)
         # 窗口设置
         window = inf["Window"]
