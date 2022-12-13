@@ -24,7 +24,7 @@ class MenuScene(Scene):
         menu_local_button.add_img(self.setting.btbg_light_pressed)
         menu_online_button.add_img(self.setting.btbg_light_pressed)
         buttons = [self.back, menu_local_button, menu_online_button]
-        self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': None}
+        self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': []}
 
     def show(self, screen):
         screen.fill((10, 10, 10))

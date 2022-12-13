@@ -7,7 +7,7 @@ class Panel:
     def __init__(self, rect, text, font_size, clicked_function):
         """rect:一个四元组，text:panel要显示的文字，is_clicked，panel被点击后要执行的函数名"""
         self.rect = pygame.Rect(rect)
-        self.color = (46, 46, 46)
+        self.color = (65, 65, 65)
         path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + "\\"
         self.font = pygame.font.Font(path + "assets\\font\\SourceHanSans-Normal.ttc", font_size)
         if text is not None:
@@ -18,7 +18,7 @@ class Panel:
         pygame.draw.rect(screen, self.color, self.rect, border_radius=15)
         width, height = self.text_surface.get_size()
         left = self.rect.left + int((self.rect.width-width)/2)
-        top = self.rect.top + int(height/2)
+        top = self.rect.top + int((self.rect.height-height)/2)
         screen.blit(self.text_surface, (left, top))
 
     def check_click(self, event):
