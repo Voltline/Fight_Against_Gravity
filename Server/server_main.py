@@ -1,4 +1,5 @@
 from Server.Modules import OptType, safeclient, safeserver
+from Server.Modules.Flogger import Flogger
 from Server.Modules.User import User
 from Server.Modules.Room import Room
 from content.maps.map_obj import Map
@@ -7,7 +8,6 @@ import uuid
 import os
 
 OptType = OptType.OptType
-_debug_ = False  # debug选项 请勿在生产环境中开启
 
 
 # TODO：get_message
@@ -23,22 +23,19 @@ class ServerMain:
     def __init__(self):
         # 获取服务器IP和端口
         path = os.path.dirname(os.path.realpath(__file__))
-        path = os.path.dirname(path) + "/"
-        self.absolute_setting_path = path + "settings/settings.json"
-        print("[server info] running at", self.absolute_setting_path)
+        path = os.path.dirname(path)
+        self.absolute_setting_path = path + "/settings/settings_local.json"
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         ip = settings["Client"]["Game_Local_IP"]
         port = settings["Client"]["Game_Port"]
         heart_beat = settings["Client"]["heart_beat"]
-        if _debug_:
-            ip = "localhost"
-            port = 25555
-
         self.user_list: {str: User} = {}
         """{"username" : User}"""
         self.room_list: {str: Room} = {}
         """"{"roomid": Room}"""
+        self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, logpath=path, level=Flogger.L_INFO,
+                              folder_name="server_main")
         self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat)
 
     @staticmethod
@@ -58,15 +55,11 @@ class ServerMain:
         """
         真的去注册服务器 进行check
         """
-        # if _debug_:
-        #     print("[debug info]ACK user", user)
-        #     return True
         with open(path, 'r') as f:
             information = json.load(f)
         reg_ip = information["Client"]["Reg_IP"]
         reg_port = information["Client"]["Reg_Port"]
         key = information["AES_Key"]
-        information = ''
         msg = {
             "opt": OptType.loginTransfer,
             "user": user,
@@ -81,7 +74,7 @@ class ServerMain:
         elif status == "close":
             return True
         else:
-            print("ServerReturnError!")
+            # print("ServerReturnError!")
             return False
 
     def login(self, message):
@@ -92,7 +85,7 @@ class ServerMain:
         if self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path):
             newUser = User(messageAdr, messageMsg["user"])
             self.user_list[messageMsg["user"]] = newUser
-            print("[game info]user {} join the game".format(newUser.get_name()))
+            self.logger.info("[game info]user {} join the game".format(newUser.get_name()))
             self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         else:
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
@@ -105,8 +98,6 @@ class ServerMain:
         messageAdr, messageMsg = message
         username, roomname, roommap = messageMsg["user"], messageMsg["roomname"], messageMsg["roommap"]
         user = self.user_list[username]
-        if _debug_:
-            print("[debug] userlist", self.user_list)
         if username not in self.user_list:
             # 非法用户
             sendMsg = messageMsg
@@ -135,7 +126,7 @@ class ServerMain:
             sendMsg = messageMsg
             sendMsg["status"] = "ACK"
             sendMsg["roomid"] = roomid
-            print("[game info]user {} creat room {}, id {}".format(username, roomname, roomid))
+            self.logger.info("[game info]user {} creat room {}, id {}".format(username, roomname, roomid))
             self.server.send(messageAdr, sendMsg)
 
     def changemap(self, message):
@@ -150,21 +141,18 @@ class ServerMain:
         roomid = messageMsg["roomid"]
         username = messageMsg["user"]
         user = self.user_list[username]
-        print(roomid, username)
         if roomid not in self.room_list:
-            # print("not in list")
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             return False
         if self.room_list[roomid].owner.get_name() != messageMsg["user"]:
-            # print("not owner")
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             return False
         if len(self.room_list[roomid].userlist) > 1:
-            # print("not empty")
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             return False
         room: Room = self.room_list[roomid]
-        print("[game info]room ({}{}) was deleted".format(room.get_roomname(), room.get_roomid()))
+        self.logger.info("[game info]room (roomname:{},roomid:{}) was deleted".format(room.get_roomname(), room.get_roomid()))
+        # print("[game info]room ({}{}) was deleted".format(room.get_roomname(), room.get_roomid()))
         self.room_list.pop(roomid)
         user.set_roomid(None)
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
@@ -184,6 +172,7 @@ class ServerMain:
             if not game_user.get_ready() and game_user != room.get_owener():
                 self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
                 return False
+        self.logger.info("[game info]room ({}{}) start game".format(room.get_roomname(), room.get_roomid()))
         room.start(self.server)
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
 
@@ -200,6 +189,7 @@ class ServerMain:
             user.ready()
         else:
             user.dready()
+        self.logger.info("[game info] user " + username + " is ready? " + isready)
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
 
     def joinroom(self, message):
@@ -219,6 +209,7 @@ class ServerMain:
         sendMsg = messageMsg
         sendMsg["status"] = "ACK"
         sendMsg["roomid"] = room.get_roomid()
+        self.logger.info("[game info]user {} join the room {}".format(username, room.get_roomname()))
         self.server.send(messageAdr, sendMsg)
 
     def leftroom(self, message):
@@ -238,6 +229,7 @@ class ServerMain:
 
         room.del_user(user)
         user.set_roomid(None)
+        self.logger.info("[game info]user {} left the room {}".format(username, room.get_roomname()))
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         return True
 
@@ -277,7 +269,7 @@ class ServerMain:
             )
         sendMsg = messageMsg
         sendMsg["roomlist"] = reslist[:]
-        print(sendMsg)
+        # print(sendMsg)
         self.server.send(messageAdr, sendMsg)
 
     def clear(self):
@@ -290,12 +282,11 @@ class ServerMain:
         # 找到已掉线的玩家列表
         for name, user in self.user_list.items():
             if user.get_address() not in connections:
-                if _debug_:
-                    print("[debug info]user {0} is unused".format((name, user.get_address())))
                 to_del.append(name)
         # 清除与掉线玩家有关的数据
         for item in to_del:
-            print("[game info]user {0} left the game".format((item, self.user_list[item].name)))
+            self.logger.info("[game info]user {0} left the game".format((item, self.user_list[item].name)))
+            # print("[game info]user {0} left the game".format((item, self.user_list[item].name)))
             user: User = self.user_list[item]
             roomid = user.get_roomid()
             if roomid in self.room_list:
@@ -310,15 +301,16 @@ class ServerMain:
         # 清除空房间
         for item in to_del:
             self.room_list.pop(item)
+            self.logger.info("[game info]room {} is deleted".format(item))
 
     def start(self):
-        print("[game info] server start")
+        self.logger.critical("[game info] server start")
+        # print("[game info] server start")
         while True:
             # 处理消息队列
             messages = self.server.get_message()
             for message in messages:
-                if _debug_:
-                    print("[debug info]message", message)
+                self.logger.debug("[debug info]message" + str(message))
                 messageAdr, messageMsg = message
                 """
                 解码后的message
@@ -346,7 +338,8 @@ class ServerMain:
                     self.ready(message)
                 else:
                     # TODO：消息转发到每个房间
-                    print("[warning]unexpected opt", message)
+                    self.logger.warning("unexpected opt" + str(message))
+                    # print("[warning]unexpected opt", message)
             self.clear()
 
 
