@@ -18,11 +18,11 @@ class ServerMain:
     服务器主类 运行服务器主逻辑
     """
 
-    def __init__(self, game_settings):
+    def __init__(self, game_settings, path, _debug_ = False):
         # 获取服务器IP和端口
-        path = os.path.dirname(os.path.realpath(__file__))
-        path = os.path.dirname(path)
         self.absolute_setting_path = path + "/settings/settings.json"
+        if _debug_:
+            self.absolute_setting_path = path + "settings/settings_local.json"
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         ip = settings["Client"]["Game_Local_IP"]
@@ -33,7 +33,7 @@ class ServerMain:
         self.room_list: {str: Room} = {}
         """"{"roomid": Room}"""
         self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
-                              folder_name="server_main")
+                              folder_name="server_main", logpath=path)
         self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat)
         self.game_settings = game_settings
 
