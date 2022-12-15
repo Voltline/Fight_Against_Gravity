@@ -1,7 +1,7 @@
 import logging
 import time
 import os
-
+import uuid
 """
 日志记录器
 记录格式 y-m-d h-m-s,ms LEVEL:info
@@ -10,11 +10,9 @@ import os
 可选择日志记录等级，仅大于等于该等级的日志消息会被记录，DEBUG会记录所有消息
 """
 
-
-# logging.basicConfig(format='%(asctime)s|[%(levelname)s]%(message)s',level=logging.DEBUG)
-
-
 class Flogger:
+    DLOGG = 0
+    """不记录日志"""
     FILE = 1
     """仅在文件记录"""
     CONSOLE = 2
@@ -34,8 +32,11 @@ class Flogger:
         level:日志记录等级，顺序为DEBUG,INFO,WARNING,ERROR,CRITICAL,默认INFO
 
         """
-        self.logger = logging.getLogger("Fight Against Gravity logger")
+        self.model = models
+        self.id = uuid.uuid4()
+        self.logger = logging.getLogger("FAG"+str(self.id))#使用uuid是防止记录到相同的日志器
         self.form = logging.Formatter('{asctime} {levelname:>8}: {message}', style='{')
+        self.path = None
         if models & self.FILE:
             # 用户未指定目录默认工作目录
             filename = str(int(time.time())) + ".log"
@@ -43,12 +44,11 @@ class Flogger:
                 logpath = os.path.dirname(os.path.realpath(__file__))
                 logpath = os.path.dirname(logpath)
             self.path = logpath + "/logs/" + folder_name + "/"
-            # print(self.path+filename)
             # 检查目录是否存在
             if not os.path.exists(self.path):
                 # 如果目录不存在，创建它
                 os.makedirs(self.path)
-            file_handler = logging.FileHandler(self.path+filename)
+            file_handler = logging.FileHandler(self.path+filename,encoding='utf-8')
             file_handler.setFormatter(self.form)
             self.logger.addHandler(file_handler)
         if models & self.CONSOLE:
@@ -56,26 +56,35 @@ class Flogger:
             con_handler.setFormatter(self.form)
             self.logger.addHandler(con_handler)
         self.logger.setLevel(level)
-        self.critical("logger start at " + str(time.ctime()) + " in " + self.path + filename)
+        if self.path:
+            self.critical("logger start at " + str(time.ctime()) + " in " + self.path + filename + "with model" + str(models))
+        else:
+            self.critical("logger start at " + str(time.ctime()) + "with model" + str(models))
     def debug(self, msg: str):
-        self.logger.debug(msg)
+        if self.model:
+            self.logger.debug(msg)
 
     def info(self, msg: str):
-        self.logger.info(msg)
+        if self.model:
+            self.logger.info(msg)
 
     def warning(self, msg: str):
-        self.logger.info(msg)
+        if self.model:
+            self.logger.info(msg)
 
     def error(self, msg: str):
-        self.logger.error(msg)
+        if self.model:
+            self.logger.error(msg)
 
     def critical(self, msg: str):
-        self.logger.critical(msg)
+        if self.model:
+            self.logger.critical(msg)
 
 
 if __name__ == "__main__":
-    logger = Flogger(Flogger.FILE_AND_CONSOLE, level=Flogger.L_DEBUG)
+    logger = Flogger(Flogger.FILE, level=Flogger.L_DEBUG)
     logger.debug("debug")
+    logger.debug("中文字符测试")
     time.sleep(1)
     logger.info("info")
     time.sleep(1)

@@ -32,7 +32,7 @@ class ServerMain:
         """"{"roomid": Room}"""
         self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
                               folder_name="server_main", logpath=path)
-        self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat)
+        self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat, models=Flogger.FILE,logpath=path)
         self.game_settings = game_settings
 
     @staticmethod
@@ -114,7 +114,7 @@ class ServerMain:
             sendMsg = messageMsg
             sendMsg["status"] = "NAK"
             sendMsg["roomid"] = None
-            self.logger.error(str(err))
+            self.logger.error("[creatroom]wrong roommap"+str(err))
             self.server.send(messageAdr, sendMsg)
         else:
             roomid = str(uuid.uuid1())
@@ -128,7 +128,6 @@ class ServerMain:
             self.server.send(messageAdr, sendMsg)
 
     def changemap(self, message):
-        # TODO:changemap
         messageAdr, messageMsg = message
         username, roomid, nroommap = messageMsg["user"], messageMsg["roomid"], messageMsg["roommap"]
         if roomid not in self.room_list:  # 无效房间

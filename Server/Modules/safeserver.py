@@ -7,6 +7,7 @@ import re
 from Crypto.Cipher import AES
 from Server.Modules.Flogger import Flogger
 
+
 class SocketServer:
     """
     对服务端的socket进行封装
@@ -19,8 +20,9 @@ class SocketServer:
     }
     """
 
-    def __init__(self, ip: str, port: int, heart_time: int = -1, debug: bool = False, warning=False,
-                 msg_len: int = 1024, password: str = None):
+    def __init__(self, ip: str, port: int, heart_time: int = -1, debug: bool = False,
+                 msg_len: int = 1024, password: str = None,
+                 models=Flogger.DLOGG, logpath=None, level=Flogger.L_INFO):
         """
         初始化socketserver
         ip:绑定服务器ip
@@ -30,11 +32,12 @@ class SocketServer:
         warning: warning选项
         msg_len: 报文长度 默认1024 实测在每秒60帧，4Mbps情况下，报文长度最高3000，否则丢包
         password：AES加密秘钥，默认None
+        models，logpath，level，folde_name都是日志选项
         收发流程：
         发：msg->encode(msg)->encrypt(encode(msg))
         收：encrypt(encode(msg))->encode(msg)->msg
         """
-        #TODO:logging
+        self.logger = Flogger(models, logpath, level, folder_name="safeserver")
         self.heart_time = heart_time
         """心跳检测"""
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -51,8 +54,6 @@ class SocketServer:
         """消息接收线程"""
         self.debug = debug
         """debug选项"""
-        self.warning = warning
-        """warning选项"""
         self.msg_len = msg_len
         """消息长度（建议短"""
         self.password = None
@@ -60,18 +61,30 @@ class SocketServer:
         if password:
             self.password = password.encode()
         if (password is not None) and (len(password) != 16):
-            raise ValueError("秘钥长度非16")
+            self.logger.error("秘钥长度非16:" + password)
+            exit(-1)
+
         try:
             self.__socket.bind((self.__host, self.__port))
             self.__socket.listen(5)
         except Exception as err:
-            print("[err info] ", err, "Fail to build a socked listener")
+            self.logger.error("Fail to build a socked listener" + str(err))
             exit(-1)
+        # 以下是初始化logging
+        self.logger.info("heart time：" + str(self.heart_time))
+        self.logger.info("ip:" + str(self.__host) + " port:" + str(self.__port))
+        self.logger.info("message length:" + str(self.msg_len))
+        self.logger.info("debug:" + str(self.debug))
+        if password:
+            self.logger.info("Encrypt message on")
+        else:
+            self.logger.info("Encrypt message off")
 
         def start():
             """
             开始接收连接
             """
+            self.logger.info("server started")
             self.accept_thread = Thread(target=self.accept_client)
             self.accept_thread.setDaemon(True)
             self.accept_thread.setName("accept_thread")
@@ -85,7 +98,7 @@ class SocketServer:
         """
         while True:
             client, address = self.__socket.accept()
-            print("[server info] client {0} connected".format(address))
+            self.logger.info("client {0} connected".format(address))
             client.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
             self.conn_poll.update({address: client})
             if self.heart_time > 0:
@@ -115,7 +128,6 @@ class SocketServer:
         """
         res = []
         msg_list = re.findall("-S-([^-]*?)-E-", message)
-        # print(msg_list)
         for item in msg_list:
             message = item[:]
             message = base64.b64decode(message)
@@ -140,11 +152,11 @@ class SocketServer:
             client.close()
             if err_reason is not None:
                 print(err_reason)
-            print("[server info] 连接{0}{1}断开".format(address, close_reason))
+            self.logger.info("连接{0}{1}断开".format(address, close_reason))
 
         while True:
             if getattr(client, '_closed'):
-                print("[server info] {}已停止运行".format(address))
+                self.logger.info("[server info] {}已停止运行".format(address))
                 break
             try:
                 recv = client.recv(self.msg_len)
@@ -162,29 +174,24 @@ class SocketServer:
                     try:
                         recv = self.decrypt(recv)
                     except ValueError as err:
-                        print("[server info]消息解密失败，请检查{}数据是否加密或秘钥是否一致".format(address), err)
-                        continue
-                    except UnicodeError:
-                        print("[server info]消息解密失败,请检查与{}的秘钥是否一致".format(address))
+                        self.logger.error("消息解密失败，请检查{}数据是否加密或秘钥是否一致".format(address) + str(err))
                         continue
                 else:
                     recv = recv.decode()
                 # 粘连包切片
                 tmpmsg = self.decode(recv)
                 for message in tmpmsg:
-                    if self.debug:
-                        if len(message) <= 50:
-                            print("[debug info]{recv %d lenth msg from%s}:%s" % (len(message), address, message))
-                        else:
-                            print("[debug info]{recv %d lenth msg from%s}" % (len(message), address))
+                    if len(message) <= 50:
+                        self.logger.debug("{recv %d lenth msg from%s}:%s" % (len(message), address, message))
+                    else:
+                        self.logger.debug("{recv %d lenth msg from%s}" % (len(message), address))
                     try:
                         message = json.loads(message)
                         if message["opt"] != 0:
                             # 0是heart beat 不存入消息队列
                             self.que.put((address, message))
                     except Exception as err:
-                        if self.warning:
-                            print("[warning info]消息{}不是json格式报文,未解析".format(message), err)
+                        self.logger.warning("消息{}不是json格式报文,未解析".format(message) + str(err))
                         if self.debug:
                             exit(-1)
                         self.que.put((address, message))
@@ -215,7 +222,7 @@ class SocketServer:
             client.close()
             self.conn_poll.pop(address)
         except Exception as err:
-            print("[err info] ", err, "连接未找到")
+            self.logger.error("[in close]" + str(err) + "连接未找到")
 
     def send(self, address, message):
         """
@@ -226,11 +233,10 @@ class SocketServer:
             client = self.conn_poll[address]
             if type(message) == dict:
                 message = json.dumps(message)
-            if self.debug:
-                if len(message) < 50:
-                    print("[debug info]sending", message)
-                else:
-                    print("[debug info]sending %d lenth message" % len(message))
+            if len(message) <= 50:
+                self.logger.debug("{send %d lenth msg to %s}:%s" % (len(message), address, message))
+            else:
+                self.logger.debug("{send %d lenth msg to %s}" % (len(message), address))
             message = self.encode(message)
             if self.password:
                 message = self.encrypt(message)
@@ -238,7 +244,7 @@ class SocketServer:
                 message = message.encode()
             client.sendall(message)
         except Exception as err:
-            print("[err info] ", err, "发送失败")
+            self.logger.error("[in send]" + str(err) + "发送失败")
 
 
 if __name__ == "__main__":
@@ -247,7 +253,7 @@ if __name__ == "__main__":
     online = False
     if online:
         ip = "192.168.0.57"
-    server = SocketServer(ip, port, heart_time=10, debug=False, warning=False, msg_len=8192,
+    server = SocketServer(ip, port, heart_time=10, debug=False, msg_len=8192,
                           password="0123456789abcdef")
     while True:
         messages = server.get_message()
