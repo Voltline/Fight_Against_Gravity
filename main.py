@@ -1,6 +1,7 @@
 """程序入口"""
 import sys
 import os
+
 path = os.path.dirname(os.path.realpath(__file__)) + '/'
 sys.path.append(path)
 from Server import server_main
@@ -25,12 +26,16 @@ if len(sys.argv) >= 2:
     _debug_ = "--debug" in sys.argv
     if sys.argv[1] == "--server":
         os.environ['SDL_VIDEODRIVER'] = 'dummy'
-        s = server_main.ServerMain(game_settings= settings, path=path, _debug_ = _debug_)
+        s = server_main.ServerMain(game_settings=settings, path=path, _debug_=_debug_)
         s.start()
         del os.environ['SDL_VIDEODRIVER']
     elif sys.argv[1] == "--client":
-        s = client_main.ClientMain(path, _debug_ = _debug_)
+        s = client_main.ClientMain(path, _debug_=_debug_)
         s.start()
+        # check_code = s.register_get_checkcode("test_1", "541665621@qq.com")
+        # input_check_code = input()
+        # ps = input()
+        # s.register_push_password("test_1", "541665621@qq.com", check_code, input_check_code, ps)
 else:
     screen = gf.init_pygame_window(settings)
     game = LocalGame(settings, screen, '征途')

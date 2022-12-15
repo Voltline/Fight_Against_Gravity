@@ -151,8 +151,9 @@ class SocketServer:
                 self.conn_poll.pop(address)
             client.close()
             if err_reason is not None:
-                print(err_reason)
-            self.logger.info("连接{0}{1}断开".format(address, close_reason))
+                self.logger.info("连接{0}{1}断开".format(address, close_reason) + str(err_reason))
+            else:
+                self.logger.info("连接{0}{1}断开".format(address, close_reason))
 
         while True:
             if getattr(client, '_closed'):

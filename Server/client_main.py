@@ -30,13 +30,16 @@ class ClientMain:
         self.user = None
         self.roomid = None
 
-    def register(self, username, email):
+    def register_get_checkcode(self, username, email):
         identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
         check_code = identify_client.get_check_code(username, email)
+        self.logger.info("[register]{}{}Register get check_code{}".format(username, email, check_code))
+        return check_code
+
+    def register_push_password(self, username, email, check_code, input_check_code, password):
+        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
         if check_code != '':
-            input_check_code = input("Input the check_code in your mailbox: ")
             if check_code.lower() == input_check_code.lower():
-                password = input("Input your password: ")
                 result = identify_client.send_all_information(username, email, password)
                 if result is True:
                     self.logger.info("[register]{}{}Register Successfully!".format(username, email))
@@ -47,7 +50,8 @@ class ClientMain:
             else:
                 self.logger.info("[register]{}{}Register Failed!".format(username, email))
                 return False
-
+        else:
+            return False
     def login(self, user: str, password: str):
         """
         用户登录
@@ -275,4 +279,4 @@ class ClientMain:
 if __name__ == "__main__":
     s = ClientMain()
     # s.start()
-    # s.register("test", "541665621@qq.com")
+
