@@ -8,25 +8,25 @@ import threading
 import Server.Modules.safeserver as safeserver
 from settings import all_settings
 
-_debug_ = 0
-
 
 class Room:
     """
     房间类 存储玩家，房间号，运行每局游戏主逻辑
     """
 
-    def __init__(self, roomid, owner: User, roomname: str, roommap: str, server: safeserver.SocketServer, game_settings):
+    def __init__(self, roomid, owner: User, roomname: str, roommap: str, server: safeserver.SocketServer,
+                 game_settings: all_settings.Settings):
         self.roomid = roomid
         self.owner = owner
         self.roomname = roomname
         self.userlist: [User] = [owner]
         self.roommap = roommap
-        self.game = None
         self.message_queue = queue.Queue()
         self.started = False
         self.server_ = server
         self.game_settings = game_settings
+        self.game: server_game.ServerGame = None
+
     def release_message(self, message):
         address, msg = message
         args = None
@@ -54,9 +54,6 @@ class Room:
 
     def start(self):
         self.started = True
-        if _debug_:
-            print("[room debug info]{} {}started".format(self.roomname, self.roomid))
-            return True
         self.game = server_game.ServerGame(
             settings=self.game_settings,
             net=self.server_,
@@ -68,6 +65,11 @@ class Room:
         thread.setDaemon(True)
         thread.setName("game of room {}{}".format(self.roomname, self.roomid))
         thread.start()
+
+    def stop(self):
+        if self.started:
+            self.game.is_run = False
+            self.started = False
 
     def get_started(self):
         return self.started

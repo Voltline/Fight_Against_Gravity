@@ -21,13 +21,15 @@ u：玩家2的发射子弹u
 鼠标滚轮：视角缩放
 """
 settings = Settings(path)  # 初始化设置类
-if len(sys.argv) == 2:
+if len(sys.argv) >= 2:
+    _debug_ = "--debug" in sys.argv
     if sys.argv[1] == "--server":
         os.environ['SDL_VIDEODRIVER'] = 'dummy'
-        s = server_main.ServerMain(game_settings= settings)
+        s = server_main.ServerMain(game_settings= settings, path=path, _debug_ = _debug_)
         s.start()
+        del os.environ['SDL_VIDEODRIVER']
     elif sys.argv[1] == "--client":
-        s = client_main.ClientMain()
+        s = client_main.ClientMain(path, _debug_ = _debug_)
         s.start()
 else:
     screen = gf.init_pygame_window(settings)

@@ -26,6 +26,7 @@ class SocketClient:
         初始化
         初始化后已经和服务端建立了socket连接
         """
+        #TODO:logging
         self.__socket = socket.socket()
         """客户端"""
         self.__port = port
