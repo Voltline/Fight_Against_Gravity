@@ -10,15 +10,13 @@ import os
 OptType = OptType.OptType
 
 
-# TODO:分发消息给玩家/玩家固定时间更新游戏状态
 # TODO：debugger
-# TODO:logging
 class ServerMain:
     """
     服务器主类 运行服务器主逻辑
     """
 
-    def __init__(self, game_settings, path, _debug_ = False):
+    def __init__(self, game_settings, path, _debug_=False):
         # 获取服务器IP和端口
         self.absolute_setting_path = path + "/settings/settings.json"
         if _debug_:
@@ -116,6 +114,7 @@ class ServerMain:
             sendMsg = messageMsg
             sendMsg["status"] = "NAK"
             sendMsg["roomid"] = None
+            self.logger.error(str(err))
             self.server.send(messageAdr, sendMsg)
         else:
             roomid = str(uuid.uuid1())
@@ -130,7 +129,24 @@ class ServerMain:
 
     def changemap(self, message):
         # TODO:changemap
-        pass
+        messageAdr, messageMsg = message
+        username, roomid, nroommap = messageMsg["user"], messageMsg["roomid"], messageMsg["roommap"]
+        if roomid not in self.room_list:  # 无效房间
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
+        room = self.room_list[roomid]
+        maxsize = 0
+        try:
+            maxsize = self.get_map_size(nroommap)
+        except Exception as err:
+            self.logger.error("[in changemap]" + str(err))
+        if maxsize < len(room.get_userlist()):  # 房间人数大于新地图人数
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
+        self.logger.info("[game info]room {},id{},changed map from {} to {}".format(room.get_roomname(), roomid, room.get_roommap(), nroommap))
+        room.change_map(nroommap)
+        self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
+        return True
 
     def deleteroom(self, message):
         """
@@ -150,6 +166,7 @@ class ServerMain:
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             return False
         room: Room = self.room_list[roomid]
+        room.stop()
         self.logger.info(
             "[game info]room (roomname:{},roomid:{}) was deleted".format(room.get_roomname(), room.get_roomid()))
         self.room_list.pop(roomid)
@@ -293,7 +310,7 @@ class ServerMain:
         # 找到空的房间列表
         for roomid, room in self.room_list.items():
             if len(room.get_userlist()) == 0:
-                # TODO:asrun
+                room.stop()
                 to_del.append(roomid)
         # 清除空房间
         for item in to_del:

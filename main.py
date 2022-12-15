@@ -27,6 +27,7 @@ if len(sys.argv) >= 2:
         os.environ['SDL_VIDEODRIVER'] = 'dummy'
         s = server_main.ServerMain(game_settings= settings, path=path, _debug_ = _debug_)
         s.start()
+        del os.environ['SDL_VIDEODRIVER']
     elif sys.argv[1] == "--client":
         s = client_main.ClientMain(path, _debug_ = _debug_)
         s.start()

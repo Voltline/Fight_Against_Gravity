@@ -1,10 +1,12 @@
 from Server.Modules import OptType, safeclient
+from Server.Modules.Flogger import Flogger
 from Server.identify_client import IdentifyClient
-import os
 import json
 
 OptType = OptType.OptType
 
+
+# TODO:logging
 
 class ClientMain:
     def __init__(self, path, _debug_=False):
@@ -21,7 +23,8 @@ class ClientMain:
         self.reg_ip = settings["Client"]["Reg_IP"]
         self.reg_port = settings["Client"]["Reg_Port"]
         self.aes_key = settings["AES_Key"]
-
+        self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
+                              folder_name="client_main", logpath=path)
         self.client = safeclient.SocketClient(self.ip, self.port, heart_beat=self.heart_beat)
         self.user = None
         self.roomid = None
@@ -66,6 +69,21 @@ class ClientMain:
             print("登陆失败 请重新启动游戏")
             return False
 
+    def changemap(self, roommap):
+        msg = {
+            "opt" : OptType.changemap,
+            "user": self.user,
+            "roommap": roommap,
+            "roomid": self.roomid
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        if recv["status"] == "NAK":
+            return False
+        elif recv["status"] == "ACK":
+            return True
+        else:
+            pass
     def creatroom(self, roomname, roommap):
         msg = {
             "opt": OptType.creatRoom,
@@ -245,6 +263,9 @@ class ClientMain:
             if opt == 9:
                 print("deready")
                 print(self.dready())
+            if opt == 10:
+                new_roommap = input("input the new roommap")
+                print(self.changemap(new_roommap))
             else:
                 continue
         self.client.close()

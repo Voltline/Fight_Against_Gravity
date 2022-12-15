@@ -34,6 +34,7 @@ class SocketServer:
         发：msg->encode(msg)->encrypt(encode(msg))
         收：encrypt(encode(msg))->encode(msg)->msg
         """
+        #TODO:logging
         self.heart_time = heart_time
         """心跳检测"""
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
