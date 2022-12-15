@@ -50,15 +50,15 @@ class SocketClient:
         if password:
             self.password = password.encode()
         if (password is not None) and (len(password) != 16):
-            self.logger.error("秘钥长度非16"+password)
-            raise Exception("秘钥长度非16"+password)
+            self.logger.error("秘钥长度非16" + password)
+            raise Exception("秘钥长度非16" + password)
             exit(-1)
         try:
             self.__socket.connect((self.__host, self.__port))
             self.__socket.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
         except Exception as err:
-            self.logger.error(str(err)+"无法连接到服务器")
-            raise  Exception(str(err)+"无法连接到服务器")
+            self.logger.error(str(err) + "无法连接到服务器")
+            raise Exception(str(err) + "无法连接到服务器")
             exit(-1)
         # 以下是初始化logging
         self.logger.info("heart time：" + str(self.heart_beat))
@@ -134,11 +134,11 @@ class SocketClient:
                             self.logger.warning("消息{}不是json格式报文,未解析".format(message) + str(err))
                         self.que.put(item)
                     if len(item) <= 150:
-                        self.logger.debug("receive:"+item+",length:"+str(len(item)))
+                        self.logger.debug("receive:" + item + ",length:" + str(len(item)))
                     else:
-                        self.logger.debug("receive message,length:"+str(len(item)))
+                        self.logger.debug("receive message,length:" + str(len(item)))
         except Exception as err:
-            self.logger.error("client closed"+str(err))
+            self.logger.error("client closed" + str(err))
 
     def beating(self):
         while True:
@@ -153,7 +153,7 @@ class SocketClient:
         """
         if type(message) == dict:
             message = json.dumps(message)
-        self.logger.debug("sending message"+message)
+        self.logger.debug("sending message" + message)
         message = self.encode(message)  # base64
         if self.password:
             message = self.encrypt(message)

@@ -28,7 +28,7 @@ class Server:
         # 不断接收消息
         is_run = [True]
         while is_run[0]:
-            clock.tick(1/self.settings.physics_dt)
+            clock.tick(1 / self.settings.physics_dt)
             self.deal_msg()
 
     def deal_msg(self):

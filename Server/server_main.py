@@ -32,7 +32,8 @@ class ServerMain:
         """"{"roomid": Room}"""
         self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
                               folder_name="server_main", logpath=path)
-        self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat, models=Flogger.FILE,logpath=path)
+        self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat, models=Flogger.FILE,
+                                              logpath=path)
         self.game_settings = game_settings
 
     @staticmethod
@@ -114,7 +115,7 @@ class ServerMain:
             sendMsg = messageMsg
             sendMsg["status"] = "NAK"
             sendMsg["roomid"] = None
-            self.logger.error("[creatroom]wrong roommap"+str(err))
+            self.logger.error("[creatroom]wrong roommap" + str(err))
             self.server.send(messageAdr, sendMsg)
         else:
             roomid = str(uuid.uuid1())
@@ -142,7 +143,9 @@ class ServerMain:
         if maxsize < len(room.get_userlist()):  # 房间人数大于新地图人数
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             return False
-        self.logger.info("[game info]room {},id{},changed map from {} to {}".format(room.get_roomname(), roomid, room.get_roommap(), nroommap))
+        self.logger.info(
+            "[game info]room {},id{},changed map from {} to {}".format(room.get_roomname(), roomid, room.get_roommap(),
+                                                                       nroommap))
         room.change_map(nroommap)
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         return True
