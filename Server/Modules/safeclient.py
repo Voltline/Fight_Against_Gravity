@@ -8,13 +8,15 @@ import re
 from Crypto.Cipher import AES
 from Server.Modules.Flogger import Flogger
 
+
 class SocketClient:
     """
     使用TCP连接的socket函数封装
     """
 
-    def __init__(self, ip: str, port: int, heart_beat: int = -1, debug=False, warning=False, msg_len: int = 1024,
-                 password: str = None):
+    def __init__(self, ip: str, port: int, heart_beat: int = -1, debug=False,
+                 warning=False, msg_len: int = 1024, password: str = None,
+                 models=Flogger.DLOGG, logpath=None, level=Flogger.L_INFO):
         """
         ip:服务端ip地址
         port:服务端端口
@@ -26,7 +28,7 @@ class SocketClient:
         初始化
         初始化后已经和服务端建立了socket连接
         """
-        #TODO:logging
+        self.logger = Flogger(models, logpath, level, folder_name="safeclient")
         self.__socket = socket.socket()
         """客户端"""
         self.__port = port
@@ -48,13 +50,22 @@ class SocketClient:
         if password:
             self.password = password.encode()
         if (password is not None) and (len(password) != 16):
-            raise ValueError("秘钥长度非16")
+            self.logger.error("秘钥长度非16"+password)
+            raise Exception("秘钥长度非16"+password)
+            exit(-1)
         try:
             self.__socket.connect((self.__host, self.__port))
             self.__socket.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
         except Exception as err:
-            print(err, "无法连接到服务器")
+            self.logger.error(str(err)+"无法连接到服务器")
+            raise  Exception(str(err)+"无法连接到服务器")
             exit(-1)
+        # 以下是初始化logging
+        self.logger.info("heart time：" + str(self.heart_beat))
+        self.logger.info("ip:" + str(self.__host) + " port:" + str(self.__port))
+        self.logger.info("message length:" + str(self.msg_len))
+        self.logger.info("debug:" + str(self.debug))
+
         self.message_thread = Thread(target=self.message_handler)
         self.message_thread.setDaemon(True)
         self.message_thread.setName("message_thread")
@@ -106,7 +117,7 @@ class SocketClient:
                     try:
                         recv_segment = self.decrypt(recv_segment)
                     except UnicodeError:
-                        print("[client info]消息解密失败,请检查与服务端的秘钥是否一致")
+                        self.logger.error("消息解密失败,请检查与服务端的秘钥是否一致")
                         continue
                 else:
                     recv_segment = recv_segment.decode()
@@ -120,15 +131,14 @@ class SocketClient:
                             self.que.put(message)
                     except Exception as err:
                         if self.warnig:
-                            print("[warning info]消息{}不是json格式报文,未解析".format(message), err)
+                            self.logger.warning("消息{}不是json格式报文,未解析".format(message) + str(err))
                         self.que.put(item)
-                    if self.debug:
-                        if len(item) <= 150:
-                            print("[debug info] receive", item, len(item))
-                        else:
-                            print("[debug info] receive msg, lenth", len(item))
+                    if len(item) <= 150:
+                        self.logger.debug("receive:"+item+",length:"+str(len(item)))
+                    else:
+                        self.logger.debug("receive message,length:"+str(len(item)))
         except Exception as err:
-            print("[client info]client closed", err)
+            self.logger.error("client closed"+str(err))
 
     def beating(self):
         while True:
@@ -143,9 +153,8 @@ class SocketClient:
         """
         if type(message) == dict:
             message = json.dumps(message)
+        self.logger.debug("sending message"+message)
         message = self.encode(message)  # base64
-        if self.debug:
-            print("[debug info]lenth of message after encode is", len(message))
         if self.password:
             message = self.encrypt(message)
         else:
@@ -182,6 +191,7 @@ class SocketClient:
         """
         关闭连接
         """
+        self.logger.info("closed")
         self.__socket.close()
 
 
@@ -202,13 +212,11 @@ if __name__ == "__main__":
             "opt": -1,
             "info": a
         }
-        # print(msg)
         client.send(msg)
         client.send(msg)
         client.send(msg)
         recv = client.get_message()
         while recv is None:
             recv = client.get_message()
-
         print(recv)
     client.close()

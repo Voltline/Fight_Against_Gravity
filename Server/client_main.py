@@ -6,26 +6,27 @@ import json
 OptType = OptType.OptType
 
 
-# TODO:logging
-
 class ClientMain:
     def __init__(self, path, _debug_=False):
+        self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
+                              folder_name="client_main", logpath=path)
         self.absolute_setting_path = path + "settings/settings.json"
         if _debug_:
             self.absolute_setting_path = path + "settings/settings_local.json"
-        print("[server info] running at", self.absolute_setting_path)
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
-
         self.ip = settings["Client"]["Game_Online_IP"]
         self.port = settings["Client"]["Game_Port"]
         self.heart_beat = settings["Client"]["heart_beat"]
         self.reg_ip = settings["Client"]["Reg_IP"]
         self.reg_port = settings["Client"]["Reg_Port"]
         self.aes_key = settings["AES_Key"]
-        self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
-                              folder_name="client_main", logpath=path)
-        self.client = safeclient.SocketClient(self.ip, self.port, heart_beat=self.heart_beat)
+        try:
+            self.client = safeclient.SocketClient(self.ip, self.port, heart_beat=self.heart_beat, models=Flogger.FILE,
+                                                  logpath=path, level=Flogger.L_INFO)
+        except Exception as err:
+            self.logger.error("客户端启动失败" + str(err))
+            exit(-1)
         self.user = None
         self.roomid = None
 
@@ -38,13 +39,13 @@ class ClientMain:
                 password = input("Input your password: ")
                 result = identify_client.send_all_information(username, email, password)
                 if result is True:
-                    print("Register Successfully!")
+                    self.logger.info("[register]{}{}Register Successfully!".format(username, email))
                     return True
                 else:
-                    print("Error! Try again later!")
+                    self.logger.info("[register]{}{}Register Failed!".format(username, email))
                     return False
             else:
-                print("Error! Try again later!")
+                self.logger.info("[register]{}{}Register Failed!".format(username, email))
                 return False
 
     def login(self, user: str, password: str):
@@ -62,16 +63,15 @@ class ClientMain:
         recvMsg = self.client.receive()
         if recvMsg["status"] == "ACK":
             self.user = user
-            print("ACK")
+            self.logger.info("[login]" + str(recvMsg))
             return True
         else:
-            print("NAK")
-            print("登陆失败 请重新启动游戏")
+            self.logger.info("[login]" + str(recvMsg))
             return False
 
     def changemap(self, roommap):
         msg = {
-            "opt" : OptType.changemap,
+            "opt": OptType.changemap,
             "user": self.user,
             "roommap": roommap,
             "roomid": self.roomid
@@ -84,6 +84,7 @@ class ClientMain:
             return True
         else:
             pass
+
     def creatroom(self, roomname, roommap):
         msg = {
             "opt": OptType.creatRoom,
@@ -187,7 +188,6 @@ class ClientMain:
         }
         self.client.send(msg)
         recv = self.client.receive()
-        print(recv)
         return recv["roomlist"]
 
     def ready(self):
@@ -269,7 +269,6 @@ class ClientMain:
             else:
                 continue
         self.client.close()
-        print("[client info] exit")
         exit(0)
 
 
