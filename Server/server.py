@@ -2,8 +2,8 @@ import threading
 import pygame
 
 from settings.all_settings import Settings
-from Modules import OptType
-from Modules import SocketServer
+from Server.Modules.OptType import OptType
+from Server.Modules.safeserver import SocketServer
 from content.online.game_room import GameRoom
 
 

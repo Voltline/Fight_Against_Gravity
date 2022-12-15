@@ -4,6 +4,7 @@ import os
 
 OptType = OptType.OptType
 
+
 class IdentifyClient:
     def __init__(self, reg_ip: str, reg_port: int,
                  game_ip: str, game_port: int,

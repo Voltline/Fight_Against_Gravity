@@ -2,7 +2,11 @@
 import sys
 import os
 
-path = os.path.dirname(os.path.realpath(__file__)) + '/'
+if hasattr(sys, 'frozen'):
+    path = os.path.dirname(sys.executable) + '/'
+else:
+    path = os.path.dirname(os.path.realpath(__file__)) + '/'
+
 sys.path.append(path)
 from Server import client_main
 from settings.all_settings import Settings
