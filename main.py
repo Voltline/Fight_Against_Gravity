@@ -23,7 +23,7 @@ u：玩家2的发射子弹u
 鼠标滚轮：视角缩放
 """
 settings = Settings(path)  # 初始化设置类
-_debug_ = False
+_debug_ = True
 s = client_main.ClientMain(path, _debug_=_debug_)
 s.start()
 # check_code = s.register_get_checkcode("test_1", "541665621@qq.com")
