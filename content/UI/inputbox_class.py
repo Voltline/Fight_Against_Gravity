@@ -44,7 +44,7 @@ class InputBox:
                 else:
                     self.text += event.unicode
 
-    def draw(self, screen: pygame.surface.Surface):
+    def render(self, screen: pygame.surface.Surface):
         if self.is_pw:
             self.draw_password(screen)
         else:

@@ -1,7 +1,6 @@
-import pygame
 import os
 
-from content.UI.scene_font import SceneFont
+from content.scene.scene_font import SceneFont
 
 
 class SceneSetting:

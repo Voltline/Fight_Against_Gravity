@@ -1,7 +1,7 @@
 import os
 import sys
 import pygame
-from content.UI.scene_settings import SceneSetting
+from content.scene.scene_settings import SceneSetting
 
 
 class ScenePlayer:

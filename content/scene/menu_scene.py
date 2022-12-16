@@ -1,11 +1,8 @@
-from content.UI.scene_class import Scene
+from content.scene.scene_class import Scene
 from content.UI.button_class import Button
-from content.UI.label_class import Label
-from content.UI.scene_font import SceneFont
-from content.UI.scene_player_class import ScenePlayer
-from content.UI.local_game_scene import LocalGameScene
-from Server import identify_client as ic
-import os
+from content.scene.scene_font import SceneFont
+from content.scene.scene_player_class import ScenePlayer
+from content.scene.local_game_scene import LocalGameScene
 import pygame
 
 

@@ -1,13 +1,11 @@
-from content.UI.scene_class import Scene
+from content.scene.scene_class import Scene
 from content.UI.button_class import Button
 from content.UI.inputbox_class import InputBox
 from content.UI.label_class import Label
-from content.UI.scene_font import SceneFont
-from content.UI.scene_player_class import ScenePlayer
-from content.UI.register_scene_class import RegScene
-from content.UI.menu_scene import MenuScene
-from Server import identify_client as ic
-import os
+from content.scene.scene_font import SceneFont
+from content.scene.scene_player_class import ScenePlayer
+from content.scene.register_scene_class import RegScene
+from content.scene.menu_scene import MenuScene
 import pygame
 
 
@@ -16,7 +14,7 @@ class LogInScene(Scene):
 
     def __init__(self, setting):
         super().__init__(setting)
-        # os.chdir(self.setting.fag_directory)
+        self.id = 0
         self.bg = (10, 10, 10)
         id_label = Label(330, 250, 98, "账号(用户名)")
         password_label = Label(330, 350, 42, "密码")
@@ -50,14 +48,9 @@ class LogInScene(Scene):
     def login_is_clicked(self):
         userid = self.loaded['box'][0].text
         userpw = self.loaded['box'][1].text
-        identify_client = ic.createIdentifyClient()
-        answer = identify_client.login(userid, userpw)
+        answer = self.client.login(userid, userpw)
         if answer:
             print("登录成功")
             ScenePlayer.push(MenuScene(self.setting))
         else:
             print("failed")
-
-
-
-
