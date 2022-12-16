@@ -32,8 +32,9 @@ class ServerMain:
         """"{"roomid": Room}"""
         self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
                               folder_name="server_main", logpath=path)
-        self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat, models=Flogger.FILE,
-                                              logpath=path)
+        self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat,
+                                              models=Flogger.FILE,
+                                              logpath=path, level=Flogger.L_INFO)
         self.game_settings = game_settings
 
     @staticmethod
@@ -80,8 +81,7 @@ class ServerMain:
         处理用户登录请求
         """
         messageAdr, messageMsg = message
-        if (messageMsg["user"] not in self.user_list) and self.check(messageMsg["user"], messageMsg["password"],
-                                                                     path=self.absolute_setting_path):
+        if (messageMsg["user"] not in self.user_list) and (self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)):
             newUser = User(messageAdr, messageMsg["user"])
             self.user_list[messageMsg["user"]] = newUser
             self.logger.info("[game info]user {} join the game".format(newUser.get_name()))
