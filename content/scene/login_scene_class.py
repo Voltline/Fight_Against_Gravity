@@ -12,8 +12,8 @@ import pygame
 class LogInScene(Scene):
     """登录界面"""
 
-    def __init__(self, setting):
-        super().__init__(setting)
+    def __init__(self, setting, client_):
+        super().__init__(setting, client_)
         self.id = 0
         self.bg = (10, 10, 10)
         id_label = Label(330, 250, 98, "账号(用户名)")
@@ -43,7 +43,7 @@ class LogInScene(Scene):
         pygame.display.flip()
 
     def register_is_clicked(self):
-        ScenePlayer.push(RegScene(self.setting))
+        ScenePlayer.push(RegScene(self.setting, self.client))
 
     def login_is_clicked(self):
         userid = self.loaded['box'][0].text
@@ -51,6 +51,6 @@ class LogInScene(Scene):
         answer = self.client.login(userid, userpw)
         if answer:
             print("登录成功")
-            ScenePlayer.push(MenuScene(self.setting))
+            ScenePlayer.push(MenuScene(self.setting, self.client))
         else:
             print("failed")

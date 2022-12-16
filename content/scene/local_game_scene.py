@@ -9,8 +9,8 @@ import pygame
 
 
 class LocalGameScene(Scene):
-    def __init__(self, setting):
-        super().__init__(setting)
+    def __init__(self, setting, client_):
+        super().__init__(setting, client_)
         pause_rect = pygame.Rect(950, 675, 20, 20)
         path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + "\\"
         """暂停按钮"""

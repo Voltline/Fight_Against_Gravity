@@ -9,9 +9,9 @@ import pygame
 
 
 class StartScene(Scene):
-    def __init__(self, setting):
+    def __init__(self, setting, client_):
         """准备开始界面的组件, 对应页面状态 0"""
-        super().__init__(setting)
+        super().__init__(setting, client_)
         start_font = SceneFont.start_font
         start_rect = pygame.Rect(455, 300, 290, 100)
         start_title = pygame.image.load(setting.fag_directory + "assets\\texture\\FAGtitle.png")  # 用作画图
@@ -25,7 +25,7 @@ class StartScene(Scene):
         self.loaded = {'img': start_title, 'label': None, 'box': None, 'button': [start], 'panel': []}
 
     def start_is_clicked(self):
-        ScenePlayer.push(LogInScene(self.setting))
+        ScenePlayer.push(LogInScene(self.setting, self.client))
 
 
 
