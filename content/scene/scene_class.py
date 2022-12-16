@@ -1,14 +1,12 @@
 import pygame
 from content.UI.button_class import Button
 from content.scene.scene_player_class import ScenePlayer
-import os
-from Server.client_main import ClientMain as client
+
 
 class Scene:
-
-    def __init__(self, setting):
-        self.path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + "\\"
-        self.client = client(self.path, _debug_=1)
+    def __init__(self, setting, client_):
+        self.path = setting.fag_directory
+        self.client = client_
         self.setting = setting  # 记得把子类所有的涉及到setting里的东西更换掉
         self.loaded = {'img': None, 'label': None, 'box': None, 'button': None, 'panel': None}
         """全局组件，返回按钮和设置按钮"""
@@ -70,7 +68,7 @@ class Scene:
     def back_is_clicked(self):
         ScenePlayer.pop()
 
-    def show(self):
+    def show(self, screen):
         pass
 
 

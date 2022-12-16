@@ -9,8 +9,8 @@ import pygame
 
 
 class RegScene(Scene):
-    def __init__(self, setting):
-        super().__init__(setting)
+    def __init__(self, setting, client_):
+        super().__init__(setting, client_)
         self.id = 1
         self.check_code = ''
         """label，分别为邮箱，用户名，密码，验证码"""

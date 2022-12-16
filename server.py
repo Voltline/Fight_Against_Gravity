@@ -7,7 +7,7 @@ from Server import server_main
 from settings.all_settings import Settings
 
 settings = Settings(path)  # 初始化设置类
-_debug_ = True  # 12/16 cdc test
+_debug_ = False  # 12/16 cdc test
 os.environ['SDL_VIDEODRIVER'] = 'dummy'
 s = server_main.ServerMain(game_settings=settings, path=path, _debug_=_debug_)
 s.start()

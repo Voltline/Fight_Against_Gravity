@@ -7,8 +7,8 @@ import pygame
 
 
 class MenuScene(Scene):
-    def __init__(self, setting):
-        super().__init__(setting)
+    def __init__(self, setting, client_):
+        super().__init__(setting, client_)
         labels = None
         boxes = None
 
@@ -30,7 +30,7 @@ class MenuScene(Scene):
         pygame.display.flip()
 
     def local_is_clicked(self):
-        ScenePlayer.push(LocalGameScene(self.setting))  # 留给游戏登录
+        ScenePlayer.push(LocalGameScene(self.setting, self.client))  # 留给游戏登录
         pass
 
     def online_is_clicked(self):
