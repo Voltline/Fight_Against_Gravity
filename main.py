@@ -1,6 +1,8 @@
 """程序入口"""
 import sys
 import os
+import time
+
 from Server import client_main
 from settings.all_settings import Settings
 import pygame
@@ -28,6 +30,9 @@ pygame.init()
 settings = Settings(path)  # 初始化设置类
 _debug_ = "--debug" in sys.argv
 s = client_main.ClientMain(path, _debug_=_debug_)
+# tmp = s.register_get_checkcode("sxm5","541665621@qq.com")
+# time.sleep(10)
+# s.register_push_password("sxm5","541665621@qq.com",tmp,tmp,"250")
 print(os.getcwd())
 sc = pygame.display.set_mode((1200, 800))
 scene_setting = SceneSetting()
