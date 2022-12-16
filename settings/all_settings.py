@@ -28,7 +28,7 @@ class Settings:
         del opening
 
         # SpaceObj
-        self.space_obj_image_path = inf["SpaceObj"]["space_obj_image_path"]  # space_obj图片路径
+        self.space_obj_image_path = self.path + inf["SpaceObj"]["space_obj_image_path"]  # space_obj图片路径
 
         # 物理
         physics = inf["Physics"]  # 物理模拟计算每次的delta_t
@@ -50,7 +50,7 @@ class Settings:
 
         # Ships
         ships = inf["Ships"]
-        self.ship_image_path = ships["ship_image_path"]  # 飞船图片路径
+        self.ship_image_path = self.path + ships["ship_image_path"]  # 飞船图片路径
         self.ship_hp = ships["ship_hp"]  # 飞船初始血量
         self.ship_go_acc = ships["ship_go_acc"]  # 飞船前进/后退的加速度
         self.ship_turn_spd = ships["ship_turn_spd"]  # 飞船转弯的角速度(弧度制)
