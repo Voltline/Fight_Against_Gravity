@@ -3,6 +3,7 @@ import sys
 path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/"
 sys.path.append(path)
 from Server.Modules import safeserver, database_operate, send_email, OptType
+from Server.Modules.Flogger import Flogger
 import json
 import time
 
@@ -18,8 +19,11 @@ class IdentifyServer:
         :返回: 无返回
         """
         self.all_reg_acc = database_operate.get_all_reg_acc() # 服务器对象内置所有账户的字典
-        self.server = safeserver.SocketServer(ip, port, heart_time, debug, password=password)
-
+        self.server = safeserver.SocketServer(ip, port, heart_time, debug, password=password,
+                                              models=Flogger.FILE,
+                                              logpath=path, level=Flogger.L_INFO)
+        self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
+                              folder_name="identify_server", logpath=path)
     def sendCheckCode_opt(self, username: str, email: str, addr: tuple):
         """发送验证码操作
         :参数: username：用户名，email：邮箱，addr：地址元组
@@ -65,7 +69,7 @@ class IdentifyServer:
         while True:
             messages = self.server.get_message()
             for message in messages:
-                print(f"[Msg In]{time.ctime()} : {message}")
+                self.logger.info(f"[Msg In]{time.ctime()} : {message}")
                 addr = message[0]  # addr : client's address
                 rmessage = message[1]
                 user_list.append({rmessage["user"]: message[0]})
@@ -73,6 +77,7 @@ class IdentifyServer:
                 if rmessage["opt"] != OptType.loginTransfer:
                     username, email = rmessage["user"], rmessage["email"]
                     if database_operate.check_duplicate(username):
+                        self.logger.info(f"[ERROR]user {username} Duplicate Error")
                         self.server.send(addr, "DUPLICATE")
                     else:
                         if rmessage["opt"] == OptType.sendCheckCode:
@@ -80,7 +85,7 @@ class IdentifyServer:
                         elif rmessage["opt"] == OptType.sendAllInformation:
                             self.register_opt(username, email, rmessage, addr)
                         else:
-                            print("[Error] unexpected opt")
+                            self.logger.info("[ERROR]Unexpected Opt")
                 else:
                     self.login_opt(rmessage, addr)
 
