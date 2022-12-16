@@ -1,11 +1,10 @@
 import sys
-from content.UI.scene_class import Scene
+from content.scene.scene_class import Scene
 from content.UI.button_class import Button
-from content.UI.scene_settings import SceneSetting
-from content.UI.scene_font import SceneFont
-from content.UI.scene_player_class import ScenePlayer
-from content.UI.login_scene_class import LogInScene
-import os
+from content.scene.scene_settings import SceneSetting
+from content.scene.scene_font import SceneFont
+from content.scene.scene_player_class import ScenePlayer
+from content.scene.login_scene_class import LogInScene
 import pygame
 
 

@@ -40,20 +40,11 @@ class Control:
             self.imgList = []
             self.imgList.append(self.__img)
 
-        # sub_width是指单独一个小按钮的宽度，整个img是一串连续的小按钮，我只在这里进行裁剪
-        #     img_rect = self.__img.get_rect()
-        #     sub_width = int(img_rect.width / img_sub)
-        #     x = 0
-        #     for i in range(self.img_sub):
-        #         self.__imgList.append(self.__img.subsurface((x, 0), (sub_width, img_rect.height)))
-        #         x += sub_width
-        #     self.sub_img_width = sub_width
-
         # 下面设定Label对象，对于纯图片的按钮，没有text，没有text就没有label
         if text is None:
             self.label = None
         else:
-            self.label = Label(rect.left, rect.top, rect.width, text, font_info)
+            self.label = Label(self.rect.left, self.rect.top, rect.width, text, font_info)
 
     def add_img(self, file_name: str):
         """多状态图进行添加"""
@@ -65,11 +56,9 @@ class Control:
     def render(self, surface):
         if self.is_show:
             if self.__img is not None:
-                # print(self.text, self.status)
                 surface.blit(self.imgList[self.status], (self.rect.left, self.rect.top))
-                # if self.status < self.img_sub:
-                #     surface.blit(self.__imgList[self.status], (self.rect.left, self.rect.top))
             if self.label is not None:
+                self.label.set_pos(self.rect.left, self.rect.top, self.rect.height)
                 self.label.render(surface)
 
     def is_over(self, point) -> bool:

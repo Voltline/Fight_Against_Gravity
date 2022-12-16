@@ -45,8 +45,8 @@ class Label:
         self.width = width  # 背景板的宽度，方便计算居中
         self.text = text
 
-        self.display_x = left
-        self.display_y = top
+        self.display_x = self.left
+        self.display_y = self.top
 
         if text == '':
             self.text_surface = None
@@ -89,21 +89,22 @@ class Label:
         elif align == 0:
             self.display_x = self.left
 
-    def set_valign(self, valign: int):
-        """设置水平对齐方式，0：靠上，1：居中，2：靠下（也就是不变）"""
-        width, height = self.__get_size()
-        if valign == 2:
-            self.display_x = self.top - height
-        elif valign == 1:
-            self.display_x = self.top - int(height / 2)
-        elif valign == 0:
-            self.display_x = self.top
+    # def set_valign(self, valign: int):
+    #     """设置水平对齐方式，0：靠上，1：居中，2：靠下（也就是不变）"""
+    #     width, height = self.__get_size()
+    #     if valign == 2:
+    #         self.display_y = self.top - height
+    #     elif valign == 1:
+    #         self.display_y = self.top + int((self.top - height) / 2)
+    #     elif valign == 0:
+    #         self.display_y = self.top
 
-    def set_pos(self, left, top, align=None, valign=None):
+    def set_pos(self, left, top, height, align=None, valign=None):
         """
         设置（更改）文本显示的位置，传入的参数是左和上
         对齐如果不更改仍然沿用
         """
+        text_width, text_height = self.__get_size()
         self.left = left
         self.top = top
         if align is not None:
@@ -112,7 +113,7 @@ class Label:
             self.valign = valign
 
         self.set_align(self.align)
-        self.set_valign(self.valign)
+        self.display_y = self.top + int((height - text_height) / 2)
 
     def hide(self, flag: bool):
         if flag:
@@ -122,4 +123,5 @@ class Label:
 
     def set_text_color(self, color):
         self.tc = color
+
 
