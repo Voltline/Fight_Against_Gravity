@@ -57,7 +57,7 @@ class LocalGameScene(Scene):
         sys.exit()
 
     def show(self):
-        self.draw_elements(self.screen)
+        self.draw_elements()
         pygame.display.flip()
 
     def deal_event(self, e):

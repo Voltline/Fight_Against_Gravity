@@ -52,7 +52,7 @@ class RegScene(Scene):
     def show(self):
         self.screen.fill((10, 10, 10))
         pygame.draw.rect(self.screen, (46, 46, 46), (300, 150, 600, 400), border_radius=15)
-        self.draw_elements(self.screen)
+        self.draw_elements()
         pygame.display.flip()
 
     def send_checkcode_clicked(self):
