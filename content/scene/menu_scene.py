@@ -9,18 +9,13 @@ import pygame
 class MenuScene(Scene):
     def __init__(self, setting, client_):
         super().__init__(setting, client_)
-        labels = None
-        boxes = None
-
-        menu_local_rect = pygame.Rect(455, 200, 290, 80)
-        menu_local_button = Button('local game', self.local_is_clicked, menu_local_rect,
-                                   self.setting.btbg_light, 0, '本地游戏', SceneFont.menu_font)
+        labels = []
+        boxes = []
         menu_online_rect = pygame.Rect(455, 360, 290, 80)
         menu_online_button = Button('online game', self.online_is_clicked, menu_online_rect,
                                     self.setting.btbg_light, 0, '线上房间', SceneFont.menu_font)
-        menu_local_button.add_img(self.setting.btbg_light_pressed)
         menu_online_button.add_img(self.setting.btbg_light_pressed)
-        buttons = [self.back, menu_local_button, menu_online_button]
+        buttons = [self.back, menu_online_button]
         self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': []}
 
     def show(self, screen):
@@ -36,3 +31,6 @@ class MenuScene(Scene):
     def online_is_clicked(self):
         # ScenePlayer.push()
         pass
+
+    def update(self, e):
+        self.deal_event(e)

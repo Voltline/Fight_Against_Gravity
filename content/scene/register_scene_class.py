@@ -55,6 +55,9 @@ class RegScene(Scene):
         self.draw_elements(screen)
         pygame.display.flip()
 
+    def update(self, e):
+        self.deal_event(e)
+
     def send_checkcode_clicked(self):
         username = self.loaded['box'][1].text
         print(username)  # 测试用
