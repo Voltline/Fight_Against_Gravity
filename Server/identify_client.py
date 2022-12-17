@@ -13,8 +13,10 @@ class IdentifyClient:
         :参数：reg_ip, reg_port：注册服务器与端口，game_ip, game_port：游戏服务器与端口, hear_time：心跳时间
         :返回：服务器返回验证码
         """
-        self.__reg_client = safeclient.SocketClient(reg_ip, reg_port, password=password)
-        self.__game_client = safeclient.SocketClient(game_ip, game_port, heart_beat=5)
+        self.__game_ip = game_ip
+        self.__game_port = game_port
+        self.__heart_beat = heart_time
+        self.__reg_client = safeclient.SocketClient(reg_ip, reg_port, password=password, heart_beat=heart_time)
 
     def get_check_code(self, username: str, email: str) -> str:
         """验证客户端对象获取验证码
@@ -31,7 +33,7 @@ class IdentifyClient:
         if check_code != "DUPLICATE":
             return check_code
         else:
-            print("Username or Email Duplicate Error!")
+            print("Username Duplicate Error!")
             return ""
 
     def send_all_information(self, username: str, email: str, password: str) -> bool:
@@ -47,12 +49,12 @@ class IdentifyClient:
         }
         self.__reg_client.send(json.dumps(msg_opt2))
         status = self.__reg_client.receive()
+        self.__reg_client.close()
         if status == "ERROR" or status == "DUPLICATE":
             return False
         elif status == "close":
             return True
         else:
-            print("ServerReturnError!")
             return False
 
     def login(self, username: str, password: str) -> bool:
@@ -60,23 +62,19 @@ class IdentifyClient:
         :参数：username: 用户名, email：邮箱, password：密码
         :返回：服务器返回结果
         """
+        game_client = safeclient.SocketClient(self.__game_ip, self.__game_port, heart_beat=self.__heart_beat)
         msg_opt = {
             "opt": OptType.login,
             "user": username,
             "password": password
         }
-        self.__game_client.send(json.dumps(msg_opt))
-        status = self.__game_client.receive()['status']
+        game_client.send(json.dumps(msg_opt))
+        status = game_client.receive()['status']
+        game_client.close()
         if status == "ACK":
             return True
         else:
-            print(status)
-            print("ServerReturnError!")
             return False
-
-    def get_Game_Socket(self):
-        """获取验证客户端中的游戏服务器socket"""
-        return self.__game_client
 
 
 def createIdentifyClient() -> IdentifyClient:
