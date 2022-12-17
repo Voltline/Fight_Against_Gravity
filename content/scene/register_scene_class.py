@@ -9,8 +9,8 @@ import pygame
 
 
 class RegScene(Scene):
-    def __init__(self, setting, client_):
-        super().__init__(setting, client_)
+    def __init__(self):
+        super().__init__()
         self.id = 1
         self.check_code = ''
         """label，分别为邮箱，用户名，密码，验证码"""
@@ -28,12 +28,12 @@ class RegScene(Scene):
 
         r_rect = pygame.Rect(650, 500, 100, 40)
         r_button = Button("r", self.confirm_reg_clicked, r_rect,
-                          self.setting.btbg_light, 0, '确认注册', SceneFont.log_font)
-        r_button.add_img(self.setting.btbg_light_pressed)
+                          self.settings.btbg_light, 0, '确认注册', SceneFont.log_font)
+        r_button.add_img(self.settings.btbg_light_pressed)
         check_rect = pygame.Rect(430, 500, 110, 40)
         r_check_button = Button('check', self.send_checkcode_clicked, check_rect,
-                                self.setting.btbg_light, 0, '发送验证码', SceneFont.log_font)
-        r_check_button.add_img(self.setting.btbg_light_pressed)
+                                self.settings.btbg_light, 0, '发送验证码', SceneFont.log_font)
+        r_check_button.add_img(self.settings.btbg_light_pressed)
         buttons = [r_button, r_check_button, self.back]
         """显示验证码错误的panel"""
         close_rect = pygame.Rect(0, 0, 20, 20)
@@ -49,14 +49,11 @@ class RegScene(Scene):
                                        [close_button], [], pause_panel_components_relative_pos)
         self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': []}
 
-    def show(self, screen):
-        screen.fill((10, 10, 10))
-        pygame.draw.rect(screen, (46, 46, 46), (300, 150, 600, 400), border_radius=15)
-        self.draw_elements(screen)
+    def show(self):
+        self.screen.fill((10, 10, 10))
+        pygame.draw.rect(self.screen, (46, 46, 46), (300, 150, 600, 400), border_radius=15)
+        self.draw_elements(self.screen)
         pygame.display.flip()
-
-    def update(self, e):
-        self.deal_event(e)
 
     def send_checkcode_clicked(self):
         username = self.loaded['box'][1].text

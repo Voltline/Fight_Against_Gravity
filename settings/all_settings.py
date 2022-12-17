@@ -4,6 +4,7 @@ import json
 from content.maps.map_obj import Map
 from content.game.obj_msg import ObjMsg
 from content.game.bullet import Bullet
+from content.scene.scene_font import SceneFont
 
 
 class Settings:
@@ -98,12 +99,20 @@ class Settings:
         # FagGame
         self.snapshots_len = 80
 
+        """字体路径"""
+        self.font_path_light = self.path + "assets\\font\\SourceHanSans-Light.ttc"
+        self.font_path_normal = self.path + "assets\\font\\SourceHanSans-Normal.ttc"
+        """按钮背景路径"""
+        self.btbg_light = self.path + "assets\\Img\\light_butbg_unpressed.png"  # 按钮浅灰底，未按版
+        self.btbg_light_pressed = self.path + "assets\\Img\\light_butbg.png"  # 鼠标移动反响
+
         del inf
 
         # 有需要初始化类变量的类的初始化
         Map.load_maps()  # 加载maps_info
         ObjMsg.init(self)
         Bullet.init(self)
+        SceneFont.init(self)
 
     def make_bullet_image(self):
         image = pygame.Surface((2 * self.bullet_radius + 1, 2 * self.bullet_radius + 1))
@@ -151,4 +160,4 @@ class Settings:
             inf[sector][target_key] = str(new_key)
         with open(self.path + "settings/game_settings.json", "r") as g:
             json.dump(inf, g)
-        self.__init__()  # 重新调用初始化函数改变键位参数
+        self.__init__(self.path)  # 重新调用初始化函数改变键位参数

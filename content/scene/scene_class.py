@@ -1,17 +1,21 @@
 import pygame
+import sys
 from content.UI.button_class import Button
 from content.scene.scene_player_class import ScenePlayer
 
 
 class Scene:
-    def __init__(self, setting, client_):
-        self.path = setting.fag_directory
-        self.client = client_
-        self.setting = setting  # 记得把子类所有的涉及到setting里的东西更换掉
+
+    screen = None
+    settings = None
+    client = None
+    path = None
+
+    def __init__(self):
         self.loaded = {'img': None, 'label': None, 'box': None, 'button': None, 'panel': None}
         """全局组件，返回按钮和设置按钮"""
         back_rect = pygame.Rect(20, 20, 45, 45)
-        self.back = Button("back", self.back_is_clicked, back_rect, setting.fag_directory + "assets\\Img\\back.png", 1)
+        self.back = Button("back", self.back_is_clicked, back_rect, self.path + "assets\\Img\\back.png", 1)
         self.reminder_panel_rect = (200, 300, 800, 200)
         self.reminder_panel_rect_small = (450, 300, 300, 100)
         self.menu_like_panel_rect = (300, 200, 600, 400)
@@ -52,8 +56,12 @@ class Scene:
             for bx in self.loaded['box']:
                 bx.deal_event(e)
 
-    def update(self, event):
-        pass
+    def update(self):
+        for event in pygame.event.get():
+            ScenePlayer.STACK[-1].deal_event(event)
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
 
     def draw_elements(self, surface):
         if self.loaded['button'] is not None:
@@ -72,7 +80,12 @@ class Scene:
     def back_is_clicked(self):
         ScenePlayer.pop()
 
-    def show(self, screen):
+    def show(self):
         pass
 
-
+    @staticmethod
+    def init(settings, screen, client):
+        Scene.settings = settings
+        Scene.path = settings.path
+        Scene.screen = screen
+        Scene.client = client
