@@ -23,7 +23,7 @@ class ScenePlayer:
     def show_scene(self):
         while True:
             for event in pygame.event.get():
-                ScenePlayer.STACK[-1].update_event(event)
+                ScenePlayer.STACK[-1].deal_event(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
