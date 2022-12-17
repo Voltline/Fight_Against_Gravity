@@ -36,211 +36,511 @@ def send_email(user_name: str, target_email: str, id_code: str) -> None:
     port = information["Email"]["SMTP_Port"]
     information = ""
 
-    content2 = """<div>
-        <includetail>
-            <div style="font:Verdana normal 14px;color:#000;">
-                <div style="position:relative;">
-                    <div class="eml-w eml-w-sys-layout">
-                        <div style="font-size: 0px;">
-                            &emsp;
-                            <div class="eml-w-sys-line">
-                                <div class="eml-w-sys-line-left"></div>
-                                <div class="eml-w-sys-line-right"></div>
-                            </div>
-                            &emsp;
-                            <div class="eml-w-sys-logo">
-                                <img src="https://www.convtool.com/2_BigPic.png" style="width: 50px; height: 50px;" onerror="">
-                            </div>
-                        </div>
-                        <div class="eml-w-sys-content">
-                            <h1>完成注册Fight Against Gravity账户</h1>
-                            <h2>&emsp;</h2>
-                            &emsp;
-                            <div class="dragArea gen-group-list">
-                                <div class="gen-item">
-                                    <div class="eml-w-item-block" style="padding: 0px;">
-                                        <div class="eml-w-phase-normal-16"><b>你好，""" + user_name + """，你的注册验证码为：</b></div>
-                                </div>
-                                </div>
+    content2 = """<!doctype html>
+<html lang="zh" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 
-                                <div class="gen-item">
+<head>
+  <title> 欢迎注册Fight Against Gravity账户！ </title>
+  <!--[if !mso]><!-- -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!--<![endif]-->
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+    #outlook a {
+      padding: 0;
+    }
 
-                                    <div class="eml-w-item-block" style="padding: 0px;">
-                                        <div class="eml-w-phase-normal-16" style="color: rgb(61, 139, 240);text-align: center;font-weight:bold;font-size: 30px"> """ + id_code + """ </div>
-                                    </div>
-                                </div>
-                                <div class="gen-item" draggable="false">
-                                    <div class="eml-w-item-block" style="padding: 0px 0px 0px 1px;">
-                                        <div class="eml-w-title-level3"><b>请不要将该验证码发给任何人！</b></div>
-                                        <div class="eml-w-title-level3">如果您从未选择注册，请忽略该邮件。</div>
-                                    </div>
-                                </div>
+    body {
+      margin: 0;
+      padding: 0;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
 
-                                <div class="gen-item" draggable="false">
-                                    <div class="eml-w-item-block" style="padding: 0px;">
-                                    </div>
-                                </div>
+    table,
+    td {
+      border-collapse: collapse;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
 
-                            </div>
-                        </div>
-                        <div class="eml-w-sys-footer">Fight Against Gravity 团队</div>
-                    </div>
-                </div>
-            </div><!--<![endif]-->
-        </includetail>
+    img {
+      border: 0;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
+    }
+
+    p {
+      display: block;
+      margin: 13px 0;
+    }
+  </style>
+  <!--[if mso]>
+        <xml>
+        <o:OfficeDocumentSettings>
+          <o:AllowPNG/>
+          <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+        </xml>
+        <![endif]-->
+  <!--[if lte mso 11]>
+        <style type="text/css">
+          .mj-outlook-group-fix { width:100% !important; }
+        </style>
+        <![endif]-->
+  <!--[if !mso]><!-->
+  <link href="https://fonts.googleapis.com/css?family=Muli:300,400,700" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    @import url(https://fonts.googleapis.com/css?family=Muli:300,400,700);
+  </style>
+  <!--<![endif]-->
+  <style type="text/css">
+    @media only screen and (min-width:480px) {
+      .mj-column-per-100 {
+        width: 100% !important;
+        max-width: 100%;
+      }
+    }
+  </style>
+  <style type="text/css">
+    @media only screen and (max-width:480px) {
+      table.mj-full-width-mobile {
+        width: 100% !important;
+      }
+
+      td.mj-full-width-mobile {
+        width: auto !important;
+      }
+    }
+  </style>
+  <style type="text/css">
+    a,
+    span,
+    td,
+    th {
+      -webkit-font-smoothing: antialiased !important;
+      -moz-osx-font-smoothing: grayscale !important;
+    }
+  </style>
+</head>
+
+<body style="background-color:#f9f0e6;">
+  <div style="background-color:#f9f0e6;">
+    <!--[if mso | IE]>
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    <div style="margin:0px auto;max-width:600px;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tbody>
+          <tr>
+            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+              <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                
+        <tr>
+      
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                  <tr>
+                    <td style="font-size:0px;word-break:break-word;">
+                      <!--[if mso | IE]>
+    
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td height="20" style="vertical-align:top;height:20px;">
+      
+    <![endif]-->
+                      <div style="height:20px;"> &nbsp; </div>
+                      <!--[if mso | IE]>
+    
+        </td></tr></table>
+      
+    <![endif]-->
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
+                        <tbody>
+                          <tr>
+                            <td style="width:75px;">
+                              <img height="auto" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="75">
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <!--[if mso | IE]>
+            </td>
+          
+        </tr>
+      
+                  </table>
+                <![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+    <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+      
+        <table
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;" width="600"
+        >
+          <tr>
+            <td  style="line-height:0;font-size:0;mso-line-height-rule:exactly;">
+              <v:image
+                 style="border:0;mso-position-horizontal:center;position:absolute;top:0;width:600px;z-index:-3;" src="https://www.convtool.com/FAGDark.png"  xmlns:v="urn:schemas-microsoft-com:vml"
+              />
+      <![endif]-->
+    <div style="margin:0 auto;max-width:600px;">
+      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tr style="vertical-align:top;">
+          <td background="https://www.convtool.com/FAGDark.png" 
+          style="background:#ffffff url(https://www.convtool.com/FAGDark.png) no-repeat center center /
+           cover;background-position:center center;background-repeat:no-repeat;padding:0px;vertical-align:top;" 
+           height="240">
+            <!--[if mso | IE]>
+        <table
+           border="0" cellpadding="0" cellspacing="0" style="width:600px;" width="600"
+        >
+          <tr>
+            <td  style="">
+      <![endif]-->
+            <div class="mj-hero-content" style="margin:0px auto;">
+              <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;margin:0px;">
+                <tr>
+                  <td style>
+                    <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;margin:0px;">
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <!--[if mso | IE]>
+            </td>
+          </tr>
+        </table>
+      <![endif]-->
+          </td>
+        </tr>
+      </table>
+    </div>
+    <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+    
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
+        <tbody>
+          <tr>
+            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+              <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                
+            <tr>
+              <td
+                 class="" width="600px"
+              >
+          
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+              <div style="margin:0px auto;max-width:600px;">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+                  <tbody>
+                    <tr>
+                      <td style="direction:ltr;font-size:0px;padding:0px;text-align:center;">
+                        <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                
+        <tr>
+      
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                            <tr>
+                              <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                <div style="font-family:Muli, Arial, sans-serif;font-size:20px;font-weight:400;line-height:30px;text-align:left;color:#333333;">
+                                  <h1 style="margin: 0; font-size: 24px; line-height: normal; font-weight: bold;">完成注册您的Fight Against Gravity账户</h1>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                <p style="border-top: solid 1px #F4F5FB; font-size: 1px; margin: 0px auto; width: 100%;">
+                                </p>
+                                <!--[if mso | IE]>
+        <table
+           align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #F4F5FB;font-size:1px;margin:0px auto;width:550px;" role="presentation" width="550px"
+        >
+          <tr>
+            <td style="height:0;line-height:0;">
+              &nbsp;
+            </td>
+          </tr>
+        </table>
+      <![endif]-->
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                <div style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
+                                  <p style="margin: 0;">您好！""" + user_name + """，您的验证码为：</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <br>
+                            <tr>
+                              <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                <div style="font-family:Muli, Arial, sans-serif;font-size:30px;font-weight:400;
+                                line-height:20px;text-align:center;font-weight:bold;color:rgb(61, 139, 240);">
+                                  <p style="margin: 0;"> """ + id_code + """</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                        <!--[if mso | IE]>
+            </td>
+          
+        </tr>
+      
+                  </table>
+                <![endif]-->
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+      
+              </td>
+            </tr>
+          
+            <tr>
+              <td
+                 class="" width="600px"
+              >
+          
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+              <div style="margin:0px auto;max-width:600px;">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+                  <tbody>
+                    <tr>
+                      <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
+                        <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                
+        <tr>
+      
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                            <tr>
+                              <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                <div style="font-family:Muli, Arial, sans-serif;font-size:14px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
+                                  <br>
+                                  <p style="margin: 0;">请不要将该验证码发给任何人！ </p>
+                                  <p style="margin: 0;">如果您从未选择注册Fight Against Gravity账户，请忽略此邮件！ </p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align="right" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                <div style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;
+                                line-height:20px;text-align:right;color:#333333;">
+                                  <p style="margin: 0;"> 此致, <br> Fight Against Gravity团队</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                        <!--[if mso | IE]>
+            </td>
+          
+        </tr>
+      
+                  </table>
+                <![endif]-->
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+      
+              </td>
+            </tr>
+          
+                  </table>
+                <![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+      
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    <div style="margin:0px auto;max-width:600px;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tbody>
+          <tr>
+            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+              <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                
+        <tr>
+      
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                  <tr>
+                    <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <div style="font-family:Muli, Arial, sans-serif;font-size:14px;font-weight:400;
+                      line-height:20px;text-align:center;
+                      color:#616161;">Copyright © 2023 Fight Against Gravity Team. <br>
+                      欢迎访问我们的项目主页<a href="https://github.com/Voltline/Fight_Against_Gravity">Fight Against Gravity</a></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <!--[if mso | IE]>
+            </td>
+          
+        </tr>
+      
+                  </table>
+                <![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+      
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    <div style="margin:0px auto;max-width:600px;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tbody>
+          <tr>
+            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+              <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                
+        <tr>
+      
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                  <tr>
+                    <td style="font-size:0px;word-break:break-word;">
+                      <!--[if mso | IE]>
+    
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td height="1" style="vertical-align:top;height:1px;">
+      
+    <![endif]-->
+                      <div style="height:1px;"> &nbsp; </div>
+                      <!--[if mso | IE]>
+    
+        </td></tr></table>
+      
+    <![endif]-->
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <!--[if mso | IE]>
+            </td>
+          
+        </tr>
+      
+                  </table>
+                <![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+      <![endif]-->
+  </div>
+</body>
 
-    <style>
-        .eml-w .eml-w-phase-normal-16 {
-            color: #2b2b2b;
-            font-size: 16px;
-            line-height: 1.75
-        }
-
-        .eml-w .eml-w-phase-bold-16 {
-            font-size: 16px;
-            color: #2b2b2b;
-            font-weight: 500;
-            line-height: 1.75
-        }
-
-        .eml-w-title-level1 {
-            font-size: 20px;
-            font-weight: 500;
-            padding: 15px 0
-        }
-
-        .eml-w-title-level3 {
-            font-size: 16px;
-            font-weight: 500;
-            padding-bottom: 10px
-        }
-
-        .eml-w-title-level3.center {
-            text-align: center
-        }
-
-        .eml-w-phase-small-normal {
-            font-size: 14px;
-            color: #2b2b2b;
-            line-height: 1.75
-        }
-
-        .eml-w-picture-wrap {
-            padding: 10px 0;
-            width: 100%;
-            overflow: hidden
-        }
-
-        .eml-w-picture-full-img {
-            display: block;
-            width: auto;
-            max-width: 100%;
-            margin: 0 auto
-        }
-
-        .eml-w-sys-layout {
-            background: #fff;
-            box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .2);
-            border-radius: 4px;
-            margin: 50px auto;
-            max-width: 700px;
-            overflow: hidden
-        }
-
-        .eml-w-sys-line-left {
-            display: inline-block;
-            width: 88%;
-            background: #2984ef;
-            height: 3px
-        }
-
-        .eml-w-sys-line-right {
-            display: inline-block;
-            width: 11.5%;
-            height: 3px;
-            background: #8bd5ff;
-            margin-left: 1px
-        }
-
-        .eml-w-sys-logo {
-            text-align: right
-        }
-
-        .eml-w-sys-logo img {
-            display: inline-block;
-            margin: 30px 50px 0 0
-        }
-
-        .eml-w-sys-content {
-            position: relative;
-            padding: 20px 50px 0;
-            min-height: 216px;
-            word-break: break-all
-        }
-
-        .eml-w-sys-footer {
-            font-weight: 500;
-            font-size: 12px;
-            color: #bebebe;
-            letter-spacing: .5px;
-            padding: 0 0 30px 50px;
-            margin-top: 60px
-        }
-
-        .eml-w {
-            font-family: Helvetica Neue, Arial, PingFang SC, Hiragino Sans GB, STHeiti, Microsoft YaHei, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            color: #2b2b2b;
-            font-size: 14px;
-            line-height: 1.75
-        }
-
-        .eml-w a {
-            text-decoration: none
-        }
-
-        .eml-w a, .eml-w a:active {
-            color: #186fd5
-        }
-
-        .eml-w h1, .eml-w h2, .eml-w h3, .eml-w h4, .eml-w h5, .eml-w h6, .eml-w li, .eml-w p, .eml-w ul {
-            margin: 0;
-            padding: 0
-        }
-
-        .eml-w-item-block {
-            margin-bottom: 10px
-        }
-
-        @media (max-width: 420px) {
-            .eml-w-sys-layout {
-                border-radius: none !important;
-                box-shadow: none !important;
-                margin: 0 !important
-            }
-
-            .eml-w-sys-layout .eml-w-sys-line {
-                display: none
-            }
-
-            .eml-w-sys-layout .eml-w-sys-logo img {
-                margin-right: 30px !important
-            }
-
-            .eml-w-sys-layout .eml-w-sys-content {
-                padding: 0 35px !important
-            }
-
-            .eml-w-sys-layout .eml-w-sys-footer {
-                padding-left: 30px !important
-            }
-        }
-    </style>"""
+</html>"""
 
     msg = MIMEText(content2, 'HTML', 'utf-8')
     msg['From'] = Header("Fight Against Gravity<fag_identify_norep@yeah.net>")
-    msg['To'] = Header(user_name)
+    msg['To'] = Header(user_name+f"<{target_email}>")
     msg["Subject"] = Header("验证您的身份")
 
     server = smtplib.SMTP_SSL(smtp_server)
