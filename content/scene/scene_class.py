@@ -56,12 +56,16 @@ class Scene:
             for bx in self.loaded['box']:
                 bx.deal_event(e)
 
-    def update(self):
+    def deal_events(self):
+        """获取并处理所有消息"""
         for event in pygame.event.get():
             ScenePlayer.STACK[-1].deal_event(event)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+    def update(self):
+        self.deal_events()
 
     def draw_elements(self, surface):
         if self.loaded['button'] is not None:
