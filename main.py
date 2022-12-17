@@ -37,7 +37,6 @@ Scene.init(settings, sc, s)
 # s.register_push_password("sxm5","541665621@qq.com",tmp,tmp,"250")
 print(os.getcwd())
 
-scene_setting = SceneSetting()
 begin = StartScene()
 ScenePlayer.push(begin)
 ScenePlayer.show_scene()

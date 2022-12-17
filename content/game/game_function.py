@@ -115,9 +115,7 @@ def update_screen(settings, gm, camera, traces: list, surplus_ratio, now_sec=-1)
             break
         else:
             traces.remove(trace)
-
-    # 刷新屏幕
-    pygame.display.flip()
+    # 刷新屏幕在scene中完成
 
 
 def add_traces(settings, gm, traces, now_sec):

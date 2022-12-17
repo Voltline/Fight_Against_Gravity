@@ -1,25 +1,24 @@
+import sys
+import pygame
 from content.scene.scene_class import Scene
 from content.UI.button_class import Button
 from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
 from content.UI.panel_class import Panel
-import os
-import sys
-import pygame
+from content.game.local_game import LocalGame
 
 
 class LocalGameScene(Scene):
     def __init__(self):
         super().__init__()
         pause_rect = pygame.Rect(950, 675, 20, 20)
-        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + "\\"
         """暂停按钮"""
-        pause_button = Button('pause', self.pause_is_clicked, pause_rect, path + 'assets\\Img\\pause.png', 0)
-        pause_button.add_img(path + 'assets\\Img\\pause_pressed.png')
+        pause_button = Button('pause', self.pause_is_clicked, pause_rect, self.path + 'assets\\Img\\pause.png', 0)
+        pause_button.add_img(self.path + 'assets\\Img\\pause_pressed.png')
         """暂停后panel上的组件"""
         close_rect = pygame.Rect(0, 0, 20, 20)
-        close_button = Button('close', self.close_is_clicked, close_rect, path + 'assets\\Img\\close_unclicked.png', 0)
-        close_button.add_img(path + 'assets\\Img\\close_clicked.png')
+        close_button = Button('close', self.close_is_clicked, close_rect, self.path + 'assets\\Img\\close_unclicked.png', 0)
+        close_button.add_img(self.path + 'assets\\Img\\close_clicked.png')
 
         """返回主界面"""
         go_menu_rect = pygame.Rect(0, 0, 300, 65)
@@ -39,11 +38,16 @@ class LocalGameScene(Scene):
         self.loaded = {'img': None, 'label': None, 'box': None,
                        'button': [pause_button], 'panel': []}
 
+        self.game = LocalGame(self.settings, self.screen, '地月系统')
+        self.game.restart()
+
     def pause_is_clicked(self):
         self.loaded['panel'] = [self.pause_panel]
+        self.game.is_pause = True
 
     def close_is_clicked(self):
         self.loaded['panel'] = []
+        self.game.is_pause = False
 
     def go_menu_is_clicked(self):
         ScenePlayer.pop()
@@ -53,9 +57,31 @@ class LocalGameScene(Scene):
         sys.exit()
 
     def show(self):
-        self.screen.fill((10, 10, 10))
         self.draw_elements(self.screen)
         pygame.display.flip()
 
+    def deal_event(self, e):
+        super().deal_event(e)
+        if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+            if self.game.is_pause:
+                self.close_is_clicked()
+            else:
+                self.pause_is_clicked()
+
+    def deal_events(self):
+        """获取并处理所有消息"""
+        self.game.mouse_loc.update(pygame.mouse.get_pos())
+        self.game.mouse_d_loc.update(pygame.mouse.get_rel())
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            else:
+                ScenePlayer.STACK[-1].deal_event(event)
+                if not self.game.is_pause:
+                    self.game.deal_event(event)
+
     def update(self):
-        pass
+        self.deal_events()
+        self.game.main_update()

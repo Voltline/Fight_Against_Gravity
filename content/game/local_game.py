@@ -21,11 +21,6 @@ class LocalGame(FAGGame):
         self.ship2 = gf.find_player_ship(self.gm.ships, 'player2')
         self.traces = []
 
-    def events_loop(self):
-        """更新消息的循环"""
-        self.camera.mouse_loc.update(self.mouse_loc)
-        super().events_loop()
-
     def deal_event(self, event):
         super().deal_event(event)
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -34,7 +29,7 @@ class LocalGame(FAGGame):
         elif event.type == pygame.MOUSEMOTION:
             mouse_keys = pygame.mouse.get_pressed()
             if mouse_keys[2]:  # 如果鼠标右键被按下
-                self.camera.d_loc.update(self.mouse_d_loc)
+                self.camera.d_loc += self.mouse_d_loc
         elif event.type == pygame.MOUSEWHEEL:
             self.camera.d_zoom = event.y
 
@@ -106,4 +101,5 @@ class LocalGame(FAGGame):
     def display(self):
         """更新屏幕"""
         surplus_ratio = self.surplus_dt / self.physics_dt
+        self.camera.mouse_loc.update(self.mouse_loc)
         gf.update_screen(self.settings, self.gm, self.camera, self.traces, surplus_ratio, self.now_time)
