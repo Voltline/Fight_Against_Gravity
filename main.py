@@ -6,8 +6,8 @@ import time
 from Server import client_main
 from settings.all_settings import Settings
 import pygame
+from content.scene.scene_class import Scene
 from content.scene.start_scene_class import StartScene
-from content.scene.scene_settings import SceneSetting
 from content.scene.scene_player_class import ScenePlayer
 if hasattr(sys, 'frozen'):
     path = os.path.dirname(sys.executable) + '/'
@@ -30,13 +30,14 @@ pygame.init()
 settings = Settings(path)  # 初始化设置类
 _debug_ = "--debug" in sys.argv
 s = client_main.ClientMain(path, _debug_=_debug_)
+sc = pygame.display.set_mode((1200, 800))
+Scene.init(settings, sc, s)
 # tmp = s.register_get_checkcode("sxm5","541665621@qq.com")
 # time.sleep(10)
 # s.register_push_password("sxm5","541665621@qq.com",tmp,tmp,"250")
 print(os.getcwd())
-sc = pygame.display.set_mode((1200, 800))
+
 scene_setting = SceneSetting()
-begin = StartScene(scene_setting, s)
-sp = ScenePlayer(sc, scene_setting)
+begin = StartScene()
 ScenePlayer.push(begin)
-sp.show_scene()
+ScenePlayer.show_scene()

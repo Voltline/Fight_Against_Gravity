@@ -31,7 +31,8 @@ class InputBox:
         else:
             self.color = self.color_inactive
             self.color_inside = self.color_inside_inactive
-        if event.type == pygame.KEYDOWN:  # 键盘输入响应
+        if event.type == pygame.KEYDOWN:
+            # 键盘输入响应
             if self.active:
                 if event.key == pygame.K_RETURN:
                     print('*'+self.text+'*')
