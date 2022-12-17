@@ -23,10 +23,11 @@ class Scene:
 
         """用于判断按下回车键时是否相应，如果是登录界面，敲下回车应该等同于登录，如果注册界面，敲下回车等同于进行注册"""
         self.id = 0  # 0对应登录，1对应注册，2对应设置改键，3对应无响应。
+
     def ban_inputbox(self):
         self.box_is_able = False
 
-    def update_event(self, e):
+    def deal_event(self, e):
         """将对应页面加载了的组件全部进行状态更新，会post新的event"""
         if self.loaded['panel'] is not None:
             for pn in self.loaded['panel']:
@@ -50,6 +51,9 @@ class Scene:
                     self.loaded['box'][self.switcher].active = True
             for bx in self.loaded['box']:
                 bx.deal_event(e)
+
+    def update(self, event):
+        pass
 
     def draw_elements(self, surface):
         if self.loaded['button'] is not None:

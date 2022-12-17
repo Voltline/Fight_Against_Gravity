@@ -56,3 +56,6 @@ class LocalGameScene(Scene):
         screen.fill((10, 10, 10))
         self.draw_elements(screen)
         pygame.display.flip()
+
+    def update(self, e):
+        pass
