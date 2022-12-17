@@ -63,10 +63,10 @@ class FAGGame:
 
     def main_update(self):
         """主循环每轮要做的事情"""
+        # if not self.is_pause:  # 不暂停才处理pygame的events
+        #     self.check_events()
         self.delta_t = self.time_scale*self.clock.tick(self.max_fps)/1000  # 获取delta_time(sec)并限制最大帧率
         self.surplus_dt += self.delta_t
-        if not self.is_pause:  # 不暂停才处理pygame的events
-            self.check_events()
         self.physic_loop()
         self.display()
 
