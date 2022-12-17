@@ -11,8 +11,12 @@ class ClientMain:
         self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
                               folder_name="client_main", logpath=path)
         self.absolute_setting_path = path + "settings/settings.json"
+        client_models = Flogger.FILE
+        client_level = Flogger.L_INFO
         if _debug_:
             self.absolute_setting_path = path + "settings/settings_local.json"
+            client_models = Flogger.FILE_AND_CONSOLE
+            client_level = Flogger.L_DEBUG
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         self.ip = settings["Client"]["Game_Online_IP"]
@@ -22,25 +26,29 @@ class ClientMain:
         self.reg_port = settings["Client"]["Reg_Port"]
         self.aes_key = settings["AES_Key"]
         try:
-            self.client = safeclient.SocketClient(self.ip, self.port, heart_beat=self.heart_beat, models=Flogger.FILE,
-                                                  logpath=path, level=Flogger.L_INFO)
+            self.client = safeclient.SocketClient(self.ip, self.port, heart_beat=self.heart_beat, models=client_models,
+                                                  logpath=path, level=client_level)
         except Exception as err:
             self.logger.error("客户端启动失败" + str(err))
-            exit(-1)
+            # exit(-1)
+            raise Exception("无法连接到服务器")
         self.user = None
         self.roomid = None
 
     def register_get_checkcode(self, username, email):
-        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
+        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key, self.heart_beat)
+        # identify_client = safeclient.SocketClient(self.reg_ip, self.reg_port, password=se)
         check_code = identify_client.get_check_code(username, email)
         self.logger.info("[register]{}{}Register get check_code{}".format(username, email, check_code))
+        del identify_client
         return check_code
 
     def register_push_password(self, username, email, check_code, input_check_code, password):
-        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
+        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key, self.heart_beat)
         if check_code != '':
             if check_code.lower() == input_check_code.lower():
                 result = identify_client.send_all_information(username, email, password)
+                del identify_client
                 if result is True:
                     self.logger.info("[register]{}{}Register Successfully!".format(username, email))
                     return True
@@ -52,6 +60,7 @@ class ClientMain:
                 return False
         else:
             return False
+
     def login(self, user: str, password: str):
         """
         用户登录
@@ -222,7 +231,7 @@ class ClientMain:
 
     def start(self):
         # self.user = input("input the user name")
-        self.user = "test_1"
+        self.user = "test__1"
         # password = input("input the pass word")
         password = "123456"
         if not self.login(self.user, password):
@@ -279,4 +288,3 @@ class ClientMain:
 if __name__ == "__main__":
     s = ClientMain()
     # s.start()
-

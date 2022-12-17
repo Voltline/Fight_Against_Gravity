@@ -19,8 +19,14 @@ class ServerMain:
     def __init__(self, game_settings, path, _debug_=False):
         # 获取服务器IP和端口
         self.absolute_setting_path = path + "/settings/settings.json"
+        self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
+                              folder_name="server_main", logpath=path)
+        server_model = Flogger.FILE
+        server_level = Flogger.L_INFO
         if _debug_:
             self.absolute_setting_path = path + "settings/settings_local.json"
+            server_model = Flogger.FILE_AND_CONSOLE
+            server_level = Flogger.L_DEBUG
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         ip = settings["Client"]["Game_Local_IP"]
@@ -30,11 +36,8 @@ class ServerMain:
         """{"username" : User}"""
         self.room_list: {str: Room} = {}
         """"{"roomid": Room}"""
-        self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
-                              folder_name="server_main", logpath=path)
         self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat,
-                                              models=Flogger.FILE,
-                                              logpath=path, level=Flogger.L_INFO)
+                                              models=server_model,logpath=path, level=server_level)
         self.game_settings = game_settings
 
     @staticmethod
@@ -88,7 +91,7 @@ class ServerMain:
             self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         else:
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
-            self.server.close(messageAdr)
+            # self.server.close(messageAdr)
 
     def creatroom(self, message):
         """
