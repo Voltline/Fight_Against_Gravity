@@ -38,7 +38,7 @@ class StartScene(Scene):
     def show(self):
         self.screen.fill((255, 255, 255))
         self.screen.blit(self.loaded['img'], (10, 10))
-        self.draw_elements(self.screen)
+        self.draw_elements()
         pygame.display.flip()
 
 

@@ -1,6 +1,10 @@
+import time
+
 import pygame
 import pygame.key
 import os
+from pygame.locals import SCRAP_TEXT
+import platform
 
 
 class InputBox:
@@ -36,6 +40,12 @@ class InputBox:
             if self.active:
                 if event.key == pygame.K_RETURN:
                     print('*'+self.text+'*')
+                elif event.key == 118 and (event.mod == 64 or event.mod == 1024):
+                    scrap_text = pygame.scrap.get(SCRAP_TEXT)
+                    if scrap_text:
+                        if 'Windows' in platform.platform():
+                            scrap_text = scrap_text.decode('gbk').strip('\x00')
+                        self.text = self.text + scrap_text
                 elif event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
                 elif event.key == pygame.K_SPACE:
@@ -54,7 +64,11 @@ class InputBox:
             self.boxBody.w = width
             pygame.draw.rect(screen, self.color_inside, self.boxBody, 0, border_radius=15)
             pygame.draw.rect(screen, self.color, self.boxBody, 4, border_radius=15)
-            screen.blit(txt_surface, (self.boxBody.x+5, self.boxBody.y+5))
+            screen.blit(txt_surface, (self.boxBody.x+10, self.boxBody.y+5))
+            cursor = self.font.render('|', True, (170, 205, 255))
+            w, h = txt_surface.get_size()
+            if int(time.time() * 2) % 3 != 0:
+                screen.blit(cursor, (self.boxBody.x+w+12, self.boxBody.y+2))
 
     def switch(self):
         self.active = not self.active

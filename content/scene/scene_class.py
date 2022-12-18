@@ -67,19 +67,19 @@ class Scene:
     def update(self):
         self.deal_events()
 
-    def draw_elements(self, surface):
+    def draw_elements(self):
         if self.loaded['button'] is not None:
             for bt in self.loaded['button']:
-                bt.render(surface)
+                bt.render(self.screen)
         if self.loaded['label'] is not None:
             for lb in self.loaded['label']:
-                lb.render(surface)
+                lb.render(self.screen)
         if self.loaded['box'] is not None:
             for bx in self.loaded['box']:
-                bx.render(surface)
+                bx.render(self.screen)
         if self.loaded['panel'] is not None:
             for pn in self.loaded['panel']:
-                pn.render(surface)
+                pn.render(self.screen)
 
     def back_is_clicked(self):
         ScenePlayer.pop()

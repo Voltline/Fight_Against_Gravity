@@ -39,7 +39,7 @@ class LogInScene(Scene):
     def show(self):
         self.screen.fill(self.bg)
         pygame.draw.rect(self.screen, (46, 46, 46), (300, 150, 600, 400), border_radius=15)
-        self.draw_elements(self.screen)
+        self.draw_elements()
         pygame.display.flip()
 
     def register_is_clicked(self):

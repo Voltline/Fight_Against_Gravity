@@ -1,6 +1,7 @@
 import pygame
 import os
 from content.scene.scene_font import SceneFont
+from content.UI import scrollbar
 
 
 class Panel:
