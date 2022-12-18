@@ -42,6 +42,16 @@ class OptType:
         "password": "str"
     }
     """
+    logout = 10
+    """
+    用户登出游戏
+    {
+        "opt" = 10
+        "user" : str
+        "roomid" : str
+        "status" : "ACK"/"NAK"
+    }
+    """
     creatRoom = 11
     """
     用户创建房间

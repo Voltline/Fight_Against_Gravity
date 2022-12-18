@@ -96,6 +96,7 @@ class Room:
     def del_user(self, user: User):
         """
         删除玩家
+        user: User
         """
         if user in self.userlist:
             self.userlist.remove(user)

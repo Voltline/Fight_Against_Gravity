@@ -36,7 +36,7 @@ class ClientMain:
         self.roomid = None
 
     def register_get_checkcode(self, username, email):
-        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key, self.heart_beat)
+        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
         # identify_client = safeclient.SocketClient(self.reg_ip, self.reg_port, password=se)
         check_code = identify_client.get_check_code(username, email)
         self.logger.info("[register]{}{}Register get check_code{}".format(username, email, check_code))
@@ -44,7 +44,7 @@ class ClientMain:
         return check_code
 
     def register_push_password(self, username, email, check_code, input_check_code, password):
-        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key, self.heart_beat)
+        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
         if check_code != '':
             if check_code.lower() == input_check_code.lower():
                 result = identify_client.send_all_information(username, email, password)
@@ -215,7 +215,21 @@ class ClientMain:
         self.client.send(msg)
         recv = self.client.receive()
         return recv["status"] == "ACK"
-
+    def logout(self):
+        msg = {
+            "opt": OptType.logout,
+            "user": self.user,
+            "roomid": self.roomid
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        if recv["status"] == "ACK":
+            self.user = None
+            self.roomid = None
+            self.client.close()
+            return True
+        else:
+            return False
     def dready(self):
         if self.roomid is None:
             return False
@@ -245,7 +259,8 @@ class ClientMain:
             else:
                 pass
             if opt == 0:
-                break
+                self.logout()
+                break;
             if opt == 1:
                 print("creat room")
                 roomname = input("input room name")

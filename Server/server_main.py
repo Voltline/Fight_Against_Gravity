@@ -37,7 +37,7 @@ class ServerMain:
         self.room_list: {str: Room} = {}
         """"{"roomid": Room}"""
         self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat,
-                                              models=server_model,logpath=path, level=server_level)
+                                              models=server_model, logpath=path, level=server_level)
         self.game_settings = game_settings
 
     @staticmethod
@@ -84,7 +84,8 @@ class ServerMain:
         处理用户登录请求
         """
         messageAdr, messageMsg = message
-        if (messageMsg["user"] not in self.user_list) and (self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)):
+        if (messageMsg["user"] not in self.user_list) and (
+        self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)):
             newUser = User(messageAdr, messageMsg["user"])
             self.user_list[messageMsg["user"]] = newUser
             self.logger.info("[game info]user {} join the game".format(newUser.get_name()))
@@ -92,6 +93,26 @@ class ServerMain:
         else:
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             # self.server.close(messageAdr)
+
+    def logout(self, message):
+        """
+        用户登出
+        """
+        messageAdr, messageMsg = message
+        if messageMsg["user"] not in self.user_list:
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
+        if messageMsg["user"] in self.user_list:
+            self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
+            user: User = self.user_list[messageMsg["user"]]
+            roomid = user.get_roomid()
+            if roomid in self.room_list:
+                room:Room = self.room_list[roomid]
+                room.del_user(user)
+            self.server.close(messageAdr)
+            self.logger.info("[game info]user {} logout the game".format(user.get_name()))
+            self.user_list.pop(messageMsg["user"])
+            return True
 
     def creatroom(self, message):
         """
@@ -337,6 +358,8 @@ class ServerMain:
                 opt = messageMsg["opt"]
                 if opt == OptType.login:
                     self.login(message)
+                elif opt == OptType.logout:
+                    self.logout(message)
                 elif opt == OptType.creatRoom:
                     self.creatroom(message)
                 elif opt == OptType.deleteRoom:
