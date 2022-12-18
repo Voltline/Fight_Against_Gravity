@@ -105,6 +105,10 @@ class Settings:
         """按钮背景路径"""
         self.btbg_light = self.path + "assets\\Img\\light_butbg_unpressed.png"  # 按钮浅灰底，未按版
         self.btbg_light_pressed = self.path + "assets\\Img\\light_butbg.png"  # 鼠标移动反响
+        # 滚动条图片
+        self.thumb = self.path + "assets/Img/thumb_unpressed.png"
+        self.thumb_pressed = self.path + "assets/Img/thumb_pressed.png"
+        self.bar = self.path + "assets/Img/bar.png"
 
         del inf
 
