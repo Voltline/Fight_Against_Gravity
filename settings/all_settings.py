@@ -4,7 +4,6 @@ import json
 from content.maps.map_obj import Map
 from content.game.obj_msg import ObjMsg
 from content.game.bullet import Bullet
-from content.scene.scene_font import SceneFont
 
 
 class Settings:
@@ -116,7 +115,6 @@ class Settings:
         Map.load_maps()  # 加载maps_info
         ObjMsg.init(self)
         Bullet.init(self)
-        SceneFont.init(self)
 
     def make_bullet_image(self):
         image = pygame.Surface((2 * self.bullet_radius + 1, 2 * self.bullet_radius + 1))

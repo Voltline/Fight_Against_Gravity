@@ -9,6 +9,7 @@ import pygame
 from content.scene.scene_class import Scene
 from content.scene.start_scene_class import StartScene
 from content.scene.scene_player_class import ScenePlayer
+from content.scene.scene_font import SceneFont
 if hasattr(sys, 'frozen'):
     path = os.path.dirname(sys.executable) + '/'
 else:
@@ -28,6 +29,7 @@ u：玩家2的发射子弹u
 """
 pygame.init()
 settings = Settings(path)  # 初始化设置类
+SceneFont.init(settings)
 _debug_ = "--debug" in sys.argv
 s = client_main.ClientMain(path, _debug_=_debug_)
 s.start()
