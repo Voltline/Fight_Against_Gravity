@@ -20,15 +20,16 @@ screen.fill((255, 255, 255))
 
 # Create a list of UI components
 components = [
-    pygame.Rect(100, 100, 100, 100),
-    pygame.Rect(200, 200, 100, 100),
-    pygame.Rect(300, 300, 100, 100),
-    pygame.Rect(400, 400, 100, 100),
-    pygame.Rect(500, 500, 100, 100),
+    pygame.Rect(50, 50, 50, 50),
+    pygame.Rect(100, 100, 50, 50),
+    pygame.Rect(150, 150, 50, 50),
+    pygame.Rect(200, 200, 50, 50),
+    pygame.Rect(250, 250, 50, 50),
 ]
 
 # Main game loop
 running = True
+dragging = False
 while running:
     # Handle events
     for event in pygame.event.get():
@@ -51,7 +52,7 @@ while running:
     thumb_rect.y = max(0, min(thumb_rect.y, 480 - thumb_rect.height))
 
     # Calculate the scrolling amount based on the position of the thumb rect
-    scroll_amount = thumb_rect.y * (len(components) - 5) / (480 - thumb_rect.height)
+    scroll_amount = thumb_rect.y / 480
 
     # Update the positions of the UI components based on the scroll amount
     for component in components:
@@ -59,12 +60,13 @@ while running:
 
     # Draw the scrollbar
     scrollbar_surface.fill((255, 255, 255))
-    pygame.draw.rect(scrollbar_surface, (0, 0, 0), thumb_rect)
 
     # Blit the scrollbar to the screen
     screen.blit(scrollbar_surface, scrollbar_rect)
+    pygame.draw.rect(screen, (0, 0, 0), thumb_rect)
 
     # Draw the UI components
+    # 理论上是不能用draw_rect的，因为没有清除，但是如果套已有组件应该是能实现的。
     for component in components:
         pygame.draw.rect(screen, (0, 0, 0), component)
 
