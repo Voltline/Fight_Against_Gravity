@@ -32,7 +32,6 @@ settings = Settings(path)  # 初始化设置类
 SceneFont.init(settings)
 _debug_ = "--debug" in sys.argv
 s = client_main.ClientMain(path, _debug_=_debug_)
-s.start()
 sc = pygame.display.set_mode((1200, 800))
 Scene.init(settings, sc, s)
 # tmp = s.register_get_checkcode("sxm5","541665621@qq.com")
