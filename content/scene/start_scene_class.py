@@ -26,7 +26,7 @@ class StartScene(Scene):
                                    self.path + "assets\\Img\\start_unpressed.png", 0, '本地游戏', SceneFont.start_font)
         local_button.add_img(self.path + "assets\\Img\\start_press.png")
         """集合组件，loaded"""
-        self.loaded = {'img': start_title, 'label': None, 'box': None, 'button': [start, local_button], 'panel': []}
+        self.loaded = {'img': start_title, 'label': None, 'box': None, 'button': [start, local_button, self.set_button], 'panel': []}
 
     def start_is_clicked(self):
         ScenePlayer.push(LogInScene())

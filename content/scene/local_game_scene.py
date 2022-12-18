@@ -11,14 +11,11 @@ from content.game.local_game import LocalGame
 class LocalGameScene(Scene):
     def __init__(self):
         super().__init__()
-        pause_rect = pygame.Rect(950, 675, 20, 20)
+        pause_rect = pygame.Rect(1060, 750, 30, 30)
         """暂停按钮"""
         pause_button = Button('pause', self.pause_is_clicked, pause_rect, self.path + 'assets\\Img\\pause.png', 0)
         pause_button.add_img(self.path + 'assets\\Img\\pause_pressed.png')
         """暂停后panel上的组件"""
-        close_rect = pygame.Rect(0, 0, 20, 20)
-        close_button = Button('close', self.close_is_clicked, close_rect, self.path + 'assets\\Img\\close_unclicked.png', 0)
-        close_button.add_img(self.path + 'assets\\Img\\close_clicked.png')
 
         """返回主界面"""
         go_menu_rect = pygame.Rect(0, 0, 300, 65)
@@ -33,10 +30,10 @@ class LocalGameScene(Scene):
         pause_panel_components_relative_pos = {'button': [[0.88, 0.1], [0.25, 0.15], [0.25, 0.4]],
                                                'box': [[]]}
         self.pause_panel = Panel(self.menu_like_panel_rect, '已暂停', 23,
-                                 [close_button, go_menu_button, exit_button], [], pause_panel_components_relative_pos, text_pos=0)
+                                 [self.close_button, go_menu_button, exit_button], [], pause_panel_components_relative_pos, text_pos=0, has_scrollbar=True)
         print("after pause_panel is created, its loaded['button'] has", len(self.pause_panel.loaded['button']))
         self.loaded = {'img': None, 'label': None, 'box': None,
-                       'button': [pause_button], 'panel': []}
+                       'button': [pause_button, self.set_button], 'panel': []}
 
         self.game = LocalGame(self.settings, self.screen, '地月系统')
         self.game.restart()
