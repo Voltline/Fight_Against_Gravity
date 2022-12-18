@@ -215,7 +215,21 @@ class ClientMain:
         self.client.send(msg)
         recv = self.client.receive()
         return recv["status"] == "ACK"
-
+    def logout(self):
+        msg = {
+            "opt": OptType.logout,
+            "user": self.user,
+            "roomid": self.roomid
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        if recv["status"] == "ACK":
+            self.user = None
+            self.roomid = None
+            self.client.close()
+            return True
+        else:
+            return False
     def dready(self):
         if self.roomid is None:
             return False
@@ -245,7 +259,8 @@ class ClientMain:
             else:
                 pass
             if opt == 0:
-                break
+                self.logout()
+                break;
             if opt == 1:
                 print("creat room")
                 roomname = input("input room name")
