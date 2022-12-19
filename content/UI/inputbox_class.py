@@ -60,14 +60,13 @@ class InputBox:
             self.draw_password(screen)
         else:
             txt_surface = self.font.render(self.text, True, self.font_color)  # 文字转换为图片
-            width = max(325, txt_surface.get_width()+10)  # 当文字过长时，延长文本框
-            self.boxBody.w = width
+            width = max(self.boxBody.w, txt_surface.get_width()+10)  # 当文字过长时，延长文本框
             pygame.draw.rect(screen, self.color_inside, self.boxBody, 0, border_radius=15)
             pygame.draw.rect(screen, self.color, self.boxBody, 4, border_radius=15)
             screen.blit(txt_surface, (self.boxBody.x+10, self.boxBody.y+5))
             cursor = self.font.render('|', True, (170, 205, 255))
             w, h = txt_surface.get_size()
-            if int(time.time() * 2) % 3 != 0:
+            if int(time.time() * 2) % 3 != 0 and self.active:
                 screen.blit(cursor, (self.boxBody.x+w+12, self.boxBody.y+2))
 
     def switch(self):

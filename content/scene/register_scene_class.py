@@ -14,10 +14,10 @@ class RegScene(Scene):
         self.id = 1
         self.check_code = ''
         """label，分别为邮箱，用户名，密码，验证码"""
-        r_email_label = Label(315, 180, 98, "请输入您的邮箱", SceneFont.r_font)
-        r_id_label = Label(315, 260, 106, "请输入您的用户名", SceneFont.r_font)
-        r_password_label = Label(315, 340, 42, "设置您的密码", SceneFont.r_font)
-        r_check_label = Label(315, 420, 40, "验证码", SceneFont.r_font)
+        r_email_label = Label(315, 180, 98, "请输入您的邮箱", SceneFont.white_font)
+        r_id_label = Label(315, 260, 106, "请输入您的用户名", SceneFont.white_font)
+        r_password_label = Label(315, 340, 42, "设置您的密码", SceneFont.white_font)
+        r_check_label = Label(315, 420, 40, "验证码", SceneFont.white_font)
         labels = [r_email_label, r_id_label, r_password_label, r_check_label]
         """输入框，分别为邮箱，用户名，密码，验证码"""
         r_email_box = InputBox(pygame.Rect(450, 180, 350, 35))
@@ -34,19 +34,15 @@ class RegScene(Scene):
         r_check_button = Button('check', self.send_checkcode_clicked, check_rect,
                                 self.settings.btbg_light, 0, '发送验证码', SceneFont.log_font)
         r_check_button.add_img(self.settings.btbg_light_pressed)
-        buttons = [r_button, r_check_button, self.back]
+        buttons = [r_button, r_check_button, self.back, self.set_button]
         """显示验证码错误的panel"""
-        close_rect = pygame.Rect(0, 0, 20, 20)
-        close_button = Button('close', self.close_is_clicked, close_rect,
-                              self.path + 'assets\\Img\\close_unclicked.png', 0)
-        close_button.add_img(self.path + 'assets\\Img\\close_clicked.png')
         pause_panel_components_relative_pos = {'button': [[0.88, 0.1]], 'box': [[]]}
 
         self.wrong_check_panel = Panel(self.reminder_panel_rect_small, '验证码错误', 22,
-                                       [close_button], [], pause_panel_components_relative_pos)
+                                       [self.close_button], [], pause_panel_components_relative_pos)
         """显示没输入验证码的panel"""
         self.no_check_panel = Panel(self.reminder_panel_rect_small, '验证码为空', 22,
-                                       [close_button], [], pause_panel_components_relative_pos)
+                                    [self.close_button], [], pause_panel_components_relative_pos)
         self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': []}
 
     def show(self):

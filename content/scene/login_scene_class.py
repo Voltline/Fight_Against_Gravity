@@ -33,7 +33,7 @@ class LogInScene(Scene):
         login_button.add_img(self.settings.btbg_light_pressed)
 
         self.loaded = {'img': None, 'label': [id_label, password_label], 'box': boxL,
-                       'button': [self.back, register_button, login_button],
+                       'button': [self.back, register_button, login_button, self.set_button],
                        'panel': []}
 
     def show(self):

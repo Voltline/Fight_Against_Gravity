@@ -15,7 +15,7 @@ class MenuScene(Scene):
         menu_online_button = Button('online game', self.online_is_clicked, menu_online_rect,
                                     self.settings.btbg_light, 0, '线上房间', SceneFont.menu_font)
         menu_online_button.add_img(self.settings.btbg_light_pressed)
-        buttons = [self.back, menu_online_button]
+        buttons = [self.back, self.set_button, menu_online_button]
         self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': []}
 
     def show(self):

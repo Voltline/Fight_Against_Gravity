@@ -71,7 +71,7 @@ class Control:
 
     def check_click(self, event):
         """每次点击完返回鼠标位置"""
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button != 4 and event.button != 5:
             return self.is_over(event.pos)
 
     def check_move(self, event):
