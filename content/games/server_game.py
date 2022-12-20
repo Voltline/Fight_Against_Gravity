@@ -1,7 +1,7 @@
 import pygame
 import time
-from Server.online_game import OnlineGame
-import content.game.game_function as gf
+from content.games.online_game import OnlineGame
+import content.game_modules.game_function as gf
 from Server.Modules.OptType import OptType
 
 
@@ -170,9 +170,9 @@ class ServerGame(OnlineGame):
 
     def check_collisions(self):
         """检查碰撞"""
-        self.gm.check_ships_ships_collisions()
-        self.gm.check_ships_planets_collisions()
-        bulletss = self.gm.check_ships_bullets_collisions().values()
+        self.gm.check_ships_ships_collisions(self.now_time)
+        self.gm.check_ships_planets_collisions(self.now_time)
+        bulletss = self.gm.check_ships_bullets_collisions(self.now_time).values()
         bullets = self.gm.check_bullets_planets_collisions().keys()
 
         for bullet in bullets:

@@ -1,8 +1,8 @@
 import pygame
 
-from content.game.fag_game import FAGGame
-import content.game.game_function as gf
-from content.game.camera import Camera
+from content.games.fag_game import FAGGame
+import content.game_modules.game_function as gf
+from content.local.camera import Camera
 
 
 class LocalGame(FAGGame):
@@ -89,7 +89,7 @@ class LocalGame(FAGGame):
     def physic_update(self):
         """每个物理dt的更新行为"""
         super().physic_update()
-        self.gm.check_collisions()
+        self.gm.check_collisions(self.now_time)
         self.gm.all_move(self.physics_dt)
         self.gm.ships_fire_bullet()
 

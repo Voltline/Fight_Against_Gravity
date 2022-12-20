@@ -1,7 +1,6 @@
 """程序入口"""
 import sys
 import os
-import time
 
 from Server import client_main
 from settings.all_settings import Settings
@@ -10,7 +9,7 @@ from content.scene.scene_class import Scene
 from content.scene.start_scene_class import StartScene
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.scene_font import SceneFont
-import content.game.game_function as gf
+import content.game_modules.game_function as gf
 if hasattr(sys, 'frozen'):
     path = os.path.dirname(sys.executable) + '/'
 else:

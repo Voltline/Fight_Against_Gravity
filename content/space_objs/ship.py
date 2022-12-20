@@ -3,25 +3,26 @@ from pygame import Vector2
 from math import sin
 from math import cos
 from math import degrees
-from content.game.space_obj import SpaceObj
-from content.game.bullet import Bullet
-from content.game.obj_msg import ObjMsg
+from content.space_objs.space_obj import SpaceObj
+from content.space_objs.bullet import Bullet
+from content.online.obj_msg import ObjMsg
 
 
 class Ship(SpaceObj):
     """玩家操控的飞船"""
-
-    # TODO:添加尾焰等特效
+    # TODO: 增加尾焰特效；增加玩家抬头信息
     def __init__(self, settings,
                  loc0: Vector2 = Vector2(0, 0), spd0: Vector2 = Vector2(0, 0),
                  angle: float = 0, player_name='?Unknown Player?'):
         super().__init__(settings, 1 * loc0, 1 * spd0)
         self.image0 = self.image
+        self.explosion_images = self.__get_explosion_images__(settings)
         self.rect0 = self.image0.get_rect()  # 原始图片的rect
         self.angle = angle
         self.update_image()
         self.player_name = player_name  # 飞船所属玩家的名字
         self.hp = settings.ship_hp  # 生命值
+        self.dead_time = 0  # 死亡时间(sec)
 
         self.go_acc = settings.ship_go_acc  # 引擎的加速度
         self.turn_spd = settings.ship_turn_spd  # 转向的角速度
@@ -39,6 +40,15 @@ class Ship(SpaceObj):
     def __get_image__(self, settings):
         """获取飞船图片"""
         return pygame.image.load(settings.ship_image_path).convert_alpha()
+
+    @staticmethod
+    def __get_explosion_images__(settings) -> list:
+        """返回按时间顺序的爆炸图片的列表"""
+        L = []
+        for i in range(0, 10):
+            L.append(pygame.image.load(
+                settings.make_ship_explosion_image_path(i)).convert_alpha())
+        return L
 
     def update_acc(self, planets: pygame.sprite.Group):
         """重载，因为飞船加速度和玩家操作有关"""
@@ -73,6 +83,18 @@ class Ship(SpaceObj):
         self.rect.center = center
         self.mask = pygame.mask.from_surface(self.image)  # 更新mask
 
+    def update_explosion_image(self, time):
+        """死亡之后的短暂时间里更新爆炸的图片"""
+        i = int((time - self.dead_time) / 0.05)
+        if i < 10:
+            self.image = self.explosion_images[i]
+        else:
+            self.image = None
+
+    def display(self, camera):
+        if self.image is not None:
+            super().display(camera)
+
     def fire_bullet(self, settings, bullets) -> Bullet:
         """
         发射子弹，射速就是物理帧精度
@@ -89,27 +111,32 @@ class Ship(SpaceObj):
         else:
             return None
 
-    def die(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):
+    def die(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group, dead_time: float):
         """死亡时"""
         # TODO:加入死亡特效
         self.is_alive = False
         self.hp = 0
+        self.dead_time = dead_time
+        self.image = self.explosion_images[0]
+        self.rect = self.image.get_rect()
+        self.rect.center = self.loc
         ships.remove(self)
         dead_ships.add(self)
 
-    def check_alive(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group) -> bool:
+    def check_alive(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group, dead_time: float) -> bool:
         """检查飞船是否还活着，如果死了就执行die函数，返回值为是否活着"""
         if self.hp <= 0:
-            self.die(ships, dead_ships)
+            self.die(ships, dead_ships, dead_time)
             return False
         return True
 
     def hit_bullet(self, damage,
-                   ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group):
+                   ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group,
+                   time: float):
         """被子弹击中时"""
         # TODO:加入被击中的特效
         self.hp -= damage
-        self.check_alive(ships, dead_ships)
+        self.check_alive(ships, dead_ships, time)
 
     def make_ctrl_msg(self) -> list:
         """返回飞船操作状态信息"""

@@ -1,7 +1,6 @@
 import pygame
 from pygame import Vector2
-from content.game.space_obj import SpaceObj
-from content.game.physics import G
+from content.space_objs.space_obj import SpaceObj
 
 
 class Planet(SpaceObj):

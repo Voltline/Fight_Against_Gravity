@@ -2,7 +2,7 @@ import Server.Modules.User as User
 from Server.Modules import OptType
 
 OptType = OptType.OptType
-from Server import server_game
+from content.games import server_game
 import queue
 import threading
 import Server.Modules.safeserver as safeserver

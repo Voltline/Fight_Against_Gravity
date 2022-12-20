@@ -1,6 +1,6 @@
 from content.maps.map_obj import Map
 from Server.Modules.safeserver import SocketServer
-from Server.server_game import ServerGame
+from content.games.server_game import ServerGame
 
 
 class GameRoom:

@@ -5,7 +5,7 @@ from content.UI.button_class import Button
 from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
 from content.UI.panel_class import Panel
-from content.game.local_game import LocalGame
+from content.games.local_game import LocalGame
 
 
 class LocalGameScene(Scene):

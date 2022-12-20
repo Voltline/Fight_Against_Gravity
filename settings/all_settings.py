@@ -2,14 +2,15 @@
 import pygame
 import json
 from content.maps.map_obj import Map
-from content.game.obj_msg import ObjMsg
-from content.game.bullet import Bullet
+from content.online.obj_msg import ObjMsg
+from content.space_objs.bullet import Bullet
 
 
 class Settings:
     """保存游戏的各类设置"""
 
     def __init__(self, path: str):
+        # TODO：最后要把这里的变量都放进json
         with open(path + "settings/game_settings.json", "r") as f:
             inf = json.load(f)
         # 窗口设置
@@ -51,6 +52,7 @@ class Settings:
         # Ships
         ships = inf["Ships"]
         self.ship_image_path = self.path + ships["ship_image_path"]  # 飞船图片路径
+        self.ship_explosion_image_path = self.path + ships["ship_explosion_image_path"]
         self.ship_hp = ships["ship_hp"]  # 飞船初始血量
         self.ship_go_acc = ships["ship_go_acc"]  # 飞船前进/后退的加速度
         self.ship_turn_spd = ships["ship_turn_spd"]  # 飞船转弯的角速度(弧度制)
@@ -127,6 +129,11 @@ class Settings:
     @staticmethod
     def make_planet_image_path(index: int) -> str:
         return "assets/texture/planet" + str(index) + ".png"
+
+    def make_ship_explosion_image_path(self, index: int) -> str:
+        """根据index返回爆炸的图片。index范围：[0,9]"""
+        s1, s2 = self.ship_explosion_image_path.split('.')
+        return s1 + str(index) + '.' + s2
 
     def change_window(self, new_width: int, new_height: int, new_fps: int):
         """修改分辨率
