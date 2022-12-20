@@ -33,7 +33,7 @@ class LocalGameScene(Scene):
                                  [self.close_button, go_menu_button, exit_button], [], pause_panel_components_relative_pos, text_pos=0, has_scrollbar=True)
         print("after pause_panel is created, its loaded['button'] has", len(self.pause_panel.loaded['button']))
         self.loaded = {'img': None, 'label': None, 'box': None,
-                       'button': [pause_button, self.set_button], 'panel': []}
+                       'button': [], 'panel': []}
 
         self.game = LocalGame(self.settings, self.screen, '地月系统')
         self.game.restart()
