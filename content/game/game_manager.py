@@ -1,5 +1,6 @@
 import pygame
 from pygame import Vector2
+from math import isclose
 
 from content.game.ship import Ship
 from content.game.planet import Planet
@@ -142,17 +143,21 @@ class GameManager:
             sum_mr += planet.mass * planet.loc
         if sum_m > 0:
             self.center_v = sum_mv / sum_m
-            for planet in self.planets:
-                other_m = sum_m - planet.mass
-                other_mv = sum_mv - planet.spd * planet.mass
-                other_v = other_mv / other_m
-                v = planet.spd - other_v
-                ek = 0.5 * planet.mass * v * v  # 动能
-                ep = planet.get_ep(self.planets)  # 势能
-                e = ek + ep  # 机械能
-                dis = - G * other_m * planet.mass / e
-                if dis > self.max_dis:
-                    self.max_dis = dis
+            if len(self.planets) == 1:
+                self.max_dis = max(self.max_dis, 6e-6*G*self.planets.sprites()[0].mass)
+                print(self.max_dis)
+            else:
+                for planet in self.planets:
+                    other_m = sum_m - planet.mass
+                    other_mv = sum_mv - planet.spd * planet.mass
+                    other_v = other_mv / other_m
+                    v = planet.spd - other_v
+                    ek = 0.5 * planet.mass * v * v  # 动能
+                    ep = planet.get_ep(self.planets)  # 势能
+                    e = ek + ep  # 机械能
+                    dis = - G * other_m * planet.mass / e
+                    if dis > self.max_dis:
+                        self.max_dis = dis
 
     def client_update(self, planets_msg=None, all_ships_msg=None, bullets_msg=None, tick=-1):
         """通过msg更新gm"""

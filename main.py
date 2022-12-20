@@ -10,6 +10,7 @@ from content.scene.scene_class import Scene
 from content.scene.start_scene_class import StartScene
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.scene_font import SceneFont
+import content.game.game_function as gf
 if hasattr(sys, 'frozen'):
     path = os.path.dirname(sys.executable) + '/'
 else:
@@ -32,7 +33,8 @@ settings = Settings(path)  # 初始化设置类
 SceneFont.init(settings)
 _debug_ = "--debug" in sys.argv
 s = client_main.ClientMain(path, _debug_=_debug_)
-sc = pygame.display.set_mode((1200, 800))
+print('111')
+sc = gf.init_pygame_window(settings)
 Scene.init(settings, sc, s)
 # tmp = s.register_get_checkcode("sxm5","541665621@qq.com")
 # time.sleep(10)

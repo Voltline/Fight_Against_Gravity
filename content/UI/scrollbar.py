@@ -52,7 +52,6 @@ class ScrollBar:
         self.thumb_top = max(self.top, min(self.thumb_top, self.top + self.height - self.thumb_height))
 
 
-
 if __name__ == "__main__":
     pygame.init()
     path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '/'
