@@ -35,7 +35,7 @@ class LocalGameScene(Scene):
         self.loaded = {'img': None, 'label': None, 'box': None,
                        'button': [], 'panel': []}
 
-        self.game = LocalGame(self.settings, self.screen, '地月系统')
+        self.game = LocalGame(self.settings, self.screen, '静止单星系统')
         self.game.restart()
 
     def pause_is_clicked(self):
