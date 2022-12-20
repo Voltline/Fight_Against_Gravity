@@ -22,6 +22,7 @@ class ScrollBar:
             self.bar_thumb[i] = pygame.transform.smoothscale(self.bar_thumb[i], (self.thumb_width, self.thumb_height))
         self.bar = pygame.image.load(settings.bar)
         self.bar = pygame.transform.smoothscale(self.bar, (self.width, self.height))
+        self.ratio = (self.thumb_top-self.top)/(self.height - self.thumb_height)
 
     def render(self, screen):
         screen.blit(self.bar, (self.left, self.top))

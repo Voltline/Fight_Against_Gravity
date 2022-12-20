@@ -13,22 +13,30 @@ class StartScene(Scene):
         super().__init__()
         start_font = SceneFont.start_font
         start_rect = pygame.Rect(455, 280, 290, 100)
-        start_title = pygame.image.load(self.path + "assets\\texture\\FAGtitle.png")  # 用作画图
+        start_title = pygame.image.load(self.path + "assets\\texture\\FAGWhite.png")  # 用作画图
         start_title = pygame.transform.smoothscale(start_title, (514, 200))
         start_title = start_title.convert_alpha()
 
-        start = Button("start", self.start_is_clicked, start_rect,
-                       self.path + "assets\\Img\\start_unpressed.png", 1, 'Start', start_font)  # 用作画图
-        start.add_img(self.path + "assets\\Img\\start_press.png")
+        online_game_button = Button("onlinegame", self.online_is_clicked, start_rect,
+                       self.path + "assets\\Img\\start_unpressed.png", 1, '在线游戏', start_font)  # 用作画图
+        online_game_button.add_img(self.path + "assets\\Img\\start_press.png")
+
+        login_rect = pygame.Rect(1120, 20, 60, 40)
+        login_button = Button("login", self.login_is_clicked, login_rect,
+                              self.settings.btbg_light, 0, '登录', SceneFont.log_font)
+        login_button.add_img(self.settings.btbg_light_pressed)
 
         local_rect = pygame.Rect(455, 450, 290, 100)
         local_button = Button('local game', self.local_is_clicked, local_rect,
                                    self.path + "assets\\Img\\start_unpressed.png", 0, '本地游戏', SceneFont.start_font)
         local_button.add_img(self.path + "assets\\Img\\start_press.png")
         """集合组件，loaded"""
-        self.loaded = {'img': start_title, 'label': None, 'box': None, 'button': [start, local_button, self.set_button], 'panel': []}
+        self.loaded = {'img': start_title, 'label': None, 'box': None, 'button': [login_button, online_game_button, local_button, self.set_button], 'panel': []}
 
-    def start_is_clicked(self):
+    def online_is_clicked(self):
+        pass
+
+    def login_is_clicked(self):
         ScenePlayer.push(LogInScene())
 
     def local_is_clicked(self):
@@ -36,7 +44,7 @@ class StartScene(Scene):
         pass
 
     def show(self):
-        self.screen.fill((255, 255, 255))
+        self.screen.fill((10, 10, 10))
         self.screen.blit(self.loaded['img'], (10, 10))
         self.draw_elements()
         pygame.display.flip()

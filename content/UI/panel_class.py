@@ -90,19 +90,19 @@ class Panel:
                 bx.deal_event(e)
         if self.has_scrollbar:
             if e.type == pygame.MOUSEWHEEL:
-                if e.y > 0:
-                    if self.loaded['button'] is not None:
-                        for i in range(1, len(self.loaded['button'])):
-                            self.loaded['button'][i].rect.top -= 20
-                    if self.loaded['box'] is not None:
-                        for j in range(len(self.loaded['box'])):
-                            self.loaded['box'][j].boxBody.top -= 20
-                elif e.y < 0:
+                if e.y > 0 and self.scrollbar.ratio >= 0:
                     if self.loaded['button'] is not None:
                         for i in range(1, len(self.loaded['button'])):
                             self.loaded['button'][i].rect.top += 20
                     if self.loaded['box'] is not None:
                         for j in range(len(self.loaded['box'])):
                             self.loaded['box'][j].boxBody.top += 20
+                elif e.y < 0 and self.scrollbar.ratio <= 1:
+                    if self.loaded['button'] is not None:
+                        for i in range(1, len(self.loaded['button'])):
+                            self.loaded['button'][i].rect.top -= 20
+                    if self.loaded['box'] is not None:
+                        for j in range(len(self.loaded['box'])):
+                            self.loaded['box'][j].boxBody.top -= 20
 
             self.scrollbar.deal_event(e)
