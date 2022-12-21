@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 
 import pygame
 
@@ -16,9 +17,11 @@ class Label:
         这个字典包含了"font"（字体），"tc"（字体颜色），"bc"（背景颜色），"align"（ 水平模式，0,1,2分别对应靠左、居中、靠右），"valign"（垂直模式，0,1,2分别代表）
         align和valign用于调整对齐
         """
-        path = os.path.dirname(os.path.realpath(__file__))
-        path = os.path.dirname(path)
-        path = os.path.dirname(path) + "\\"
+        if hasattr(sys, 'frozen'):
+            path = os.path.dirname(sys.executable) + '\\'
+        else:
+            path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '\\'
+
         if font_info is None:
             font_info = {
                 'font': pygame.font.Font(path + "assets\\font\\SourceHanSans-Normal.ttc", 21),

@@ -1,5 +1,6 @@
 import pygame
 import os
+import sys
 from content.scene.scene_font import SceneFont
 from content.UI.scrollbar import ScrollBar
 from settings.all_settings import Settings
@@ -17,7 +18,10 @@ class Panel:
         self.rect = pygame.Rect(rect)
         self.text_pos = text_pos
         self.color = (43, 43, 43)  # 65
-        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + "\\"
+        if hasattr(sys, 'frozen'):
+            path = os.path.dirname(sys.executable) + '/'
+        else:
+            path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '/'
         self.font = pygame.font.Font(path + "assets\\font\\SourceHanSans-Normal.ttc", font_size)
         if text is not None:
             self.text_surface = self.font.render(text, True, SceneFont.white_font['tc'], SceneFont.white_font['bc'])

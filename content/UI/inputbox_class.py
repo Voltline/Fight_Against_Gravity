@@ -3,6 +3,7 @@ import time
 import pygame
 import pygame.key
 import os
+import sys
 from pygame.locals import SCRAP_TEXT
 import platform
 
@@ -22,7 +23,12 @@ class InputBox:
         self.active = False
         self.text = ''
         self.done = False
-        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + "\\"
+
+        if hasattr(sys, 'frozen'):
+            path = os.path.dirname(sys.executable) + '/'
+        else:
+            path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '/'
+
         self.font = pygame.font.Font(path + "assets\\font\\SourceHanSans-Normal.ttc", 18)  # 11/25 14:25 文件路径添加前缀UI
         self.font_color = pygame.Color(169, 183, 198)
         self.is_pw = is_pw
