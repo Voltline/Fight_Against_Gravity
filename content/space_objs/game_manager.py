@@ -1,11 +1,10 @@
 import pygame
 from pygame import Vector2
-from math import isclose
 
-from content.game.ship import Ship
-from content.game.planet import Planet
-from content.game.bullet import Bullet
-from content.game.physics import G
+from content.space_objs.ship import Ship
+from content.space_objs.planet import Planet
+from content.space_objs.bullet import Bullet
+from content.game_modules.physics import G
 
 
 class GameManager:
@@ -56,7 +55,7 @@ class GameManager:
             self.bullets, self.planets)
 
     @staticmethod
-    def static_check_ships_bullets_collisions(ships, bullets, dead_ships):
+    def static_check_ships_bullets_collisions(ships, bullets, dead_ships, time: float):
         """mask检测"""
         collisions = pygame.sprite.groupcollide(
             ships, bullets, False, True, pygame.sprite.collide_mask)
@@ -64,49 +63,49 @@ class GameManager:
             damage = 0
             for bullet in bullets:
                 damage += bullet.damage
-            ship.hit_bullet(damage, ships, dead_ships)
+            ship.hit_bullet(damage, ships, dead_ships, time)
         return collisions
 
-    def check_ships_bullets_collisions(self):
+    def check_ships_bullets_collisions(self, time: float):
         """mask检测"""
         return GameManager.static_check_ships_bullets_collisions(
-            self.ships, self.bullets, self.dead_ships)
+            self.ships, self.bullets, self.dead_ships, time)
 
     @staticmethod
-    def static_check_ships_planets_collisions(ships, planets, dead_ships):
+    def static_check_ships_planets_collisions(ships, planets, dead_ships, time: float):
         """mask检测"""
         collisions = pygame.sprite.groupcollide(
             ships, planets, False, False, pygame.sprite.collide_mask)
         for ship in collisions.keys():
-            ship.die(ships, dead_ships)
+            ship.die(ships, dead_ships, time)
         return collisions
 
-    def check_ships_planets_collisions(self):
+    def check_ships_planets_collisions(self, time: float):
         """mask检测"""
         return GameManager.static_check_ships_planets_collisions(
-            self.ships, self.planets, self.dead_ships)
+            self.ships, self.planets, self.dead_ships, time)
 
     @staticmethod
-    def static_check_ships_ships_collisions(ships, dead_ships):
+    def static_check_ships_ships_collisions(ships, dead_ships, time: float):
         """mask检测"""
         collisions = pygame.sprite.groupcollide(
             ships, ships, False, False, pygame.sprite.collide_mask)
         for ship1, ship2s in collisions.items():
             for ship2 in ship2s:
                 if id(ship1) != id(ship2):
-                    ship1.die(ships, dead_ships)
+                    ship1.die(ships, dead_ships, time)
                     break
         return collisions
 
-    def check_ships_ships_collisions(self):
+    def check_ships_ships_collisions(self, time: float):
         """mask检测"""
         return GameManager.static_check_ships_ships_collisions(
-            self.ships, self.dead_ships)
+            self.ships, self.dead_ships, time)
 
-    def check_collisions(self):
-        self.check_ships_ships_collisions()
-        self.check_ships_planets_collisions()
-        self.check_ships_bullets_collisions()
+    def check_collisions(self, time: float):
+        self.check_ships_ships_collisions(time)
+        self.check_ships_planets_collisions(time)
+        self.check_ships_bullets_collisions(time)
         self.check_bullets_planets_collisions()
 
     def load_map(self, game_map, player_names):
@@ -159,32 +158,32 @@ class GameManager:
                     if dis > self.max_dis:
                         self.max_dis = dis
 
-    def client_update(self, planets_msg=None, all_ships_msg=None, bullets_msg=None, tick=-1):
-        """通过msg更新gm"""
-        if planets_msg:  # 更新planets
-            i = 0
-            for planet in self.planets:
-                planet.update_by_msg(planets_msg[i], self.planets)
-                i += 1
-        if all_ships_msg:  # 更新ships和dead_ships
-            ships_msg = all_ships_msg[0]
-            dead_players_name = all_ships_msg[1]
-            for name in dead_players_name:
-                for ship in self.ships:
-                    if name == ship.player_name:
-                        ship.die(self.ships, self.dead_ships)
-                        break
-            i = 0
-            for ship in self.ships:
-                ship.update_by_msg(ships_msg[i], self.planets)
-                i += 1
-        if bullets_msg:  # 更新bullets
-            self.bullets.empty()
-            for msg in bullets_msg:
-                new_bullet = Bullet(self.settings)
-                new_bullet.update_by_msg(msg, self.planets)
-                new_bullet.loc0.update(new_bullet.loc)
-                self.bullets.add(new_bullet)
+    # def client_update(self, planets_msg=None, all_ships_msg=None, bullets_msg=None, tick=-1):
+    #     """通过msg更新gm"""
+    #     if planets_msg:  # 更新planets
+    #         i = 0
+    #         for planet in self.planets:
+    #             planet.update_by_msg(planets_msg[i], self.planets)
+    #             i += 1
+    #     if all_ships_msg:  # 更新ships和dead_ships
+    #         ships_msg = all_ships_msg[0]
+    #         dead_players_name = all_ships_msg[1]
+    #         for name in dead_players_name:
+    #             for ship in self.ships:
+    #                 if name == ship.player_name:
+    #                     ship.die(self.ships, self.dead_ships)
+    #                     break
+    #         i = 0
+    #         for ship in self.ships:
+    #             ship.update_by_msg(ships_msg[i], self.planets)
+    #             i += 1
+    #     if bullets_msg:  # 更新bullets
+    #         self.bullets.empty()
+    #         for msg in bullets_msg:
+    #             new_bullet = Bullet(self.settings)
+    #             new_bullet.update_by_msg(msg, self.planets)
+    #             new_bullet.loc0.update(new_bullet.loc)
+    #             self.bullets.add(new_bullet)
 
     @staticmethod
     def group_make_msg(objs: pygame.sprite.Group) -> list:

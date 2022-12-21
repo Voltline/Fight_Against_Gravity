@@ -2,8 +2,8 @@ import pygame
 from pygame import Vector2
 
 from content.maps.map_obj import Map
-from content.game.game_manager import GameManager
-import content.game.game_function as gf
+from content.space_objs.game_manager import GameManager
+import content.game_modules.game_function as gf
 
 
 class FAGGame:

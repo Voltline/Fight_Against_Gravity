@@ -1,6 +1,4 @@
-import pygame
 from pygame import Vector2
-from random import randint
 import math
 
 

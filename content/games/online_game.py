@@ -2,7 +2,7 @@ from typing import Union
 
 from Server.Modules.safeserver import SocketServer
 from Server.Modules.safeclient import SocketClient
-from content.game.fag_game import FAGGame
+from content.games.fag_game import FAGGame
 
 
 class OnlineGame(FAGGame):

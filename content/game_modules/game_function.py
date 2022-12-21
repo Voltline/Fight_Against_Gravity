@@ -1,7 +1,7 @@
 import sys
 import pygame
 from pygame import Vector2
-from content.game.trace import Trace
+from content.local.trace import Trace
 from Server.Modules.OptType import OptType
 
 # 鼠标位置信息，每帧实时更新
@@ -108,6 +108,11 @@ def update_screen(settings, gm, camera, traces: list, surplus_ratio, now_sec=-1)
         for obj in objs:
             obj.display(camera)
             obj.rect.center = obj.loc
+
+    # 最后画爆炸，因为爆炸应该在最上层
+    for ship in gm.dead_ships:
+        ship.update_explosion_image(now_sec)
+        ship.display(camera)
 
     # 更新traces，删除其中应该消失的元素
     for trace in traces[:]:

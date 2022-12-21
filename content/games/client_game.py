@@ -2,16 +2,16 @@ import math
 import pygame
 from pygame import Vector2
 
-from Server.online_game import OnlineGame
-from content.game.camera import Camera
+from content.games.online_game import OnlineGame
+from content.local.camera import Camera
 from Server.Modules.safeclient import SocketClient
 from Server.Modules.OptType import OptType
-import content.game.game_function as gf
+import content.game_modules.game_function as gf
 from content.online.snapshot import Snapshot
-from content.game.obj_msg import ObjMsg
-from content.game.physics import is_close
-from content.game.ship import Ship
-from content.game.bullet import Bullet
+from content.online.obj_msg import ObjMsg
+from content.game_modules.physics import is_close
+from content.space_objs.ship import Ship
+from content.space_objs.bullet import Bullet
 from content.online.player_info import PlayerInfo
 
 
@@ -346,12 +346,12 @@ class ClientGame(OnlineGame):
         else:
             return self.now_tick - tick
 
-    def ships_die(self, dead_players_name: list):
+    def ships_die(self, dead_players_name: list, dead_time: float):
         """根据消息让死亡的玩家死亡"""
         for name in dead_players_name:
             for ship in self.gm.ships:
                 if name == ship.player_name:
-                    ship.die(self.gm.ships, self.gm.dead_ships)
+                    ship.die(self.gm.ships, self.gm.dead_ships, dead_time)
                     break
 
     def all_ships_update(self, all_ship_msg, tick):
@@ -359,7 +359,7 @@ class ClientGame(OnlineGame):
         if tick > self.last_all_ships_update_tick:
             self.last_all_ships_update_tick = tick
             ships_msg, dead_players_name = all_ship_msg
-            self.ships_die(dead_players_name)
+            self.ships_die(dead_players_name, tick*self.physics_dt)
             si = self.get_snapshot_i(tick)
             ships = self.get_problem_ships(ships_msg, self.snapshots[si])
             all_objs = {'ships': ships}

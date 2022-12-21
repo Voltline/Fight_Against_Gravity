@@ -1,9 +1,9 @@
 """太空中各个对象的基类"""
 import pygame
 from pygame import Vector2
-from content.game.physics import gvt_acc
-from content.game.physics import G
-from content.game.obj_msg import ObjMsg
+from content.game_modules.physics import gvt_acc
+from content.game_modules.physics import G
+from content.online.obj_msg import ObjMsg
 
 
 class SpaceObj(pygame.sprite.Sprite):
