@@ -113,9 +113,6 @@ class Scene:
     def close_is_clicked(self):
         self.loaded['panel'] = []
 
-    def select_map_button_clicked(self, name: str):
-        return name
-
     def show(self):
         pass
 
