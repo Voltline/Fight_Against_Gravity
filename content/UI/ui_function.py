@@ -47,7 +47,7 @@ class UIFunction:
         path = scene.path + "assets\\texture\\thumbnail\\" + name + ".png"
         temp_rect = pygame.Rect(0, 0, 250, 250)
         select_map_button = Button(name, lambda: scene.select_map_button_clicked(name),
-                                   temp_rect, path, 1, name, SceneFont.white_font)
+                                   temp_rect, path, 1, name, SceneFont.map_list_font)
         return select_map_button
 
     @staticmethod
@@ -56,12 +56,13 @@ class UIFunction:
         for name in Map.maps_info.keys():
             buttons.append(UIFunction.new_select_map_button(scene, name))
 
-        select_map_panel_relative_pos = {'button': [[0.00065, 0.073], [0.338, 0.073], [0.669, 0.073],
-                                                    [0.00065, 0.536], [0.338, 0.536], [0.669, 0.536]],
+        select_map_panel_relative_pos = {'button': [[0.007, 0.133], [0.338, 0.133], [0.669, 0.133],
+                                                    [0.007, 0.565], [0.338, 0.565], [0.669, 0.565]],
                                          'box': [[]]}
 
-        map_rect = pygame.Rect(0, 0, 770, 550)
-        map_panel = Panel(map_rect, "地图选择", 12, buttons, [], select_map_panel_relative_pos)
+        map_rect = pygame.Rect(0, 0, 770, 590)
+        map_rect.center = scene.screen.get_rect().center
+        map_panel = Panel(map_rect, "地图选择", 28, buttons, [], select_map_panel_relative_pos, text_pos=0)
         return map_panel
 
 
