@@ -44,7 +44,7 @@ class UIFunction:
 
     @staticmethod
     def new_select_map_button(scene, name):
-        path = scene.path + "assets\\texture\\thumbnail" + name + ".png"
+        path = scene.path + "assets\\texture\\thumbnail\\" + name + ".png"
         temp_rect = pygame.Rect(0, 0, 250, 250)
         select_map_button = Button(name, lambda: scene.select_map_button_clicked(name),
                                    temp_rect, path, 1, name, SceneFont.white_font)
