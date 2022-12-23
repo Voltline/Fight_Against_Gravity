@@ -52,15 +52,15 @@ class RoomScene(Scene):
         if self.is_ready:
             res = self.client.dready()
             print("dready is clicked", res)
-            self.r_ready_button.set_text("准备")
             if res:
-              self.is_ready = False
+                self.r_ready_button.set_text("准备")
+                self.is_ready = False
 
         else:
             res = self.client.ready()
             print("ready is clicked", res)
-            self.r_ready_button.set_text("取消准备")
             if res:
+                self.r_ready_button.set_text("取消准备")
                 self.is_ready = True
     def strt_is_clicked(self):
         self.client.start()
