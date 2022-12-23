@@ -21,6 +21,7 @@ class StatusBar:
 
         self.Nickname = Label(self.x, self.y, 90, username, SceneFont.nickname_font)
         self.HP_bar = HP(self.x, self.y + 20, path)
+        self.HP_Value = Label(self.x, self.y + 20, 90, str(self.HP_bar.hp), SceneFont.hp_value_font)
 
     def render(self, screen):
         self.HP_bar.render(screen)
@@ -28,3 +29,4 @@ class StatusBar:
 
     def update(self, new_hp):
         self.HP_bar.update_hp(new_hp)
+        self.HP_Value.text = str(new_hp)
