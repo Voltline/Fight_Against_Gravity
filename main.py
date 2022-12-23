@@ -8,6 +8,7 @@ import pygame
 from content.scene.scene_class import Scene
 from content.scene.start_scene_class import StartScene
 from content.scene.scene_player_class import ScenePlayer
+from content.scene.room_scene import RoomScene
 from content.scene.scene_font import SceneFont
 import content.game_modules.game_function as gf
 if hasattr(sys, 'frozen'):
@@ -35,11 +36,10 @@ s = client_main.ClientMain(path, _debug_=_debug_)
 print('111')
 sc = gf.init_pygame_window(settings)
 Scene.init(settings, sc, s)
-# tmp = s.register_get_checkcode("sxm5","541665621@qq.com")
-# time.sleep(10)
-# s.register_push_password("sxm5","541665621@qq.com",tmp,tmp,"250")
 print(os.getcwd())
-
+# roomscene = RoomScene()
+# while True:
+#     roomscene.show()
 begin = StartScene()
 ScenePlayer.push(begin)
 ScenePlayer.show_scene()

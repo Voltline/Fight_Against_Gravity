@@ -1,5 +1,6 @@
 import pygame
 import sys
+from Server.client_main import ClientMain
 from content.UI.button_class import Button
 from content.UI.inputbox_class import InputBox
 from content.scene.scene_player_class import ScenePlayer
@@ -10,7 +11,7 @@ from content.UI.panel_class import Panel
 class Scene:
     screen = None
     settings = None
-    client = None
+    client: ClientMain = None
     path = None
 
     def __init__(self):
