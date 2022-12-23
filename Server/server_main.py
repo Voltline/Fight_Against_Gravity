@@ -126,6 +126,7 @@ class ServerMain:
             sendMsg["status"] = "NAK"
             sendMsg["roomid"] = None
             self.server.send(messageAdr, sendMsg)
+            return False
         user = self.user_list[username]
         if user.get_roomid():
             # 用户已在房间
@@ -133,6 +134,7 @@ class ServerMain:
             sendMsg["status"] = "NAK"
             sendMsg["roomid"] = None
             self.server.send(messageAdr, sendMsg)
+            return False
         try:
             self.get_map_size(roommap)
         except Exception as err:
