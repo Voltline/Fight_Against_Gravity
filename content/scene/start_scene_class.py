@@ -42,7 +42,6 @@ class StartScene(Scene):
 
     def online_is_clicked(self):
         ScenePlayer.push(RoomScene())
-        #TODO:点了没反应
 
     def login_is_clicked(self):
         ScenePlayer.push(LogInScene())
