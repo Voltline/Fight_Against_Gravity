@@ -9,7 +9,7 @@ from content.games.local_game import LocalGame
 
 
 class LocalGameScene(Scene):
-    def __init__(self):
+    def __init__(self, map_name):
         super().__init__()
         pause_rect = pygame.Rect(1060, 750, 30, 30)
         """暂停按钮"""
@@ -35,7 +35,7 @@ class LocalGameScene(Scene):
         self.loaded = {'img': None, 'label': None, 'box': None,
                        'button': [], 'panel': []}
 
-        self.game = LocalGame(self.settings, self.screen, '静止单星系统')
+        self.game = LocalGame(self.settings, self.screen, map_name)
         self.game.restart()
 
     def pause_is_clicked(self):

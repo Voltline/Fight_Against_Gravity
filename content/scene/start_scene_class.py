@@ -1,3 +1,4 @@
+import pygame
 from content.scene.local_game_scene import LocalGameScene
 from content.scene.scene_class import Scene
 from content.UI.button_class import Button
@@ -6,7 +7,6 @@ from content.scene.scene_player_class import ScenePlayer
 from content.scene.login_scene_class import LogInScene
 from content.scene.room_scene import RoomScene
 from content.UI.ui_function import UIFunction
-import pygame
 
 
 class StartScene(Scene):
@@ -48,7 +48,11 @@ class StartScene(Scene):
         ScenePlayer.push(LogInScene())
 
     def local_is_clicked(self):
-        ScenePlayer.push(LocalGameScene())  # 留给游戏登录
+        self.loaded['panel'] = [UIFunction.new_select_map_panel(self)]
+
+    def select_map_button_clicked(self, name: str):
+        self.loaded['panel'] = []
+        ScenePlayer.push(LocalGameScene(name))  # 留给游戏登录
 
 
     def show(self):
