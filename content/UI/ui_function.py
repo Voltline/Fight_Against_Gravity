@@ -56,8 +56,16 @@ class UIFunction:
         for name in Map.maps_info.keys():
             buttons.append(UIFunction.new_select_map_button(scene, name))
 
+        close_rect = pygame.Rect(0, 0, 20, 20)
+        close_button = Button('close', scene.close_is_clicked, close_rect,
+                                   scene.path + 'assets\\Img\\close_unclicked.png', 0)
+        close_button.add_img(scene.path + 'assets\\Img\\close_clicked.png')
+
+        buttons.append(close_button)
+
         select_map_panel_relative_pos = {'button': [[0.007, 0.133], [0.338, 0.133], [0.669, 0.133],
-                                                    [0.007, 0.565], [0.338, 0.565], [0.669, 0.565]],
+                                                    [0.007, 0.565], [0.338, 0.565], [0.669, 0.565],
+                                                    [0.968, 0.020]],
                                          'box': [[]]}
 
         map_rect = pygame.Rect(0, 0, 770, 590)
@@ -65,4 +73,8 @@ class UIFunction:
         map_panel = Panel(map_rect, "地图选择", 28, buttons, [], select_map_panel_relative_pos, text_pos=0)
         return map_panel
 
+    @staticmethod
+    def new_status_panel(scene, username):
+
+        pass
 
