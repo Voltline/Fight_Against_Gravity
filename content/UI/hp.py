@@ -13,16 +13,16 @@ class HP:
 
         self.width = 90
         self.height = 10
-        self.hp_percent = 1
+        self.hp = 100
         self.hp_panel = pygame.image.load(self.path + "assets/Img/hp.png")
         self.hp_column = pygame.transform.smoothscale(pygame.image.load(self.path + "assets/Img/hp_column.png"),
                                                       (self.width, self.height))
 
-    def update_hp(self, new_hp_percent):
-        self.hp_percent = new_hp_percent
+    def update_hp(self, new_hp):
+        self.hp = new_hp
 
     def render(self, screen):
-        hp = pygame.transform.smoothscale(self.hp_panel, (self.width * self.hp_percent, self.height))
+        hp = pygame.transform.smoothscale(self.hp_panel, (self.width * self.hp / 100, self.height))
         screen.blit(hp, (self.left, self.top))
         screen.blit(self.hp_column, (self.left, self.top))
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
             if e.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        if hpt.hp_percent >= 0:
-            hpt.update_hp(hpt.hp_percent-0.00001)
+        if hpt.hp >= 0:
+            hpt.update_hp(hpt.hp-0.1)
         hpt.render(sc)
         pygame.display.flip()
