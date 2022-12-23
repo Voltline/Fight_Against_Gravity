@@ -120,13 +120,13 @@ class ServerMain:
         """
         messageAdr, messageMsg = message
         username, roomname, roommap = messageMsg["user"], messageMsg["roomname"], messageMsg["roommap"]
-        user = self.user_list[username]
         if username not in self.user_list:
             # 非法用户
             sendMsg = messageMsg
             sendMsg["status"] = "NAK"
             sendMsg["roomid"] = None
             self.server.send(messageAdr, sendMsg)
+        user = self.user_list[username]
         if user.get_roomid():
             # 用户已在房间
             sendMsg = messageMsg

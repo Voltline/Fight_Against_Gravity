@@ -4,6 +4,7 @@ from content.UI.button_class import Button
 from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.login_scene_class import LogInScene
+from content.scene.room_scene import RoomScene
 from content.UI.ui_function import UIFunction
 import pygame
 
@@ -40,7 +41,8 @@ class StartScene(Scene):
         self.loaded = {'img': start_title, 'label': None, 'box': None, 'button': [login_button, online_game_button, local_button, self.set_button], 'panel': []}
 
     def online_is_clicked(self):
-        pass
+        ScenePlayer.push(RoomScene())
+        #TODO:点了没反应
 
     def login_is_clicked(self):
         ScenePlayer.push(LogInScene())
