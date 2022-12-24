@@ -1,3 +1,5 @@
+import os
+
 import pygame
 
 
@@ -10,6 +12,8 @@ class SceneFont:
     map_list_font = {}
     nickname_font = {}
     hp_value_font = {}
+    red_font = {}
+    """红色字体"""
 
     @staticmethod
     def init(scene_settings):
@@ -63,3 +67,11 @@ class SceneFont:
             'align': 1,
             'valign': 1
         }
+        SceneFont.red_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 15),
+            'tc': (255, 50, 80),
+            'bc': None,
+            'align': 1,
+            'valign': 1
+        }
+
