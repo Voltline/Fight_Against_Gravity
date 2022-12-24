@@ -7,7 +7,7 @@ from content.UI.panel_class import Panel
 
 
 class ScrollablePanel(Panel):
-    def __init__(self, rect, text, font_size, ctrlrs, boxes, others, relative_pos, text_pos=1):
+    def __init__(self, settings, rect, text, font_size, ctrlrs=[], boxes=[], others=[], text_pos=1):
         """
         rect: 一个四元组，text:panel要显示的文字，
         buttons: panel里的按钮组件，列表形式
@@ -18,102 +18,62 @@ class ScrollablePanel(Panel):
         # todo: 判断是否点到panel，涉及到一个panel是否active，如果panel被点击了，再让panel里的东西进行响应
         # 在panel里面画一个surface，把panel的surface画到
         # 把东西画到panel上，再把panel画到screen上。
-        super().__init__(rect, None, 0, '', None)
-        self.rect = pygame.Rect(rect)
-        self.surface = pygame.Surface(self.rect.width, self.rect.height)
-        self.surface.set_colorkey((0, 0, 0))  # 默认黑色为透明
-        self.text_pos = text_pos
-        self.color = (43, 43, 43)  # 65；如果需要panel背景透明就把color设成（0,0,0）
-        if hasattr(sys, 'frozen'):
-            path = os.path.dirname(sys.executable) + '/'
-        else:
-            path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '/'
-        self.font = pygame.font.Font(path + "assets\\font\\SourceHanSans-Normal.ttc", font_size)
-        if text is not None:
-            self.text_surface = self.font.render(text, True, SceneFont.white_font['tc'], SceneFont.white_font['bc'])
-        self.loaded = {'button': ctrlrs, 'box': boxes, 'others': others}
-        self.components_relative_pos = relative_pos
-        self.abs_pos = relative_pos  # 控制滚轮别把控件滚到有的没的地方
-        """计算组件相对位置"""
-        if self.loaded['button'] is not None:
-            for i in range(len(self.loaded['button'])):
-                self.loaded['button'][i].rect.left = self.rect.left + \
-                                                     self.components_relative_pos['button'][i][0] * self.rect.width
-                self.loaded['button'][i].rect.top = self.rect.top + self.components_relative_pos['button'][i][1] * self.rect.height
-        if self.loaded['box'] is not None:
-            for j in range(len(self.loaded['box'])):
-                self.loaded['box'][j].boxBody.left = self.rect.left + self.components_relative_pos['box'][j][0] * self.rect.width
-                self.loaded['box'][j].boxBody.top = self.rect.top + self.components_relative_pos['box'][j][1] * self.rect.height
-        # 协调控制输入框
-        self.box_is_able = True
-        self.switcher = 0
+        super().__init__(rect, text, font_size, ctrlrs, boxes, others, text_pos)
+        height = self.rect.height
+        # 计算surface的长
+        for objs in self.loaded.values():
+            for obj in objs:
+                if obj.rect.bottom > height:
+                    height = obj.rect.bottom
+        self.surface = pygame.Surface((self.rect.width, height))
+        self.surface.set_colorkey(self.color_key)
+        self.surface.fill(self.color_key)
 
         # 滚动条协调
-        self.has_scrollbar = has_scrollbar
-        if self.has_scrollbar:
-            settings = Settings(path)
-            sb_left = self.rect.left + self.rect.width - 15
-            print(self.rect.top, self.rect.height)
-            self.scrollbar = ScrollBar([sb_left, self.rect.top, self.rect.height], settings)
+        sb_left = self.rect.width - 15
+        self.scrollbar = ScrollBar([sb_left, 0, self.rect.height], settings)
 
     def render(self, screen, rect=pygame.Rect(0, 0, 0, 0)):
-        self.surface.fill((0, 0, 0))
-        pygame.draw.rect(self.surface, self.color, self.rect, border_radius=15)
+        self.surface.fill(self.color)
         width, height = self.text_surface.get_size()
         if self.text_pos == 1:
-            left = self.rect.left + int((self.rect.width - width) / 2)
-            top = self.rect.top + int((self.rect.height - height) / 2)
-        elif self.text_pos == 0:
-            left = self.rect.left + int((self.rect.width - width) / 2)
-            top = self.rect.top + 20
-        screen.blit(self.text_surface, (left, top))
-        if self.loaded['button'] is not None:
-            self.loaded['button'][0].render(screen)
-            for i in range(len(self.loaded['button'])):
-                if self.rect.top < self.loaded['button'][i].rect.top < self.rect.top + self.rect.height - self.loaded['button'][i].rect.height:
-                    self.loaded['button'][i].render(screen)
-        if self.loaded['box'] is not None:
-            for j in range(len(self.loaded['box'])):
-                if self.rect.top < self.loaded['box'][j].rect.top < self.rect.top + self.rect.height - self.loaded['box'][j].rect.height:
-                    self.loaded['box'][j].render(screen)
-        if self.has_scrollbar:
-            self.scrollbar.render(screen)
+            left = int((self.rect.width - width) / 2)
+            top = int((self.rect.height - height) / 2)
+        else:  # self.text_pos == 0
+            left = int((self.rect.width - width) / 2)
+            top = 20
+        self.surface.blit(self.text_surface, (left, top))
+        for objs in self.loaded.values():
+            for obj in objs:
+                obj.render(self.surface)
+        self.scrollbar.render(self.surface, self.scrollbar.ratio*(self.surface.get_height()-self.rect.height))
+        screen.blit(self.surface, self.rect,
+                    pygame.Rect(0, self.scrollbar.ratio*(self.surface.get_height()-self.rect.height),
+                                self.rect.width, self.rect.height))
 
     def update(self, event, pos_offset=(0, 0)) -> bool:
-        pos_offset = (self.rect[0]+pos_offset[0], self.rect[1]+pos_offset[1])
-        if self.loaded['button'] is not None:
-            for bt in self.loaded['button']:
-                bt.update(event, pos_offset)
-        if self.loaded['box'] is not None and self.box_is_able:
-            for i in range(len(self.loaded['box'])):
-                if self.loaded['box'][i].check_click(event, pos_offset):  # 若按下鼠标且位置在文本框
-                    self.loaded['box'][i].switch()
-                    self.switcher = i
-                else:
-                    self.loaded['box'][i].active = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_TAB:
-                    for m in self.loaded['box']:
-                        m.active = False
-                    self.switcher = (self.switcher + 1) % len(self.loaded['box'])
-                    self.loaded['box'][self.switcher].active = True
-            for bx in self.loaded['box']:
-                bx.deal_event(event)
-        if self.has_scrollbar:
-            if event.type == pygame.MOUSEWHEEL:
-                if event.y > 0 and self.scrollbar.ratio >= 0:
-                    if self.loaded['button'] is not None:
-                        for i in range(1, len(self.loaded['button'])):
-                            self.loaded['button'][i].rect.top += 20
-                    if self.loaded['box'] is not None:
-                        for j in range(len(self.loaded['box'])):
-                            self.loaded['box'][j].rect.top += 20
-                elif event.y < 0 and self.scrollbar.ratio <= 1:
-                    if self.loaded['button'] is not None:
-                        for i in range(1, len(self.loaded['button'])):
-                            self.loaded['button'][i].rect.top -= 20
-                    if self.loaded['box'] is not None:
-                        for j in range(len(self.loaded['box'])):
-                            self.loaded['box'][j].rect.top -= 20
+        pos_offset0 = pos_offset
+        pos_offset = (self.rect[0]+pos_offset[0],
+                      self.rect[1]+pos_offset[1]-self.scrollbar.ratio*(self.surface.get_height()-self.rect.height))
+        if self.deal_event_mouse(event, pos_offset, pos_offset0):
+            return True
+        self.scrollbar.deal_event(event, (self.rect[0]+pos_offset[0], self.rect[1]+pos_offset[1]))
+        self.deal_event_key(event)
+        return False
 
-            self.scrollbar.deal_event(event, pos_offset)
+        # if event.type == pygame.MOUSEWHEEL:
+        #     if event.y > 0 and self.scrollbar.ratio >= 0:
+        #         if self.loaded['button'] is not None:
+        #             for i in range(1, len(self.loaded['button'])):
+        #                 self.loaded['button'][i].rect.top += 20
+        #         if self.loaded['box'] is not None:
+        #             for j in range(len(self.loaded['box'])):
+        #                 self.loaded['box'][j].rect.top += 20
+        #     elif event.y < 0 and self.scrollbar.ratio <= 1:
+        #         if self.loaded['button'] is not None:
+        #             for i in range(1, len(self.loaded['button'])):
+        #                 self.loaded['button'][i].rect.top -= 20
+        #         if self.loaded['box'] is not None:
+        #             for j in range(len(self.loaded['box'])):
+        #                 self.loaded['box'][j].rect.top -= 20
+
