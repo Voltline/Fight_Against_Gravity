@@ -1,5 +1,3 @@
-import os
-
 import pygame
 
 
@@ -9,6 +7,9 @@ class SceneFont:
     white_font = {}
     menu_font = {}
     start_font = {}
+    map_list_font = {}
+    nickname_font = {}
+    hp_value_font = {}
 
     @staticmethod
     def init(scene_settings):
@@ -62,4 +63,3 @@ class SceneFont:
             'align': 1,
             'valign': 1
         }
-

@@ -19,9 +19,9 @@ class Scene:
         """全局组件，返回按钮、设置按钮、关闭按钮"""
         back_rect = pygame.Rect(20, 20, 45, 45)
         self.back = Button("back", self.back_is_clicked, back_rect, self.path + "assets\\Img\\back.png", 1)
-        self.reminder_panel_rect = (200, 300, 800, 200)
-        self.reminder_panel_rect_small = (450, 300, 300, 100)
-        self.menu_like_panel_rect = (300, 200, 600, 400)
+        self.reminder_panel_rect = pygame.Rect(200, 300, 800, 200)
+        self.reminder_panel_rect_small = pygame.Rect(450, 300, 300, 100)
+        self.menu_like_panel_rect = pygame.Rect(300, 200, 600, 400)
         set_rect = pygame.Rect(1120, 745, 35, 35)
         self.set_button = Button('setting', self.set_is_clicked, set_rect, self.path + "assets/Img/setting_light.png",
                                  1)
@@ -40,30 +40,33 @@ class Scene:
         set_boxes = []
 
         for i in range(10):
-            set_boxes.append(InputBox(pygame.Rect(0, 0, 80, 35)))
+            set_boxes.append(InputBox(pygame.Rect(i % 5 - 0.15, i / 5, 80, 35)))
         set_key_confirm_rect = pygame.Rect(450, 200, 150, 50)
-        r_pos = {"button": [[0.95, 0.03], [0.25, 0.4]],
-                 "box": [[i / 5 - 0.15, j / 10] for i in range(1, 6) for j in range(1, 3)]}
         set_key_confirm_button = Button('确认修改', self.set_key_clicked, set_key_confirm_rect,
                                         self.settings.btbg_light, 0, "确认修改", SceneFont.log_font)
-        self.set_panel = Panel((200, 50, 800, 700), '设置', 25, [self.close_button, set_key_confirm_button], set_boxes,
-                               r_pos, text_pos=0, has_scrollbar=True)
+        self.close_button.rect.left, self.close_button.rect.top = 0.95, 0.03
+        set_key_confirm_button.rect.left, set_key_confirm_button.rect.top = 0.25, 0.4
+        # self.set_panel = Panel(pygame.Rect(200, 50, 800, 700), '设置', 25,
+        #                        [self.close_button, set_key_confirm_button], set_boxes, [],
+        #                        text_pos=0)
 
     def ban_inputbox(self):
         self.box_is_able = False
 
-    def deal_event(self, e):
+    def deal_event(self, e) -> bool:
         """将对应页面加载了的组件全部进行状态更新，会post新的event"""
         if self.loaded['panel'] is not None:
-            for pn in self.loaded['panel']:
-                pn.update(e)
+            for pn in self.loaded['panel'][::-1]:  # 越新的panel，响应的优先级越高
+                if pn.update(e):
+                    return True
         if self.loaded['button'] is not None:
             for bt in self.loaded['button']:
-                bt.update(e)
+                if bt.update(e):
+                    return True
         if self.loaded['box'] is not None and self.box_is_able:
             if e.type == pygame.MOUSEBUTTONDOWN:
                 for i in range(len(self.loaded['box'])):
-                    if self.loaded['box'][i].boxBody.collidepoint(e.pos):  # 若按下鼠标且位置在文本框
+                    if self.loaded['box'][i].check_click(e):  # 若按下鼠标且位置在文本框
                         self.loaded['box'][i].switch()
                         self.switcher = i
                     else:
@@ -76,11 +79,12 @@ class Scene:
                     self.loaded['box'][self.switcher].active = True
             for bx in self.loaded['box']:
                 bx.deal_event(e)
+        return False
 
     def deal_events(self):
         """获取并处理所有消息"""
         for event in pygame.event.get():
-            ScenePlayer.STACK[-1].deal_event(event)
+            self.deal_event(event)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -112,7 +116,7 @@ class Scene:
         pass
 
     def close_is_clicked(self):
-        self.loaded['panel'] = []
+        self.loaded['panel'].pop()
 
     def show(self):
         pass

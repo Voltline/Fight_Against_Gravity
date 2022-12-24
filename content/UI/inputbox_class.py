@@ -13,7 +13,7 @@ class InputBox:
         """
         rect，传入矩形实体，传达输入框的位置和大小
         """
-        self.boxBody: pygame.Rect = rect
+        self.rect: pygame.Rect = rect
         self.color_inside_inactive = pygame.Color(31, 31, 31)
         self.color_inactive = pygame.Color(71, 71, 71)  # 未被选中的颜色
         self.color_active = pygame.Color(105, 105, 105)  # 被选中的颜色
@@ -66,14 +66,14 @@ class InputBox:
             self.draw_password(screen)
         else:
             txt_surface = self.font.render(self.text, True, self.font_color)  # 文字转换为图片
-            width = max(self.boxBody.w, txt_surface.get_width()+10)  # 当文字过长时，延长文本框
-            pygame.draw.rect(screen, self.color_inside, self.boxBody, 0, border_radius=15)
-            pygame.draw.rect(screen, self.color, self.boxBody, 4, border_radius=15)
-            screen.blit(txt_surface, (self.boxBody.x+10, self.boxBody.y+5))
+            width = max(self.rect.w, txt_surface.get_width() + 10)  # 当文字过长时，延长文本框
+            pygame.draw.rect(screen, self.color_inside, self.rect, 0, border_radius=15)
+            pygame.draw.rect(screen, self.color, self.rect, 4, border_radius=15)
+            screen.blit(txt_surface, (self.rect.x + 10, self.rect.y + 5))
             cursor = self.font.render('|', True, (170, 205, 255))
             w, h = txt_surface.get_size()
             if int(time.time() * 2) % 3 != 0 and self.active:
-                screen.blit(cursor, (self.boxBody.x+w+12, self.boxBody.y+2))
+                screen.blit(cursor, (self.rect.x + w + 12, self.rect.y + 2))
 
     def switch(self):
         self.active = not self.active
@@ -84,7 +84,20 @@ class InputBox:
             password += '*'
         password_surface = self.font.render(password, True, self.font_color)
         width = max(325, password_surface.get_width() + 10)  # 当文字过长时，延长文本框
-        self.boxBody.w = width
-        pygame.draw.rect(screen, self.color_inside, self.boxBody, 0, border_radius=15)
-        pygame.draw.rect(screen, self.color, self.boxBody, 4, border_radius=15)
-        screen.blit(password_surface, (self.boxBody.x + 5, self.boxBody.y + 5))
+        self.rect.w = width
+        pygame.draw.rect(screen, self.color_inside, self.rect, 0, border_radius=15)
+        pygame.draw.rect(screen, self.color, self.rect, 4, border_radius=15)
+        screen.blit(password_surface, (self.rect.x + 5, self.rect.y + 5))
+
+    def is_over(self, point, pos_offset=(0, 0)) -> bool:
+        """检测鼠标位置是否在按钮上，并检测按钮是否可用"""
+        if self.active:
+            flag = self.rect.collidepoint(point[0]-pos_offset[0], point[1]-pos_offset[1])
+        else:
+            flag = False
+        return flag
+
+    def check_click(self, event, pos_offset=(0, 0)):
+        """每次点击完返回鼠标位置"""
+        if event == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            return self.is_over(event.pos, pos_offset)

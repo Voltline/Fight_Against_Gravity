@@ -36,13 +36,13 @@ class RegScene(Scene):
         r_check_button.add_img(self.settings.btbg_light_pressed)
         buttons = [r_button, r_check_button, self.back, self.set_button]
         """显示验证码错误的panel"""
-        pause_panel_components_relative_pos = {'button': [[0.88, 0.1]], 'box': [[]]}
-
+        self.close_button.r_xy = 0.88, 0.1
         self.wrong_check_panel = Panel(self.reminder_panel_rect_small, '验证码错误', 22,
-                                       [self.close_button], [], pause_panel_components_relative_pos)
+                                       [self.close_button])
         """显示没输入验证码的panel"""
+        self.close_button.r_xy = 0.88, 0.1
         self.no_check_panel = Panel(self.reminder_panel_rect_small, '验证码为空', 22,
-                                    [self.close_button], [], pause_panel_components_relative_pos)
+                                    [self.close_button])
         self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': []}
 
     def show(self):

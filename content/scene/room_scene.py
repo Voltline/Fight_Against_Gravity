@@ -36,9 +36,9 @@ class RoomScene(Scene):
                                      self.settings.btbg_light, 0, "更改房间名", SceneFont.log_font)
         self.buttons = [self.back, self.r_ready_button, r_change_map_button, r_roommap_button, r_change_name_button]
 
-        pause_panel_components_relative_pos = {'button': [[0.88, 0.1]], 'box': [[]]}
-        self.not_allready_panel = Panel(self.reminder_panel_rect_small, '有玩家未准备', 22,
-                                        [self.close_button], [], pause_panel_components_relative_pos)
+        # pause_panel_components_relative_pos = {'button': [[0.88, 0.1]], 'box': [[]]}
+        # self.not_allready_panel = Panel(self.reminder_panel_rect_small, '有玩家未准备', 22,
+        #                                 [self.close_button], [], pause_panel_components_relative_pos)
         self.panel = []
         self.loaded = {'label': self.labels, 'box': self.boxes, 'button': self.buttons, 'panel': self.panel}
 
