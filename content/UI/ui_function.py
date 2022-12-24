@@ -1,12 +1,12 @@
+import pygame
 from content.maps.map_obj import Map
 from content.UI.button_class import Button
 from content.UI.inputbox_class import InputBox
 from content.UI.scrollbar import ScrollBar
 from content.UI.panel_class import Panel
 from content.UI.label_class import Label
-from settings.all_settings import Settings
 from content.scene.scene_font import SceneFont
-import pygame
+from content.UI.hp import HP
 
 
 class UIFunction:
@@ -76,7 +76,5 @@ class UIFunction:
         return map_panel
 
     @staticmethod
-    def new_status_panel(scene, username):
-
+    def new_status_bar_panel(scene, username):
         pass
-

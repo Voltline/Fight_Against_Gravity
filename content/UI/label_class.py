@@ -43,13 +43,12 @@ class Label:
             self.valign = font_info["valign"]
         self.is_show = True  # 默认显示
 
-        self.left = left
-        self.top = top
-        self.width = width  # 背景板的宽度，方便计算居中
+        self.rect = pygame.Rect(left, top, width, 0)
+        self.r_xy = (0, 0)  # 用于适配panel
         self.text = text
 
-        self.display_x = self.left
-        self.display_y = self.top
+        self.display_x = self.rect.left
+        self.display_y = self.rect.top
 
         if text == '':
             self.text_surface = None
@@ -60,7 +59,7 @@ class Label:
         """接受一个surface对象，在其上方显示文字"""
         if self.text != '' and self.is_show:
             self.set_align(self.align)
-            surface.blit(self.text_surface, (self.display_x, self.display_y))
+            surface.blit(self.text_surface, (self.get_display_x(), self.get_display_y()))
 
     def set_text(self, text, tc=None, bc=None):
         """设置(或修改）文字内容，并重新建立Surface对象，默认不修改原有颜色"""
@@ -70,7 +69,10 @@ class Label:
         if bc is not None:
             self.bc = bc
         self.text_surface = self.font.render(self.text, True, self.tc, self.bc)
-        print(self.text, ",文字大小为", self.text_surface.get_size())  # 测试用
+        # print(self.text, ",文字大小为", self.text_surface.get_size())  # 测试用
+        width, height = self.text_surface.get_size()
+        if self.rect.height == 0:
+            self.rect.height = height
         # pygame.Font.render方法，返回一个surface对象
 
     def __get_size(self):
@@ -82,18 +84,27 @@ class Label:
             return self.text_surface.get_size()
             # pygame.surface.get_size()
 
+    def get_display_x(self):
+        width, height = self.__get_size()
+        if self.align == 2:
+            self.display_x = self.rect.left + self.rect.width - width
+        elif self.align == 1:
+            self.display_x = self.rect.left + int((self.rect.width-width)/2)
+        elif self.align == 0:
+            self.display_x = self.rect.left
+        return self.display_x
+
+    def get_display_y(self):
+        width, height = self.__get_size()
+        self.display_y = self.rect.top + int((self.rect.height - height) / 2)
+        return self.display_y
+
     def set_align(self, align: int):
         """设置水平对齐方式，0：靠左（也就是不变），1：居中，2：靠右"""
-        width, height = self.__get_size()
-        if align == 2:
-            self.display_x = self.left - width
-        elif align == 1:
-            self.display_x = self.left + int((self.width-width) / 2)
-        elif align == 0:
-            self.display_x = self.left
+        self.align = align
 
     # def set_valign(self, valign: int):
-    #     """设置水平对齐方式，0：靠上，1：居中，2：靠下（也就是不变）"""
+    #     """设置垂直对齐方式，0：靠上，1：居中，2：靠下（也就是不变）"""
     #     width, height = self.__get_size()
     #     if valign == 2:
     #         self.display_y = self.top - height
@@ -108,15 +119,16 @@ class Label:
         对齐如果不更改仍然沿用
         """
         text_width, text_height = self.__get_size()
-        self.left = left
-        self.top = top
+        self.rect.left = left
+        self.rect.top = top
+        self.rect.height = height
         if align is not None:
             self.align = align
         if valign is not None:
             self.valign = valign
 
         self.set_align(self.align)
-        self.display_y = self.top + int((height - text_height) / 2)
+        self.display_y = self.rect.top + int((height - text_height) / 2)
 
     def hide(self, flag: bool):
         if flag:
@@ -126,5 +138,3 @@ class Label:
 
     def set_text_color(self, color):
         self.tc = color
-
-

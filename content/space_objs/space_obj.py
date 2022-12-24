@@ -38,26 +38,18 @@ class SpaceObj(pygame.sprite.Sprite):
 
     def update_loc_spd(self, dt, planets: pygame.sprite.Group):
         """
-        在已经更新了acc后，更新spd和loc
+        更新spd和loc
 
         误差不太大的组合：
         x'用spd,x"不用,x"'用
         x'用(spd+spd0)/2,x"用(acc+acc0)/2,x"'用
 
         """
-        spd0 = self.spd.copy()
-        acc0 = self.acc.copy()
-        spd = self.spd
         # 韦尔莱算法
+        acc0 = self.acc.copy()
         self.update_loc(dt)
         self.update_acc(planets)
         self.spd += (acc0 + self.acc)/2 * dt
-
-        # 自己瞎写的算法
-        # self.spd += self.acc * delta_t + aacc * delta_t**2 / 2
-        # self.loc += (0.5*spd0+0.5*spd) * delta_t
-        # self.loc += (0.5*acc0+0.5*acc) * delta_t**2 / 2
-        # self.loc += aacc * delta_t**3 / 6
 
     def update_loc(self, dt):
         """下一时刻的位置需要这一时刻的速度和加速度"""

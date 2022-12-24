@@ -18,6 +18,7 @@ class Control:
         属性：is_show: 是否显示这个控件，is_active:控件是否被激活，is_able:控件是否可响应点击，
         status:用于标记这个按钮的状态，当一个按钮有多个状态时，status可用于索引对应素材。
         __img: 被加载好的图像，img_width:底图的长度，sub_img_width:子图宽度
+        r_xy：二元组，在本对象作为成员传入panel时起作用
 
         """
         self.is_show = 1
@@ -42,10 +43,10 @@ class Control:
             self.imgList.append(self.__img)
 
         # 下面设定Label对象，对于纯图片的按钮，没有text，没有text就没有label
-        if text is None:
+        if text is None or text == '':
             self.label = None
         else:
-            self.label = Label(self.rect.left, self.rect.top, rect.width, text, font_info)
+            self.label = Label(self.rect.left, self.rect.top, self.rect.width, text, font_info)
 
     def add_img(self, file_name: str):
         """多状态图进行添加"""
