@@ -27,11 +27,12 @@ class LocalGameScene(Scene):
         exit_button = Button('exit', self.exit_is_clicked, exit_rect,
                              self.settings.btbg_light, 0, '退出游戏', SceneFont.log_font)
         exit_button.add_img(self.settings.btbg_light_pressed)
-        pause_panel_components_relative_pos = {'button': [[0.88, 0.1], [0.25, 0.15], [0.25, 0.4]],
-                                               'box': [[]]}
+        self.close_button.r_xy = 0.88, 0.1
+        go_menu_button.r_xy = 0.25, 0.15
+        exit_button.r_xy = 0.25, 0.4
         self.pause_panel = Panel(self.menu_like_panel_rect, '已暂停', 23,
-                                 [self.close_button, go_menu_button, exit_button], [], pause_panel_components_relative_pos, text_pos=0, has_scrollbar=True)
-        print("after pause_panel is created, its loaded['button'] has", len(self.pause_panel.loaded['button']))
+                                 [self.close_button, go_menu_button, exit_button], [], [],
+                                 text_pos=0)
         self.loaded = {'img': None, 'label': None, 'box': None,
                        'button': [], 'panel': []}
 

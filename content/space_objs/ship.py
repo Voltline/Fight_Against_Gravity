@@ -6,6 +6,7 @@ from math import degrees
 from content.space_objs.space_obj import SpaceObj
 from content.space_objs.bullet import Bullet
 from content.online.obj_msg import ObjMsg
+from content.UI.statusbar_class import StatusBar
 
 
 class Ship(SpaceObj):
@@ -26,6 +27,8 @@ class Ship(SpaceObj):
 
         self.go_acc = settings.ship_go_acc  # 引擎的加速度
         self.turn_spd = settings.ship_turn_spd  # 转向的角速度
+
+        self.status_bar = StatusBar(self.player_name)
 
         # 主动状态
         self.is_go_ahead = False  # 是否在前进

@@ -47,12 +47,11 @@ class StartScene(Scene):
         ScenePlayer.push(LogInScene())
 
     def local_is_clicked(self):
-        self.loaded['panel'] = [UIFunction.new_select_map_panel(self)]
+        self.loaded['panel'].append(UIFunction.new_select_map_panel(self))
 
     def select_map_button_clicked(self, name: str):
         self.loaded['panel'] = []
-        ScenePlayer.push(LocalGameScene(name))  # 留给游戏登录
-
+        ScenePlayer.push(LocalGameScene(name))
 
     def show(self):
         self.screen.fill((10, 10, 10))

@@ -10,7 +10,7 @@ from content.UI.label_class import Label
 
 
 class Control:
-    def __init__(self, rect: pygame.Rect, img_file: str, img_sub: int, text, font_info):
+    def __init__(self, rect: pygame.Rect, img_file: str, img_sub: int, text, font_info, relate_xy=(0, 0)):
         """
         构造：
         rect: pygame.Rect对象,决定控制组件的位置,也用于创建label, img_file: 图片文件路径,img_sub: 表示这个图片有几张,
@@ -25,6 +25,7 @@ class Control:
         self.is_able = 1
         self.status = 0
         self.rect = rect
+        self.r_xy = relate_xy
         self.img_sub = img_sub
         self.text = text
         self.font_info = font_info
@@ -61,23 +62,24 @@ class Control:
                 self.label.set_pos(self.rect.left, self.rect.top, self.rect.height)
                 self.label.render(surface)
 
-    def is_over(self, point) -> bool:
+    def is_over(self, point, pos_offset=(0, 0)) -> bool:
         """检测鼠标位置是否在按钮上，并检测按钮是否可用"""
         if self.is_able:
-            flag = self.rect.collidepoint(point)
+            flag = self.rect.collidepoint(point[0]-pos_offset[0], point[1]-pos_offset[1])
         else:
             flag = False
         return flag
 
-    def check_click(self, event):
-        """每次点击完返回鼠标位置"""
+    def check_click(self, event, pos_offset=(0, 0)) -> bool:
+        """每次点击完返回是否被点到"""
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            return self.is_over(event.pos)
+            return self.is_over(event.pos, pos_offset)
+        return False
 
-    def check_move(self, event):
+    def check_move(self, event, pos_offset=(0, 0)):
         """如果鼠标在按钮上要响应相应的动态效果"""
         if event.type == pygame.MOUSEMOTION:
-            if self.is_over(event.pos):
+            if self.is_over(event.pos, pos_offset):
                 self.status = 1
             else:
                 self.status = 0
@@ -100,6 +102,10 @@ class Control:
         if len(self.imgList) > 1:
             self.status = 1
 
+    def update(self, event, pos_offset=(0, 0)) -> bool:
+        """处理event，返回是否应该终止处理"""
+        return False
+
 
 class Button(Control):
     def __init__(self, name: str, clicked_function, rect, img_file, img_sub, text="", font_info=None):
@@ -107,25 +113,27 @@ class Button(Control):
 
         self.name = name
         # self.event_id = event_id
-        self.is_clicked = clicked_function
+        self.clicked_func = clicked_function
 
     def set_text(self, text):
         self.label.set_text(text)
 
     # update :按钮更新状态，并上传事件
-    def update(self, event):
-        if self.check_click(event):  # 响应点击
+    def update(self, event, pos_offset=(0, 0)) -> bool:
+        if self.check_click(event, pos_offset):  # 响应点击
             print(self.name, "clicked")
-            self.is_clicked()
+            self.clicked_func()
+            return True
             # data = {"from_ui": self.name, "status": self.status}
             # ev = pygame.event.Event(self.event_id, data)
             # pygame.event.post(ev)
-        if event.type == pygame.MOUSEMOTION:  # 响应鼠标移动
+        elif event.type == pygame.MOUSEMOTION:  # 响应鼠标移动
             if len(self.imgList) > 1:
-                if self.is_over(event.pos):
+                if self.is_over(event.pos, pos_offset):
                     self.status = 1
                 else:
                     self.status = 0
+        return False
 
 
 class CheckBox(Control):
@@ -151,9 +159,11 @@ class CheckBox(Control):
     def get_selected(self):
         return self.status == 0
 
-    def update(self, event):
-        if self.check_click(event):
+    def update(self, event, pos_offset=(0, 0)) -> bool:
+        if self.check_click(event, pos_offset):
             self.status = (self.status+1) % 2
+            return True
+        return False
 
 
 class RadioButton(CheckBox):
@@ -168,8 +178,10 @@ class RadioButton(CheckBox):
         if self.group_id == group_id:
             self.set_selected(self.name == from_id)
 
-    def update(self, event):
-        if self.check_click(event):
+    def update(self, event, pos_offset=(0, 0)) -> bool:
+        if self.check_click(event, pos_offset):
             data = {"from_ui": self.name}
             ev = pygame.event.Event(self.event_id, data)
             pygame.event.post(ev)
+            return True
+        return False
