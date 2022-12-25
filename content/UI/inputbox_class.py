@@ -92,13 +92,11 @@ class InputBox:
 
     def is_over(self, point, pos_offset=(0, 0)) -> bool:
         """检测鼠标位置是否在按钮上，并检测按钮是否可用"""
-        if self.active:
-            flag = self.rect.collidepoint(point[0]-pos_offset[0], point[1]-pos_offset[1])
-        else:
-            flag = False
+        flag = self.rect.collidepoint(point[0]-pos_offset[0], point[1]-pos_offset[1])
         return flag
 
     def check_click(self, event, pos_offset=(0, 0)):
         """每次点击完返回鼠标位置"""
-        if event == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             return self.is_over(event.pos, pos_offset)
+        return False
