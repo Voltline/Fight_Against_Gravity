@@ -46,7 +46,7 @@ class RoomListScene(Scene):
     def create_room_button_clicked(self):
         """点击创建房间按钮"""
         if self.client.creatroom(PlayerInfo.player_name+'的房间', '虚空'):
-            ScenePlayer.push(RoomScene())
+            ScenePlayer.push(RoomScene(True))
 
     def room_bar_clicked(self, room_id):
         """点击房间，加入房间"""
