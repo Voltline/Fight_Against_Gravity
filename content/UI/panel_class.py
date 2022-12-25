@@ -68,8 +68,7 @@ class Panel(Control):
 
     def deal_event_mouse(self, event, pos_offset=(0, 0), pos_offset0=(0, 0)) -> bool:
         """处理鼠标事件"""
-        if self.is_able and (self.check_click(event, pos_offset0)
-                             or event.type == pygame.MOUSEMOTION and self.is_over(event.pos, pos_offset0)):
+        if self.is_able and self.is_over(pygame.mouse.get_pos(), pos_offset0):
             for bt in self.loaded['ctrlrs'][::-1]:
                 if bt.update(event, pos_offset):
                     return True
@@ -81,6 +80,7 @@ class Panel(Control):
                     else:
                         self.loaded['boxes'][i].active = False
             return True
+        return False
 
     def deal_event_key(self, event):
         """处理键盘事件"""

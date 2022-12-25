@@ -53,7 +53,7 @@ class ScrollBar:
             else:
                 self.thumb_status = 0
             if self.is_dragging:
-                self.thumb_top = e.pos[1]
+                self.thumb_top = e.pos[1]-pos_offset[1]
         self.thumb_top = max(self.top, min(self.thumb_top, self.top + self.height - self.thumb_height))
 
 
