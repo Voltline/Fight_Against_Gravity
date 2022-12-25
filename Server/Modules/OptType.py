@@ -99,12 +99,12 @@ class OptType:
     {
         "opt" : 15
         "roomlist" : [{
-            "roomid": roomid,
-            "owner": owner,
-            "size": size,
-            "started": started,
-            "roommap" : roommap,
-            "roomname" : roomname
+            "roomid": uuid(str),
+            "owner": 房主名(str),
+            "size": 玩家人数(int),
+            "started": 是否在游戏中(int:0/1),
+            "roommap" : 地图名(str),
+            "roomname" : 房间名(str)
         }]
     }
     """
