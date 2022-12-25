@@ -182,6 +182,17 @@ class ClientMain:
             pass
 
     def getroom(self):
+        """
+        {
+            roomid : "str"
+            roomname : "str"
+            owner: "str"
+            roommap: "str"
+            userlist : {
+                user:ready
+            }
+        }
+        """
         if self.roomid is None:
             return False
         msg = {
@@ -215,6 +226,7 @@ class ClientMain:
         self.client.send(msg)
         recv = self.client.receive()
         return recv["status"] == "ACK"
+
     def logout(self):
         msg = {
             "opt": OptType.logout,
@@ -230,6 +242,7 @@ class ClientMain:
             return True
         else:
             return False
+
     def dready(self):
         if self.roomid is None:
             return False
