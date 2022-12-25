@@ -16,15 +16,16 @@ class RoomScene(Scene):
         self.confirm_quit_bool = False
         self.last_update_time = 0
         self.roomname = "默认房间名"
+        # TODO:get信息
         self.roommap = "地月系统"
         self.is_owner = is_owner  # 是否是房主
         self.is_ready = False
         # 左侧房间信息初始化
-        r_roomname_lable = Label(100, 160, 800, "房间名：" + self.roomname, SceneFont.white_font)
-        r_roomname_lable.r_xy = 0.1, 1 / 10 * 0.8
+        self.r_roomname_lable = Label(100, 160, 800, "房间名：" + self.roomname, SceneFont.white_font)
+        self.r_roomname_lable.r_xy = 0.1, 1 / 10 * 0.8
         """房间名"""
-        r_roommap_lable = Label(100, 200, 800, "房间地图：" + self.roommap, SceneFont.white_font)
-        r_roommap_lable.r_xy = 0.1, 1 / 10 * 1.6
+        self.r_roommap_lable = Label(100, 200, 800, "房间地图：" + self.roommap, SceneFont.white_font)
+        self.r_roommap_lable.r_xy = 0.1, 1 / 10 * 1.6
         """房间地图名"""
         self.not_allready_lable = Label(570, 710, 800, "有玩家未准备", SceneFont.red_font)
         self.not_allready_lable.is_show = False
@@ -42,7 +43,7 @@ class RoomScene(Scene):
             self.user_dready_lable[i].r_xy = 0.6, 0.05 + 1 / 10 * i
             self.user_dready_lable[i].is_show = False
         self.labels = [self.not_allready_lable]
-        self.room_lables = [r_roomname_lable, r_roommap_lable]
+        self.room_lables = [self.r_roomname_lable, self.r_roommap_lable]
         """左侧房间信息"""
         self.user_lables = []
         """右侧玩家名"""
@@ -59,10 +60,10 @@ class RoomScene(Scene):
         r_change_map_button = Button("changemap", self.change_map_is_clicked, pygame.Rect(100, 470, 200, 50),
                                      self.settings.btbg_light, 0, "更改地图", SceneFont.log_font)
         r_change_map_button.r_xy = 0.1, 1 / 10 * 7
-        r_roommap_button = Button("roommap", lambda: 1, pygame.Rect(100, 240, 200, 200),
-                                  self.path + "/assets/texture/thumbnail/" + self.roommap + ".png", 0, "",
-                                  SceneFont.log_font)
-        r_roommap_button.r_xy = 0.1, 1 / 10 * 2.8
+        self.r_roommap_button = Button("roommap", lambda: 1, pygame.Rect(100, 240, 200, 200),
+                                       self.path + "/assets/texture/thumbnail/" + self.roommap + ".png", 0, "",
+                                       SceneFont.log_font)
+        self.r_roommap_button.r_xy = 0.1, 1 / 10 * 2.8
         r_change_name_button = Button("changename", self.change_name_is_clicked, pygame.Rect(100, 570, 200, 50),
                                       self.settings.btbg_light, 0, "更改房间名", SceneFont.log_font)
         r_change_name_button.r_xy = 0.1, 1 / 10 * 8.55
@@ -77,7 +78,7 @@ class RoomScene(Scene):
         r_confirm_button_.r_xy = 0.4, 0.55
         self.buttons = [self.back, self.r_ready_button]
         self.room_buttons = [r_change_map_button, r_change_name_button]
-        self.room_lables.append(r_roommap_button)
+        self.room_lables.append(self.r_roommap_button)
         user_panel = Panel(pygame.Rect(400, 150, 700, 500), "", 28, others=self.user_lables)
         """用户信息"""
         room_panel = Panel(pygame.Rect(80, 150, 250, 500), "", 28, others=self.room_lables, ctrlrs=self.room_buttons)
@@ -150,6 +151,11 @@ class RoomScene(Scene):
             self.last_update_time = time.time()
             res = self.client.getroom()
             if res:
+                self.roommap = res["roommap"]
+                self.roomname = res["roomname"]
+                self.r_roommap_lable.set_text(self.roommap)
+                self.r_roomname_lable.set_text(self.roomname)
+                self.r_roommap_button.change_new_image(self.path + "/assets/texture/thumbnail/" + self.roommap + ".png")
                 owner = res["owner"]
                 userlist = res["userlist"]
                 self.user_ready_lable[0].set_text("房  主")
@@ -188,6 +194,7 @@ class RoomScene(Scene):
             res = self.client.deleteroom()
             print(res)
             if res:
+                self.client.deleteroom()
                 ScenePlayer.pop()
             else:
                 self.user_confirm_quit_panel.is_show = False

@@ -66,7 +66,7 @@ class Control:
     def is_over(self, point, pos_offset=(0, 0)) -> bool:
         """检测鼠标位置是否在按钮上，并检测按钮是否可用"""
         if self.is_able:
-            flag = self.rect.collidepoint(point[0]-pos_offset[0], point[1]-pos_offset[1])
+            flag = self.rect.collidepoint(point[0] - pos_offset[0], point[1] - pos_offset[1])
         else:
             flag = False
         return flag
@@ -136,6 +136,12 @@ class Button(Control):
                     self.status = 0
         return False
 
+    def change_new_image(self, img_file):
+        """修改默认图片"""
+        self.__img = pygame.image.load(img_file)
+        self.__img = pygame.transform.smoothscale(self.__img, (self.rect.width, self.rect.height))
+        self.imgList[0] = self.__img
+
 
 class CheckBox(Control):
     def __init__(self, name, rect, img_file, img_sub, text, font_info):
@@ -162,7 +168,7 @@ class CheckBox(Control):
 
     def update(self, event, pos_offset=(0, 0)) -> bool:
         if self.check_click(event, pos_offset):
-            self.status = (self.status+1) % 2
+            self.status = (self.status + 1) % 2
             return True
         return False
 
