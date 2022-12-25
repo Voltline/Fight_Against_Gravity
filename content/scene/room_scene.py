@@ -76,7 +76,9 @@ class RoomScene(Scene):
         r_dconfirm_button = Button("changename", self.dconfirm_quit_is_clicked, pygame.Rect(0, 0, 100, 50),
                                    self.settings.btbg_light, 0, "取消", SceneFont.log_font)
         r_dconfirm_button.r_xy = 0.6, 0.55
-
+        r_confirm_button_ = Button("changename", self.confirm__is_clicked, pygame.Rect(0, 0, 100, 50),
+                                   self.settings.btbg_light, 0, "确认", SceneFont.log_font)
+        r_confirm_button_.r_xy = 0.4, 0.55
         self.buttons = [self.back, self.r_ready_button]
         self.room_buttons = [r_change_map_button, r_change_name_button]
         self.room_lables.append(r_roommap_button)
@@ -84,10 +86,17 @@ class RoomScene(Scene):
         """用户信息"""
         room_panel = Panel(pygame.Rect(80, 150, 250, 500), "", 28, others=self.room_lables, ctrlrs=self.room_buttons)
         """房间信息"""
-        self.user_confirm_quit_panel = Panel(pygame.Rect(450, 300, 300, 180), "确认退出?", 28, ctrlrs=[r_confirm_button,r_dconfirm_button], text_pos=0.5)
-        self.user_confirm_quit_panel.color = (13,13,13)
+        self.user_confirm_quit_panel = Panel(pygame.Rect(450, 300, 300, 180), "确认退出?", 28,
+                                             ctrlrs=[r_confirm_button, r_dconfirm_button], text_pos=0.5)
+        self.owner_quit_warning_panel = Panel(pygame.Rect(450, 300, 400, 180), "有玩家未退出，无法退出房间", 25,
+                                              ctrlrs=[r_confirm_button_], text_pos=0.5)
+        self.user_confirm_quit_panel.color = (13, 13, 13)
+        self.owner_quit_warning_panel.color = (13, 13, 13)
         self.user_confirm_quit_panel.is_show = False
-        self.panel = [user_panel, room_panel, self.user_confirm_quit_panel]
+        self.user_confirm_quit_panel.is_able = False
+        self.owner_quit_warning_panel.is_show = False
+        self.owner_quit_warning_panel.is_able = False
+        self.panel = [user_panel, room_panel, self.user_confirm_quit_panel, self.owner_quit_warning_panel]
         self.loaded = {'label': self.labels, 'box': [], 'button': self.buttons, 'panel': self.panel}
 
     def show(self):
@@ -97,6 +106,7 @@ class RoomScene(Scene):
 
     def back_is_clicked(self):
         self.user_confirm_quit_panel.is_show = True
+        self.user_confirm_quit_panel.is_able = True
         # if self.is_owner:
         #     res = self.client.deleteroom()
         #     if not res:
@@ -127,7 +137,7 @@ class RoomScene(Scene):
                 self.is_ready = True
 
     def start_is_clicked(self):
-        res = self.client.start()
+        res = self.client.startgame()
         if not res:
             self.not_allready_lable.is_show = True
 
@@ -175,13 +185,25 @@ class RoomScene(Scene):
     def confirm_quit_is_clicked(self):
         if self.is_owner:
             res = self.client.deleteroom()
-            if not res:
-                # 没有成功删除房间
-                return False
+            print(res)
+            if res:
+                ScenePlayer.pop()
+            else:
+                self.user_confirm_quit_panel.is_show = False
+                self.user_confirm_quit_panel.is_able = False
+                self.owner_quit_warning_panel.is_show = True
+                self.owner_quit_warning_panel.is_able = True
         else:
             print("user left room")
             self.client.leftroom()
-        ScenePlayer.pop()
+            ScenePlayer.pop()
+
+    def confirm__is_clicked(self):
+        self.owner_quit_warning_panel.is_show = False
+        self.owner_quit_warning_panel.is_able = False
+        self.user_confirm_quit_panel.is_show = False
+        self.user_confirm_quit_panel.is_able = False
 
     def dconfirm_quit_is_clicked(self):
         self.user_confirm_quit_panel.is_show = False
+        self.user_confirm_quit_panel.is_able = False
