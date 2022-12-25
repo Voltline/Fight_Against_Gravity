@@ -34,22 +34,23 @@ class ScrollablePanel(Panel):
         self.scrollbar = ScrollBar([sb_left, 0, self.rect.height], settings)
 
     def render(self, screen, rect=pygame.Rect(0, 0, 0, 0)):
-        self.surface.fill(self.color)
-        width, height = self.text_surface.get_size()
-        if self.text_pos == 1:
-            left = int((self.rect.width - width) / 2)
-            top = int((self.rect.height - height) / 2)
-        else:  # self.text_pos == 0
-            left = int((self.rect.width - width) / 2)
-            top = 20
-        self.surface.blit(self.text_surface, (left, top))
-        for objs in self.loaded.values():
-            for obj in objs:
-                obj.render(self.surface)
-        self.scrollbar.render(self.surface, self.scrollbar.ratio*(self.surface.get_height()-self.rect.height))
-        screen.blit(self.surface, self.rect,
-                    pygame.Rect(0, self.scrollbar.ratio*(self.surface.get_height()-self.rect.height),
-                                self.rect.width, self.rect.height))
+        if self.is_show:
+            self.surface.fill(self.color)
+            width, height = self.text_surface.get_size()
+            if self.text_pos == 1:
+                left = int((self.rect.width - width) / 2)
+                top = int((self.rect.height - height) / 2)
+            else:  # self.text_pos == 0
+                left = int((self.rect.width - width) / 2)
+                top = 20
+            self.surface.blit(self.text_surface, (left, top))
+            for objs in self.loaded.values():
+                for obj in objs:
+                    obj.render(self.surface)
+            self.scrollbar.render(self.surface, self.scrollbar.ratio*(self.surface.get_height()-self.rect.height))
+            screen.blit(self.surface, self.rect,
+                        pygame.Rect(0, self.scrollbar.ratio*(self.surface.get_height()-self.rect.height),
+                                    self.rect.width, self.rect.height))
 
     def update(self, event, pos_offset=(0, 0)) -> bool:
         pos_offset0 = pos_offset
