@@ -5,20 +5,22 @@ from content.UI.button_class import Button
 from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
 from content.UI.panel_class import Panel
-from content.games.local_game import LocalGame
+from content.games.client_game import ClientGame
 from content.UI.ui_function import UIFunction as UIF
+from content.online.player_info import PlayerInfo
 
 
-class LocalGameScene(Scene):
-    """本地游戏的场景"""
-    def __init__(self, map_name):
+class ClientGameScene(Scene):
+    """客户端在线游戏的场景"""
+    def __init__(self, map_name, player_names):
         super().__init__()
         self.pause_panel = UIF.new_pause_panel(self)
         self.pause_panel.is_show = self.pause_panel.is_able = False
         self.loaded = {'img': None, 'label': None, 'box': None,
                        'button': [], 'panel': [self.pause_panel]}
 
-        self.game = LocalGame(self.settings, self.screen, map_name)
+        self.game = ClientGame(self.settings, self.client.client, self.client.roomid,
+                               map_name, player_names, self.screen, PlayerInfo.player_name)
         self.game.restart()
 
     def pause_clicked(self):

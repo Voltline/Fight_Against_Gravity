@@ -1,10 +1,11 @@
 from content.scene.scene_class import Scene
 from content.UI.button_class import Button
-# from content.UI.inputbox_class import InputBox
+from content.UI.inputbox_class import InputBox
 from content.UI.label_class import Label
 from content.scene.scene_font import SceneFont
 from content.UI.panel_class import Panel
 from content.scene.scene_player_class import ScenePlayer
+from content.UI.ui_function import UIFunction as UIF
 import pygame
 import time
 
@@ -52,19 +53,25 @@ class RoomScene(Scene):
             self.user_lables.append(self.user_ready_lable[i])
             self.user_lables.append(self.user_dready_lable[i])
         r_rect = pygame.Rect(600, 700, 300, 50)
-        self.r_ready_button = Button("ready", self.ready_is_clicked, r_rect, self.settings.btbg_light, 0, "准备",
-                                     SceneFont.log_font)
+        self.ready_button = Button("ready", self.ready_is_clicked, r_rect, self.settings.btbg_light, 0, "准备",
+                                   SceneFont.log_font)
+        self.start_button = Button("start", self.start_is_clicked, r_rect, self.settings.btbg_light, 0,
+                                   "开始游戏", SceneFont.log_font)
+        self.ready_button.is_show = self.ready_button.is_able = False
+        self.start_button.is_show = self.start_button.is_able = False
         if self.is_owner:
-            self.r_ready_button = Button("start", self.start_is_clicked, r_rect, self.settings.btbg_light, 0,
-                                         "开始游戏", SceneFont.log_font)
-        self.r_change_map_button = Button("changemap", self.change_map_is_clicked, pygame.Rect(100, 470, 200, 50),
+            self.start_button.is_show = self.start_button.is_able = True
+        else:
+            self.ready_button.is_show = self.ready_button.is_able = True
+
+        self.r_change_map_button = Button("changemap", self.change_map_clicked, pygame.Rect(100, 470, 200, 50),
                                           self.settings.btbg_light, 0, "更改地图", SceneFont.log_font)
         self.r_change_map_button.r_xy = 0.1, 1 / 10 * 7
         self.r_roommap_button = Button("roommap", lambda: 1, pygame.Rect(100, 240, 200, 200),
                                        self.path + "/assets/texture/thumbnail/" + self.roommap + ".png", 0, "",
                                        SceneFont.log_font)
         self.r_roommap_button.r_xy = 0.1, 1 / 10 * 2.8
-        self.r_change_name_button = Button("changename", self.change_name_is_clicked, pygame.Rect(100, 570, 200, 50),
+        self.r_change_name_button = Button("changename", self.change_name_clicked, pygame.Rect(100, 570, 200, 50),
                                            self.settings.btbg_light, 0, "更改房间名", SceneFont.log_font)
         self.r_change_name_button.r_xy = 0.1, 1 / 10 * 8.55
         r_confirm_button = Button("changename", self.confirm_quit_is_clicked, pygame.Rect(0, 0, 100, 50),
@@ -76,7 +83,7 @@ class RoomScene(Scene):
         r_confirm_button_ = Button("changename", self.confirm__is_clicked, pygame.Rect(0, 0, 100, 50),
                                    self.settings.btbg_light, 0, "确认", SceneFont.log_font)
         r_confirm_button_.r_xy = 0.4, 0.55
-        self.buttons = [self.back, self.r_ready_button]
+        self.buttons = [self.back, self.ready_button, self.start_button]
         self.room_buttons = [self.r_change_map_button, self.r_change_name_button]
         self.room_lables.append(self.r_roommap_button)
         user_panel = Panel(pygame.Rect(400, 150, 700, 500), "", 28, others=self.user_lables)
@@ -93,7 +100,12 @@ class RoomScene(Scene):
         self.user_confirm_quit_panel.is_able = False
         self.owner_quit_warning_panel.is_show = False
         self.owner_quit_warning_panel.is_able = False
-        self.panel = [user_panel, room_panel, self.user_confirm_quit_panel, self.owner_quit_warning_panel]
+        self.select_map_panel = UIF.new_select_map_panel(self)
+        self.select_map_panel.is_able = self.select_map_panel.is_show = False
+        self.change_room_name_panel = UIF.new_change_room_name_panel(self)
+        self.change_room_name_panel.is_able = self.change_room_name_panel.is_show = False
+        self.panel = [user_panel, room_panel, self.user_confirm_quit_panel, self.owner_quit_warning_panel,
+                      self.select_map_panel, self.change_room_name_panel]
         self.update_user()
         self.loaded = {'label': self.labels, 'box': [], 'button': self.buttons, 'panel': self.panel}
 
@@ -116,22 +128,22 @@ class RoomScene(Scene):
         # ScenePlayer.pop()
 
     def close_is_clicked(self):
-        self.loaded['panel'] = []
-        self.box_is_able = True
+        self.select_map_panel.is_show = False
+        self.select_map_panel.is_able = False
 
     def ready_is_clicked(self):
         if self.is_ready:
             res = self.client.dready()
             print("dready is clicked", res)
             if res:
-                self.r_ready_button.set_text("准备")
+                self.ready_button.set_text("准备")
                 self.is_ready = False
 
         else:
             res = self.client.ready()
             print("ready is clicked", res)
             if res:
-                self.r_ready_button.set_text("取消准备")
+                self.ready_button.set_text("取消准备")
                 self.is_ready = True
 
     def start_is_clicked(self):
@@ -140,11 +152,32 @@ class RoomScene(Scene):
         if not res:
             self.not_allready_lable.is_show = True
 
-    def change_map_is_clicked(self):
-        pass
+    def change_map_clicked(self):
+        """点击房间中的切换地图按钮"""
+        self.select_map_panel.is_show = True
+        self.select_map_panel.is_able = True
 
-    def change_name_is_clicked(self):
-        pass
+    def select_map_button_clicked(self, name: str):
+        """点击选择地图panel上的地图按钮"""
+        self.select_map_panel.is_show = False
+        self.select_map_panel.is_able = False
+        self.client.changemap(name)
+
+    def change_name_clicked(self):
+        """点击房间中的更改房间名按钮"""
+        self.change_room_name_panel.is_show = True
+        self.change_room_name_panel.is_able = True
+
+    def change_room_name_confirm_button_clicked(self):
+        """点击更改房间名panel上的确定按钮"""
+        self.client.changeroomname(self.change_room_name_panel.loaded['boxes'][0].text)
+        self.change_room_name_panel.is_show = False
+        self.change_room_name_panel.is_able = False
+
+    def change_room_name_cancel_button_clicked(self):
+        """点击更改房间名panel上的取消按钮"""
+        self.change_room_name_panel.is_show = False
+        self.change_room_name_panel.is_able = False
 
     def update_user(self):
         if time.time() - self.last_update_time > 1:
@@ -154,19 +187,24 @@ class RoomScene(Scene):
             if res:
                 self.is_owner = (res["owner"] == self.client.local_get_user())
                 if self.is_owner:
+                    self.ready_button.is_show = self.ready_button.is_able = False
+                    self.start_button.is_show = self.start_button.is_able = True
                     self.r_change_map_button.is_show = True
                     self.r_change_map_button.is_able = True
                     self.r_change_name_button.is_show = True
                     self.r_change_name_button.is_able = True
+
                 else:
+                    self.ready_button.is_show = self.ready_button.is_able = True
+                    self.start_button.is_show = self.start_button.is_able = False
                     self.r_change_map_button.is_show = False
                     self.r_change_map_button.is_able = False
                     self.r_change_name_button.is_show = False
                     self.r_change_name_button.is_able = False
                 self.roommap = res["roommap"]
                 self.roomname = res["roomname"]
-                self.r_roommap_lable.set_text(self.roommap)
-                self.r_roomname_lable.set_text(self.roomname)
+                self.r_roommap_lable.set_text('地图：'+self.roommap)
+                self.r_roomname_lable.set_text('房间名：'+self.roomname)
                 self.r_roommap_button.change_new_image(self.path + "/assets/texture/thumbnail/" + self.roommap + ".png")
                 owner = res["owner"]
                 userlist = res["userlist"]
