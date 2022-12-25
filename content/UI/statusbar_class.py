@@ -17,7 +17,7 @@ class StatusBar:
         self.hp_value_label = Label(0, 0, 60, str(self.hp_bar.hp), SceneFont.hp_value_font)
         self.hp_value_label.rect.height = 10
         self.hp_value_label.r_xy = 0, 0.5
-        self.hp_panel = Panel(pygame.Rect(0, 0, 60, 30), '', 20,
+        self.hp_panel = Panel(pygame.Rect(0, 0, 60, 40), '', 20,
                               others=[self.name_label, self.hp_bar, self.hp_value_label])
         self.hp_panel.color = (1, 1, 1)  # panel背景设成透明
 
