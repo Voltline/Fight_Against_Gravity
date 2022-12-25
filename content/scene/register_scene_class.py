@@ -4,6 +4,7 @@ from content.UI.inputbox_class import InputBox
 from content.UI.label_class import Label
 from content.scene.scene_font import SceneFont
 from content.UI.panel_class import Panel
+from content.UI.ui_function import UIFunction as UI
 from content.scene.scene_player_class import ScenePlayer
 import pygame
 
@@ -13,28 +14,12 @@ class RegScene(Scene):
         super().__init__()
         self.id = 1
         self.check_code = ''
-        """label，分别为邮箱，用户名，密码，验证码"""
-        r_email_label = Label(315, 180, 98, "请输入您的邮箱", SceneFont.white_font)
-        r_id_label = Label(315, 260, 106, "请输入您的用户名", SceneFont.white_font)
-        r_password_label = Label(315, 340, 42, "设置您的密码", SceneFont.white_font)
-        r_check_label = Label(315, 420, 40, "验证码", SceneFont.white_font)
-        labels = [r_email_label, r_id_label, r_password_label, r_check_label]
-        """输入框，分别为邮箱，用户名，密码，验证码"""
-        r_email_box = InputBox(pygame.Rect(450, 180, 350, 35))
-        r_id_box = InputBox(pygame.Rect(450, 260, 350, 35))
-        r_password_box = InputBox(pygame.Rect(450, 340, 350, 35))
-        r_check_box = InputBox(pygame.Rect(450, 420, 350, 35))
-        boxes = [r_email_box, r_id_box, r_password_box, r_check_box]
 
-        r_rect = pygame.Rect(650, 500, 100, 40)
-        r_button = Button("r", self.confirm_reg_clicked, r_rect,
-                          self.settings.btbg_light, 0, '确认注册', SceneFont.log_font)
-        r_button.add_img(self.settings.btbg_light_pressed)
-        check_rect = pygame.Rect(430, 500, 110, 40)
-        r_check_button = Button('check', self.send_checkcode_clicked, check_rect,
-                                self.settings.btbg_light, 0, '发送验证码', SceneFont.log_font)
-        r_check_button.add_img(self.settings.btbg_light_pressed)
-        buttons = [r_button, r_check_button, self.back, self.set_button]
+        labels = UI.new_reg_labels()  # label，分别为邮箱，用户名，密码，验证码
+
+        boxes = UI.new_reg_boxes()  # 输入框，分别为邮箱，用户名，密码，验证码
+
+        buttons = UI.new_register_buttons(self)
         """显示验证码错误的panel"""
         self.close_button.r_xy = 0.88, 0.1
         self.wrong_check_panel = Panel(self.reminder_panel_rect_small, '验证码错误', 22,
