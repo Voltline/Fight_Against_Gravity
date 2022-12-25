@@ -6,6 +6,7 @@ from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.login_scene_class import LogInScene
 from content.scene.room_scene import RoomScene
+from content.scene.room_list_scene_class import RoomListScene
 from content.UI.ui_function import UIFunction
 from content.online.player_info import PlayerInfo
 
@@ -23,7 +24,10 @@ class StartScene(Scene):
         self.loaded = {'img': start_title, 'label': [], 'box': None, 'button': [login_button, online_game_button, local_button, self.set_button], 'panel': []}
 
     def online_is_clicked(self):
-        ScenePlayer.push(RoomScene())
+        if PlayerInfo.player_name == '':
+            ScenePlayer.push(LogInScene())
+        else:
+            ScenePlayer.push(RoomListScene())
 
     def login_is_clicked(self):
         if PlayerInfo.player_name == '':
@@ -45,6 +49,3 @@ class StartScene(Scene):
             self.loaded['button'][0].set_text('已登录')
         self.draw_elements()
         pygame.display.flip()
-
-
-
