@@ -13,32 +13,14 @@ class StartScene(Scene):
     def __init__(self):
         """准备开始界面的组件"""
         super().__init__()
-        # start_font = SceneFont.start_font
-        # start_rect = pygame.Rect(455, 280, 290, 100)
-        # start_title = pygame.image.load(self.path + "assets\\texture\\FAGWhite.png")  # 用作画图
-        # start_title = pygame.transform.smoothscale(start_title, (514, 200))
-        # start_title = start_title.convert_alpha()
-        #
-        # online_game_button = Button("onlinegame", self.online_is_clicked, start_rect,
-        #                self.path + "assets\\Img\\start_unpressed.png", 1, '在线游戏', start_font)  # 用作画图
-        # online_game_button.add_img(self.path + "assets\\Img\\start_press.png")
-        #
-        # login_rect = pygame.Rect(1120, 20, 60, 40)
-        # login_button = Button("login", self.login_is_clicked, login_rect,
-        #                       self.settings.btbg_light, 0, '登录', SceneFont.log_font)
-        # login_button.add_img(self.settings.btbg_light_pressed)
-        #
-        # local_rect = pygame.Rect(455, 450, 290, 100)
-        # local_button = Button('local game', self.local_is_clicked, local_rect,
-        #                            self.path + "assets\\Img\\start_unpressed.png", 0, '本地游戏', SceneFont.start_font)
-        # local_button.add_img(self.path + "assets\\Img\\start_press.png")
+
         start_title = UIFunction.new_start_logo(self)
         login_button = UIFunction.new_login_button(self)
         online_game_button = UIFunction.new_online_button(self)
         local_button = UIFunction.new_local_button(self)
 
         """集合组件，loaded"""
-        self.loaded = {'img': start_title, 'label': None, 'box': None, 'button': [login_button, online_game_button, local_button, self.set_button], 'panel': []}
+        self.loaded = {'img': start_title, 'label': [], 'box': None, 'button': [login_button, online_game_button, local_button, self.set_button], 'panel': []}
 
     def online_is_clicked(self):
         ScenePlayer.push(RoomScene())
