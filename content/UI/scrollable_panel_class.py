@@ -53,6 +53,8 @@ class ScrollablePanel(Panel):
                                     self.rect.width, self.rect.height))
 
     def update(self, event, pos_offset=(0, 0)) -> bool:
+        if not self.is_able:
+            return False
         pos_offset0 = pos_offset
         pos_offset = (self.rect[0]+pos_offset[0],
                       self.rect[1]+pos_offset[1]-self.scrollbar.ratio*(self.surface.get_height()-self.rect.height))
