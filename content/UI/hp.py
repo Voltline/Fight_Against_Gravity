@@ -6,25 +6,24 @@ from time import sleep
 
 
 class HP:
-    def __init__(self, x, y, path):
-        self.left = x
-        self.top = y
-        self.path = path
+    def __init__(self, x, y, settings):
+        self.rect = pygame.Rect(x, y, 60, 10)
+        self.r_xy = (0, 0)
+        self.path = settings.path
 
-        self.width = 90
-        self.height = 10
         self.hp = 100
+        self.full_hp = self.hp
         self.hp_panel = pygame.image.load(self.path + "assets/Img/hp.png")
         self.hp_column = pygame.transform.smoothscale(pygame.image.load(self.path + "assets/Img/hp_column.png"),
-                                                      (self.width, self.height))
+                                                      (self.rect.width, self.rect.height))
 
     def update_hp(self, new_hp):
         self.hp = new_hp
 
     def render(self, screen):
-        hp = pygame.transform.smoothscale(self.hp_panel, (self.width * self.hp / 100, self.height))
-        screen.blit(hp, (self.left, self.top))
-        screen.blit(self.hp_column, (self.left, self.top))
+        hp = pygame.transform.smoothscale(self.hp_panel, (self.rect.width * self.hp / self.full_hp, self.rect.height))
+        screen.blit(self.hp_column, (self.rect.left, self.rect.top))
+        screen.blit(hp, (self.rect.left, self.rect.top))
 
 
 if __name__ == '__main__':

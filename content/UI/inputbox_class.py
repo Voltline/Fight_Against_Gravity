@@ -14,6 +14,7 @@ class InputBox:
         rect，传入矩形实体，传达输入框的位置和大小
         """
         self.rect: pygame.Rect = rect
+        self.r_xy = (0, 0)
         self.color_inside_inactive = pygame.Color(31, 31, 31)
         self.color_inactive = pygame.Color(71, 71, 71)  # 未被选中的颜色
         self.color_active = pygame.Color(105, 105, 105)  # 被选中的颜色
@@ -91,13 +92,11 @@ class InputBox:
 
     def is_over(self, point, pos_offset=(0, 0)) -> bool:
         """检测鼠标位置是否在按钮上，并检测按钮是否可用"""
-        if self.active:
-            flag = self.rect.collidepoint(point[0]-pos_offset[0], point[1]-pos_offset[1])
-        else:
-            flag = False
+        flag = self.rect.collidepoint(point[0]-pos_offset[0], point[1]-pos_offset[1])
         return flag
 
     def check_click(self, event, pos_offset=(0, 0)):
         """每次点击完返回鼠标位置"""
-        if event == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             return self.is_over(event.pos, pos_offset)
+        return False

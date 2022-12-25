@@ -22,13 +22,18 @@ class ScrollBar:
             self.bar_thumb[i] = pygame.transform.smoothscale(self.bar_thumb[i], (self.thumb_width, self.thumb_height))
         self.bar = pygame.image.load(settings.bar)
         self.bar = pygame.transform.smoothscale(self.bar, (self.width, self.height))
-        self.ratio = (self.thumb_top-self.top)/(self.height - self.thumb_height)
+        # self.ratio = (self.thumb_top-self.top)/(self.height - self.thumb_height)
 
-    def render(self, screen):
-        screen.blit(self.bar, (self.left, self.top))
-        screen.blit(self.bar_thumb[self.thumb_status], (self.thumb_left, self.thumb_top))
+    @property
+    def ratio(self) -> float:
+        """返回[0,1]之间的浮点数"""
+        return (self.thumb_top-self.top)/(self.height - self.thumb_height)
 
-    def deal_event(self, e):
+    def render(self, screen, top):
+        screen.blit(self.bar, (self.left, top + self.top))
+        screen.blit(self.bar_thumb[self.thumb_status], (self.thumb_left, top + self.thumb_top))
+
+    def deal_event(self, e, pos_offset=(0, 0)):
         rect = pygame.Rect((self.thumb_left, self.thumb_top, self.thumb_width, self.thumb_height))
         if e.type == pygame.MOUSEWHEEL:
             if e.y > 0:
@@ -36,12 +41,12 @@ class ScrollBar:
             else:
                 self.thumb_top += 18
         if e.type == pygame.MOUSEBUTTONDOWN:
-            if rect.collidepoint(e.pos):
+            if rect.collidepoint(e.pos[0]-pos_offset[0], e.pos[1]-pos_offset[1]):
                 self.is_dragging = True
         elif e.type == pygame.MOUSEBUTTONUP:
             self.is_dragging = False
         elif e.type == pygame.MOUSEMOTION:
-            if rect.collidepoint(e.pos):
+            if rect.collidepoint(e.pos[0]-pos_offset[0], e.pos[1]-pos_offset[1]):
                 self.thumb_status = 1
             elif self.is_dragging:
                 self.thumb_status = 1
@@ -67,8 +72,3 @@ if __name__ == "__main__":
             sb.deal_event(event)
         sb.render(sc)
         pygame.display.flip()
-
-
-
-
-
