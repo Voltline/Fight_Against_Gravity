@@ -6,6 +6,7 @@ from content.UI.inputbox_class import InputBox
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.scene_font import SceneFont
 from content.UI.panel_class import Panel
+from content.UI.scrollable_panel_class import ScrollablePanel
 
 
 class Scene:
@@ -40,15 +41,17 @@ class Scene:
         set_boxes = []
 
         for i in range(10):
-            set_boxes.append(InputBox(pygame.Rect(i % 5 - 0.15, i / 5, 80, 35)))
+            box = InputBox(pygame.Rect(0, 0, 80, 35))
+            box.r_xy = (i % 5)/5, i / 5
+            set_boxes.append(box)
         set_key_confirm_rect = pygame.Rect(450, 200, 150, 50)
         set_key_confirm_button = Button('确认修改', self.set_key_clicked, set_key_confirm_rect,
                                         self.settings.btbg_light, 0, "确认修改", SceneFont.log_font)
-        self.close_button.rect.left, self.close_button.rect.top = 0.95, 0.03
-        set_key_confirm_button.rect.left, set_key_confirm_button.rect.top = 0.25, 0.4
-        # self.set_panel = Panel(pygame.Rect(200, 50, 800, 700), '设置', 25,
-        #                        [self.close_button, set_key_confirm_button], set_boxes, [],
-        #                        text_pos=0)
+        self.close_button.r_xy = 0.95, 0.03
+        set_key_confirm_button.r_xy = 0.25, 0.4
+        self.set_panel = ScrollablePanel(self.settings, pygame.Rect(200, 50, 800, 700), '设置', 25,
+                               [self.close_button, set_key_confirm_button], set_boxes, [],
+                               text_pos=0)
 
     def ban_inputbox(self):
         self.box_is_able = False

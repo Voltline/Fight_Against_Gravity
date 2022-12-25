@@ -14,6 +14,7 @@ class InputBox:
         rect，传入矩形实体，传达输入框的位置和大小
         """
         self.rect: pygame.Rect = rect
+        self.r_xy = (0, 0)
         self.color_inside_inactive = pygame.Color(31, 31, 31)
         self.color_inactive = pygame.Color(71, 71, 71)  # 未被选中的颜色
         self.color_active = pygame.Color(105, 105, 105)  # 被选中的颜色

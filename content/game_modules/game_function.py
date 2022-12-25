@@ -104,7 +104,7 @@ def update_screen(settings, gm, camera, traces: list, surplus_ratio, now_sec=-1)
     for trace in traces:
         trace.display(camera)
 
-    for objs in gm.ships, gm.bullets, gm.planets:
+    for objs in gm.bullets, gm.planets, gm.ships:
         for obj in objs:
             obj.display(camera)
             obj.rect.center = obj.loc
