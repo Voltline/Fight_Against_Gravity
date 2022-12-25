@@ -13,6 +13,9 @@ class SceneFont:
     nickname_font = {}
     hp_value_font = {}
     red_font = {}
+    user_name_font = {}
+    ready_font = {}
+    dready_font = {}
     """红色字体"""
 
     @staticmethod
@@ -72,6 +75,27 @@ class SceneFont:
             'tc': (255, 50, 80),
             'bc': None,
             'align': 1,
+            'valign': 1
+        }
+        SceneFont.user_name_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 20),
+            'tc': (255, 255, 255),
+            'bc': None,
+            'align': 0,
+            'valign': 1
+        }
+        SceneFont.dready_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 20),
+            'tc': (255, 50, 80),
+            'bc': None,
+            'align': 0,
+            'valign': 1
+        }
+        SceneFont.ready_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 20),
+            'tc': (170, 200, 90),
+            'bc': None,
+            'align': 0,
             'valign': 1
         }
 
