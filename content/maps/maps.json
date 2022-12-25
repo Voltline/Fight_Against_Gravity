@@ -20,10 +20,31 @@
         "angle": 0
       },
       {
+        "locx": -800,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": 900,
+        "angle": 0
+      },
+      {
         "locx": 1000,
         "locy": 0,
         "spdx": 0,
         "spdy": -600,
+        "angle": 3.14159
+      },
+      {
+        "locx": 2000,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -600,
+        "angle": 3.14159
+      },
+      {
+        "locx": 3000,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -300,
         "angle": 3.14159
       }
     ]
@@ -62,6 +83,27 @@
         "locy": 0,
         "spdx": 0,
         "spdy": -1135,
+        "angle": 0
+      },
+      {
+        "locx": -1240,
+        "locy": 400,
+        "spdx": 0,
+        "spdy": -735,
+        "angle": 0
+      },
+      {
+        "locx": 3240,
+        "locy": 0,
+        "spdx": 0,
+        "spdy": -235,
+        "angle": 0
+      },
+      {
+        "locx": -2240,
+        "locy": 600,
+        "spdx": 0,
+        "spdy": -335,
         "angle": 0
       }
     ]
