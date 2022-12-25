@@ -143,6 +143,7 @@ class UIFunction:
         """
         screen_rect = scene.screen.get_rect()
         ry = 0
+        room_list_panel_rect = Rect(0, 0, screen_rect.width-10, (1-ry)*(screen_rect.height-85))
         ctrlrs = []
         for room in room_list:
 
@@ -150,10 +151,9 @@ class UIFunction:
                 room_bar_panel = UIFunction.new_room_bar_panel(scene, room['roomid'],
                     room['roomname'], room['owner'], room['roommap'], room['size'], room['started'])
                 room_bar_panel.r_xy = (0, ry)
-                ry += 0.1
+                ry += (3+room_bar_panel.rect.height)/room_list_panel_rect.height
                 ctrlrs.append(room_bar_panel)
         ry = 0.06
-        room_list_panel_rect = Rect(0, 0, screen_rect.width-10, (1-ry)*(screen_rect.height-85))
         room_list_panel = ScrollablePanel(scene.settings, room_list_panel_rect, '', 10, ctrlrs=ctrlrs)
         room_list_panel.color = (20, 20, 20)
         room_list_panel.r_xy = (0, ry)
