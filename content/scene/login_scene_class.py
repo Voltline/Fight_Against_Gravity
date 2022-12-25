@@ -1,3 +1,4 @@
+import pygame
 from content.scene.scene_class import Scene
 from content.UI.button_class import Button
 from content.UI.inputbox_class import InputBox
@@ -7,7 +8,6 @@ from content.scene.scene_player_class import ScenePlayer
 from content.scene.register_scene_class import RegScene
 from content.scene.menu_scene import MenuScene
 from content.online.player_info import PlayerInfo
-import pygame
 
 
 class LogInScene(Scene):

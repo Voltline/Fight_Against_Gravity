@@ -1,13 +1,12 @@
 import pygame
+from pygame import Rect
 from content.maps.map_obj import Map
 from content.UI.button_class import Button
 from content.UI.inputbox_class import InputBox
-from content.UI.scrollbar import ScrollBar
 from content.UI.panel_class import Panel
+from content.UI.scrollable_panel_class import ScrollablePanel
 from content.UI.label_class import Label
 from content.scene.scene_font import SceneFont
-from content.online.player_info import PlayerInfo
-from content.UI.hp import HP
 
 
 class UIFunction:
@@ -23,7 +22,7 @@ class UIFunction:
     def new_online_button(scene):
         """开始界面的在线游戏按钮"""
         start_font = SceneFont.start_font
-        start_rect = pygame.Rect(455, 250, 290, 100)
+        start_rect = Rect(455, 250, 290, 100)
         online_game_button = Button("onlinegame", scene.online_is_clicked, start_rect,
                                     scene.path + "assets\\Img\\start_unpressed.png", 1, '在线游戏', start_font)  # 用作画图
         online_game_button.add_img(scene.path + "assets\\Img\\start_press.png")
@@ -32,7 +31,7 @@ class UIFunction:
     @staticmethod
     def new_login_button(scene):
         """开始界面的登录按钮"""
-        login_rect = pygame.Rect(1120, 20, 60, 40)
+        login_rect = Rect(1120, 20, 60, 40)
         login_button = Button("login", scene.login_is_clicked, login_rect,
                               scene.settings.btbg_light, 0, '登录', SceneFont.log_font)
         login_button.add_img(scene.settings.btbg_light_pressed)
@@ -41,7 +40,7 @@ class UIFunction:
     @staticmethod
     def new_local_button(scene):
         """开始界面的本地登录按钮"""
-        local_rect = pygame.Rect(455, 420, 290, 100)
+        local_rect = Rect(455, 420, 290, 100)
         local_button = Button('local game', scene.local_is_clicked, local_rect,
                               scene.path + "assets\\Img\\start_unpressed.png", 0, '本地游戏', SceneFont.start_font)
         local_button.add_img(scene.path + "assets\\Img\\start_press.png")
@@ -60,32 +59,31 @@ class UIFunction:
     @staticmethod
     def new_reg_boxes():
         """注册界面的四个输入框，分别是邮箱、用户名、密码、验证码"""
-        r_email_box = InputBox(pygame.Rect(450, 180, 350, 35))
-        r_id_box = InputBox(pygame.Rect(450, 260, 350, 35))
-        r_password_box = InputBox(pygame.Rect(450, 340, 350, 35))
-        r_check_box = InputBox(pygame.Rect(450, 420, 350, 35))
+        r_email_box = InputBox(Rect(450, 180, 350, 35))
+        r_id_box = InputBox(Rect(450, 260, 350, 35))
+        r_password_box = InputBox(Rect(450, 340, 350, 35))
+        r_check_box = InputBox(Rect(450, 420, 350, 35))
         boxes = [r_email_box, r_id_box, r_password_box, r_check_box]
         return boxes
 
     @staticmethod
     def new_register_buttons(scene):
         """注册界面的 确认注册 和 发送验证码 按钮"""
-        r_rect = pygame.Rect(650, 500, 100, 40)
+        r_rect = Rect(650, 500, 100, 40)
         r_button = Button("r", scene.confirm_reg_clicked, r_rect,
                           scene.settings.btbg_light, 0, '确认注册', SceneFont.log_font)
         r_button.add_img(scene.settings.btbg_light_pressed)
-        check_rect = pygame.Rect(430, 500, 110, 40)
+        check_rect = Rect(430, 500, 110, 40)
         r_check_button = Button('check', scene.send_checkcode_clicked, check_rect,
                                 scene.settings.btbg_light, 0, '发送验证码', SceneFont.log_font)
         r_check_button.add_img(scene.settings.btbg_light_pressed)
         buttons = [r_button, r_check_button, scene.back, scene.set_button]  # 包含了返回和设置
         return buttons
 
-
     @staticmethod
     def new_select_map_button(scene, name):
         path = scene.path + "assets\\texture\\thumbnail\\" + name + ".png"
-        temp_rect = pygame.Rect(0, 0, 250, 250)
+        temp_rect = Rect(0, 0, 250, 250)
         select_map_button = Button(name, lambda: scene.select_map_button_clicked(name),
                                    temp_rect, path, 1, name, SceneFont.map_list_font)
         return select_map_button
@@ -102,7 +100,7 @@ class UIFunction:
         buttons[4].r_xy = 0.338, 0.565
         buttons[5].r_xy = 0.669, 0.565
 
-        close_rect = pygame.Rect(0, 0, 20, 20)
+        close_rect = Rect(0, 0, 20, 20)
         close_button = Button('close', scene.close_is_clicked, close_rect,
                                    scene.path + 'assets\\Img\\close_unclicked.png', 0)
         close_button.r_xy = 0.968, 0.020
@@ -110,11 +108,107 @@ class UIFunction:
 
         buttons.append(close_button)
 
-        map_rect = pygame.Rect(0, 0, 770, 590)
+        map_rect = Rect(0, 0, 770, 590)
         map_rect.center = scene.screen.get_rect().center
         map_panel = Panel(map_rect, "地图选择", 28, buttons, text_pos=0)
         return map_panel
 
     @staticmethod
-    def new_status_bar_panel(scene, username):
-        pass
+    def new_all_room_list_panel(scene) -> Panel:
+        """服务器大厅使用的房间列表panel"""
+        screen_rect = scene.screen.get_rect()
+
+        rooms_name_label = Label(0, 0, 100, '房间名')
+        rooms_name_label.r_xy = (0.01, 0.01)
+        rooms_owner_label = Label(0, 0, 100, '房主')
+        rooms_owner_label.r_xy = (0.21, 0.01)
+        rooms_map_label = Label(0, 0, 100, '地图')
+        rooms_map_label.r_xy = (0.41, 0.01)
+        rooms_player_num_label = Label(0, 0, 100, '玩家数量')
+        rooms_player_num_label.r_xy = (0.61, 0.01)
+        rooms_is_play_label = Label(0, 0, 100, '是否游戏中')
+        rooms_is_play_label.r_xy = (0.81, 0.01)
+        others = [rooms_name_label, rooms_owner_label, rooms_map_label, rooms_player_num_label, rooms_is_play_label]
+        ctrlrs = [UIFunction.new_room_list_panel(scene, [], '')]
+        all_room_list_panel_rect = Rect(5, 80, screen_rect.width-10, screen_rect.height-85)
+        all_room_list_panel = Panel(all_room_list_panel_rect, '', 10, ctrlrs=ctrlrs, others=others, border_radius=10)
+        return all_room_list_panel
+
+    @staticmethod
+    def new_room_list_panel(scene, room_list, key: str) -> ScrollablePanel:
+        """
+        返回只显示房间的可滚动panel
+        room_list：由一个个字典组成的列表，为接收到的房间消息，具体见OptType
+        key：搜索栏的关键字，用于筛选
+        """
+        screen_rect = scene.screen.get_rect()
+        ry = 0
+        ctrlrs = []
+        for room in room_list:
+
+            if key in room['roomname']:
+                room_bar_panel = UIFunction.new_room_bar_panel(scene, room['roomid'],
+                    room['roomname'], room['owner'], room['roommap'], room['size'], room['started'])
+                room_bar_panel.r_xy = (0, ry)
+                ry += 0.1
+                ctrlrs.append(room_bar_panel)
+        ry = 0.06
+        room_list_panel_rect = Rect(0, 0, screen_rect.width-10, (1-ry)*(screen_rect.height-85))
+        room_list_panel = ScrollablePanel(scene.settings, room_list_panel_rect, '', 10, ctrlrs=ctrlrs)
+        room_list_panel.color = (20, 20, 20)
+        room_list_panel.r_xy = (0, ry)
+        return room_list_panel
+
+    @staticmethod
+    def new_room_bar_panel(scene, room_id: str, name: str, owner: str,
+                           map_name: str, player_num: int, is_play: bool) -> Panel:
+        """
+        scene：场景
+        name：房间名
+        owner：房主名
+        map_name：地图名
+        player_num：玩家数量
+        is_play：是否游戏中
+        """
+        width = scene.screen.get_width()
+        max_num = len(Map(map_name).ships_info)
+        name_label = Label(0, 0, 100, name)
+        name_label.r_xy = (0.01, 0)
+        owner_label = Label(0, 0, 100, owner)
+        owner_label.r_xy = (0.21, 0)
+        map_label = Label(0, 0, 100, map_name)
+        map_label.r_xy = (0.41, 0)
+        player_num_label = Label(0, 0, 100, str(player_num)+'/'+str(max_num))
+        player_num_label.r_xy = (0.61, 0)
+        if is_play:
+            is_play = '游戏中'
+        else:
+            is_play = '房间中'
+        is_play_label = Label(0, 0, 100, is_play)
+        is_play_label.r_xy = (0.81, 0.01)
+        others = [name_label, owner_label, map_label, player_num_label, is_play_label]
+
+        height = name_label.rect.height
+        room_bar_rect = Rect(0, 0, width, height)
+        room_bar_button = Button('join_room', lambda: scene.room_bar_clicked(room_id), room_bar_rect,
+                                 scene.path+'assets/texture/void.png', 0)
+        room_bar_panel = Panel(room_bar_rect, '', 10, ctrlrs=[room_bar_button], others=others, border_radius=0)
+        room_bar_panel.color = (60, 60, 60)
+        return room_bar_panel
+
+    @staticmethod
+    def new_join_fail_panel(scene):
+        """room_list_scene中的加入房间失败提示panel"""
+        confirm_button_rect = Rect(0, 0, 100, 50)
+        confirm_button = Button('确定', scene.join_fail_panel_button_clicked, confirm_button_rect,
+                                scene.settings.btbg_light, 0, '确定', SceneFont.log_font)
+        confirm_button.add_img(scene.settings.btbg_light_pressed)
+        confirm_button.r_xy = (0.375, 0.7)
+        hint_label = Label(0, 0, 400, '加入失败！请刷新房间列表！', SceneFont.map_list_font)
+        hint_label.r_xy = (0, 0.2)
+        join_fail_panel_rect = Rect(0, 0, 400, 200)
+        join_fail_panel_rect.center = scene.screen.get_rect().center
+        join_fail_panel = Panel(join_fail_panel_rect, '', 23, ctrlrs=[confirm_button], others=[hint_label])
+        join_fail_panel.color = (80, 80, 80)
+        join_fail_panel.is_show = join_fail_panel.is_able = False
+        return join_fail_panel
