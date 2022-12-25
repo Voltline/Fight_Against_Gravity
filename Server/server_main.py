@@ -25,7 +25,7 @@ class ServerMain:
         server_level = Flogger.L_INFO
         if _debug_:
             self.absolute_setting_path = path + "settings/settings_local.json"
-            server_model = Flogger.FILE_AND_CONSOLE
+            # server_model = Flogger.FILE_AND_CONSOLE
             server_level = Flogger.L_DEBUG
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
@@ -176,6 +176,19 @@ class ServerMain:
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         return True
 
+    def changeroomname(self, message):
+        messageAdr, messageMsg = message
+        roomid = messageMsg["roomid"]
+        username = messageMsg["user"]
+        if username not in self.user_list:
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
+        if roomid not in self.room_list:
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
+        room = self.room_list[roomid]
+        room.changeroomname(messageMsg["new_roomname"])
+        self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
     def deleteroom(self, message):
         """
         删除房间
@@ -191,16 +204,20 @@ class ServerMain:
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             return False
         if self.room_list[roomid].owner.get_name() != messageMsg["user"]:
-            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
-            return False
-        if len(self.room_list[roomid].userlist) > 1:
+            # 用户不是房主
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             return False
         room: Room = self.room_list[roomid]
-        room.stop()
-        self.logger.info(
-            "[game info]room (roomname:{},roomid:{}) was deleted".format(room.get_roomname(), room.get_roomid()))
-        self.room_list.pop(roomid)
+        room.del_user(user)
+        if len(self.room_list[roomid].userlist) == 0:
+            # 用户没了
+            room.stop()
+            self.logger.info(
+                "[game info]room (roomname:{},roomid:{}) was deleted".format(room.get_roomname(), room.get_roomid()))
+            self.room_list.pop(roomid)
+        else:
+            useer_list = room.get_userlist()
+            room.change_ownener(useer_list[0])
         user.set_roomid(None)
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         return True
@@ -316,8 +333,8 @@ class ServerMain:
                     "owner": owner,
                     "size": size,
                     "started": started,
-                    "roommap" : roommap,
-                    "roomname" : roomname
+                    "roommap": roommap,
+                    "roomname": roomname
                 }
             )
         sendMsg = messageMsg
@@ -342,6 +359,9 @@ class ServerMain:
             roomid = user.get_roomid()
             if roomid in self.room_list:
                 room = self.room_list[roomid]
+                if room.get_owener() == user:
+                    useer_list = room.get_userlist()
+                    room.change_ownener(useer_list[0])
                 room.del_user(user)
             self.user_list.pop(item)
         to_del.clear()
@@ -389,7 +409,9 @@ class ServerMain:
                     self.getroomlist(message)
                 elif opt == OptType.userready:
                     self.ready(message)
-                elif 26 <= opt <= 29:
+                elif opt == OptType.changeroomname:
+                    self.changeroomname(message)
+                elif 26 <= opt <= 20:
                     room_id = messageMsg['args'][0]
                     room: Room = self.room_list[room_id]
                     room.release_message(message)
