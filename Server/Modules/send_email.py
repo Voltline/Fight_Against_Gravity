@@ -15,7 +15,7 @@ def generate_id_code() -> str:
     :返回：返回生成的验证码
     """
     char_check = ''
-    for i in range(8):
+    for i in range(6):
         # 生成一个不包括0,o和O的字符
         char1 = random.choice([chr(random.randint(65, 78)), chr(random.randint(80, 90)), str(random.randint(1, 9)),
                                chr(random.randint(97, 110)), chr(random.randint(112, 122))])
