@@ -85,7 +85,7 @@ class ServerMain:
         """
         messageAdr, messageMsg = message
         if (messageMsg["user"] not in self.user_list) and (
-        self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)):
+                self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)):
             newUser = User(messageAdr, messageMsg["user"])
             self.user_list[messageMsg["user"]] = newUser
             self.logger.info("[game info]user {} join the game".format(newUser.get_name()))
@@ -107,7 +107,7 @@ class ServerMain:
             user: User = self.user_list[messageMsg["user"]]
             roomid = user.get_roomid()
             if roomid in self.room_list:
-                room:Room = self.room_list[roomid]
+                room: Room = self.room_list[roomid]
                 room.del_user(user)
             self.server.close(messageAdr)
             self.logger.info("[game info]user {} logout the game".format(user.get_name()))
@@ -184,6 +184,9 @@ class ServerMain:
         messageAdr, messageMsg = message
         roomid = messageMsg["roomid"]
         username = messageMsg["user"]
+        if username not in self.user_list:
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
         user = self.user_list[username]
         if roomid not in self.room_list:
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
@@ -391,4 +394,7 @@ class ServerMain:
 
 if __name__ == "__main__":
     s = ServerMain()
-    s.start()
+    try:
+        s.start()
+    except Exception as err:
+        print(err)

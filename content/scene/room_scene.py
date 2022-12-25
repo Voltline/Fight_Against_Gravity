@@ -20,6 +20,7 @@ class RoomScene(Scene):
         self.is_owner = isowner  # 是否是房主
         self.is_ready = False
         self.client.creatroom("test", self.roommap)
+        self.is_owner = True
         # TODO:测试用 创建了个房间
 
         # 左侧房间信息初始化
@@ -95,16 +96,16 @@ class RoomScene(Scene):
         pygame.display.flip()
 
     def back_is_clicked(self):
-        # self.user_confirm_quit_panel.is_show = True
-        if self.is_owner:
-            res = self.client.deleteroom()
-            if not res:
-                # 没有成功删除房间
-                return False
-        else:
-            print("user left room")
-            self.client.leftroom()
-        ScenePlayer.pop()
+        self.user_confirm_quit_panel.is_show = True
+        # if self.is_owner:
+        #     res = self.client.deleteroom()
+        #     if not res:
+        #         # 没有成功删除房间
+        #         return False
+        # else:
+        #     print("user left room")
+        #     self.client.leftroom()
+        # ScenePlayer.pop()
 
     def close_is_clicked(self):
         self.loaded['panel'] = []
@@ -172,7 +173,15 @@ class RoomScene(Scene):
         self.deal_events()
 
     def confirm_quit_is_clicked(self):
-        self.confirm_quit_bool = True
+        if self.is_owner:
+            res = self.client.deleteroom()
+            if not res:
+                # 没有成功删除房间
+                return False
+        else:
+            print("user left room")
+            self.client.leftroom()
+        ScenePlayer.pop()
 
     def dconfirm_quit_is_clicked(self):
-        self.confirm_quit_bool = False
+        self.user_confirm_quit_panel.is_show = False
