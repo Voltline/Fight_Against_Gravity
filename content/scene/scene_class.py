@@ -16,7 +16,7 @@ class Scene:
     path = None
 
     def __init__(self):
-        self.loaded = {'img': None, 'label': None, 'box': None, 'button': None, 'panel': None}
+        self.loaded = {'img': None, 'label': [], 'box': [], 'button': [], 'panel': []}
         """全局组件，返回按钮、设置按钮、关闭按钮"""
         back_rect = pygame.Rect(20, 20, 45, 45)
         self.back = Button("back", self.back_is_clicked, back_rect, self.path + "assets\\Img\\back.png", 1)
@@ -121,6 +121,15 @@ class Scene:
 
     def close_is_clicked(self):
         self.loaded['panel'].pop()
+
+    def settings_button_clicked(self):
+        """点击暂停panel中的设置按钮或是开始界面中的设置按钮"""
+        pass
+
+    @staticmethod
+    def quit_button_clicked():
+        """点击暂停panel中的退出按钮"""
+        ScenePlayer.pop()
 
     def show(self):
         pass

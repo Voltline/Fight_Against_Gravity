@@ -142,18 +142,19 @@ class UIFunction:
         key：搜索栏的关键字，用于筛选
         """
         screen_rect = scene.screen.get_rect()
-        ry = 0
-        room_list_panel_rect = Rect(0, 0, screen_rect.width-10, (1-ry)*(screen_rect.height-85))
+        r_y = 0
+        ry = 0.06
+        room_list_panel_rect = Rect(0, 0, screen_rect.width-10, (1-ry)*(screen_rect.height-85)-10)
         ctrlrs = []
         for room in room_list:
 
             if key in room['roomname']:
                 room_bar_panel = UIFunction.new_room_bar_panel(scene, room['roomid'],
                     room['roomname'], room['owner'], room['roommap'], room['size'], room['started'])
-                room_bar_panel.r_xy = (0, ry)
-                ry += (3+room_bar_panel.rect.height)/room_list_panel_rect.height
+                room_bar_panel.r_xy = (0, r_y)
+                r_y += (5+room_bar_panel.rect.height)/room_list_panel_rect.height
                 ctrlrs.append(room_bar_panel)
-        ry = 0.06
+
         room_list_panel = ScrollablePanel(scene.settings, room_list_panel_rect, '', 10, ctrlrs=ctrlrs)
         room_list_panel.color = (20, 20, 20)
         room_list_panel.r_xy = (0, ry)
@@ -170,27 +171,27 @@ class UIFunction:
         player_num：玩家数量
         is_play：是否游戏中
         """
-        width = scene.screen.get_width()
+        width = scene.screen.get_width() - 25
         max_num = len(Map(map_name).ships_info)
         name_label = Label(0, 0, 100, name)
-        name_label.r_xy = (0.01, 0)
+        name_label.r_xy = (0.02, 0)
         owner_label = Label(0, 0, 100, owner)
-        owner_label.r_xy = (0.21, 0)
+        owner_label.r_xy = (0.23, 0)
         map_label = Label(0, 0, 100, map_name)
-        map_label.r_xy = (0.41, 0)
+        map_label.r_xy = (0.44, 0)
         player_num_label = Label(0, 0, 100, str(player_num)+'/'+str(max_num))
-        player_num_label.r_xy = (0.61, 0)
+        player_num_label.r_xy = (0.65, 0)
         if is_play:
             is_play = '游戏中'
         else:
             is_play = '房间中'
         is_play_label = Label(0, 0, 100, is_play)
-        is_play_label.r_xy = (0.81, 0.01)
+        is_play_label.r_xy = (0.86, 0.01)
         others = [name_label, owner_label, map_label, player_num_label, is_play_label]
 
         height = name_label.rect.height
         room_bar_rect = Rect(0, 0, width, height)
-        room_bar_button = Button('join_room', lambda: scene.room_bar_clicked(room_id), room_bar_rect,
+        room_bar_button = Button('join_room', lambda: scene.room_bar_clicked(room_id), room_bar_rect.copy(),
                                  scene.path+'assets/texture/void.png', 0)
         room_bar_panel = Panel(room_bar_rect, '', 10, ctrlrs=[room_bar_button], others=others, border_radius=0)
         room_bar_panel.color = (60, 60, 60)
@@ -212,3 +213,50 @@ class UIFunction:
         join_fail_panel.color = (80, 80, 80)
         join_fail_panel.is_show = join_fail_panel.is_able = False
         return join_fail_panel
+
+    @staticmethod
+    def new_change_room_name_panel(scene):
+        """RoomScene中点击更改房间名按钮呼出的panel"""
+        confirm_button_rect = Rect(0, 0, 100, 50)
+        confirm_button = Button('确定', scene.change_room_name_confirm_button_clicked, confirm_button_rect,
+                                scene.settings.btbg_light, 0, '确定', SceneFont.log_font)
+        confirm_button.add_img(scene.settings.btbg_light_pressed)
+        confirm_button.r_xy = (0.125, 0.7)
+        cancel_button_rect = Rect(0, 0, 100, 50)
+        cancel_button = Button('取消', scene.change_room_name_cancel_button_clicked, cancel_button_rect,
+                               scene.settings.btbg_light, 0, '取消', SceneFont.log_font)
+        cancel_button.add_img(scene.settings.btbg_light_pressed)
+        cancel_button.r_xy = (0.625, 0.7)
+        hint_label = Label(0, 0, 400, '请输入新的房间名:', SceneFont.map_list_font)
+        hint_label.r_xy = (0, 0.1)
+        box_rect = Rect(0, 0, 200, 35)
+        box = InputBox(box_rect)
+        box.r_xy = (0.25, 0.3)
+        change_room_name_panel_rect = Rect(0, 0, 400, 250)
+        change_room_name_panel_rect.center = scene.screen.get_rect().center
+        change_room_name_panel = Panel(change_room_name_panel_rect, '', 23, ctrlrs=[confirm_button, cancel_button], boxes=[box], others=[hint_label])
+        change_room_name_panel.color = (80, 80, 80)
+        change_room_name_panel.is_show = change_room_name_panel.is_able = False
+        return change_room_name_panel
+
+    @staticmethod
+    def new_pause_panel(scene) -> Panel:
+        """用于游戏场景的暂停panel"""
+        button_rect = Rect(0, 0, 300, 65)
+        continue_button = Button('继续游戏', scene.continue_button_clicked, button_rect.copy(),
+                                 scene.settings.btbg_light, 0, '继续游戏', SceneFont.log_font)
+        continue_button.add_img(scene.settings.btbg_light_pressed)
+        continue_button.r_xy = 0.25, 0.15
+        settings_button = Button('设置', scene.settings_button_clicked, button_rect.copy(),
+                                 scene.settings.btbg_light, 0, '设置', SceneFont.log_font)
+        settings_button.add_img(scene.settings.btbg_light_pressed)
+        settings_button.r_xy = 0.25, 0.4
+        quit_button = Button('退出对局', scene.quit_button_clicked, button_rect.copy(),
+                             scene.settings.btbg_light, 0, '退出对局', SceneFont.log_font)
+        quit_button.add_img(scene.settings.btbg_light_pressed)
+        quit_button.r_xy = 0.25, 0.65
+
+        pause_panel_rect = Rect(300, 200, 600, 500)
+        pause_panel = Panel(pause_panel_rect, '已暂停', 23,
+                            ctrlrs=[continue_button, settings_button, quit_button], text_pos=0)
+        return pause_panel
