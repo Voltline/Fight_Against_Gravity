@@ -148,6 +148,10 @@ class ClientMain:
         elif recv["status"] == "NAK":
             return False
 
+    def is_in_room(self):
+        """返回是不是在房间里"""
+        return self.roomid is not None
+
     def leftroom(self):
         if self.roomid is None:
             return False
