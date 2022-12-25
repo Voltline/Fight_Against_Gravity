@@ -22,8 +22,8 @@ class HP:
 
     def render(self, screen):
         hp = pygame.transform.smoothscale(self.hp_panel, (self.rect.width * self.hp / self.full_hp, self.rect.height))
-        screen.blit(hp, (self.rect.left, self.rect.top))
         screen.blit(self.hp_column, (self.rect.left, self.rect.top))
+        screen.blit(hp, (self.rect.left, self.rect.top))
 
 
 if __name__ == '__main__':
