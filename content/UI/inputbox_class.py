@@ -89,6 +89,10 @@ class InputBox:
         pygame.draw.rect(screen, self.color_inside, self.rect, 0, border_radius=15)
         pygame.draw.rect(screen, self.color, self.rect, 4, border_radius=15)
         screen.blit(password_surface, (self.rect.x + 5, self.rect.y + 5))
+        cursor = self.font.render('|', True, (170, 205, 255))
+        w, h = password_surface.get_size()
+        if int(time.time() * 2) % 3 != 0 and self.active:
+            screen.blit(cursor, (self.rect.x + w + 12, self.rect.y + 2))
 
     def is_over(self, point, pos_offset=(0, 0)) -> bool:
         """检测鼠标位置是否在按钮上，并检测按钮是否可用"""

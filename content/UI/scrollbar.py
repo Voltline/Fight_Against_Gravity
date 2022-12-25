@@ -17,7 +17,7 @@ class ScrollBar:
         self.thumb_width, self.thumb_height = 10, 60
         self.thumb_left = self.left + (self.width-self.thumb_width)/2
         self.thumb_top = self.top
-        self.thumb_status = 0
+        self.thumb_status = 0  # 对应显示状态，动态效果
         for i in range(len(self.bar_thumb)):
             self.bar_thumb[i] = pygame.transform.smoothscale(self.bar_thumb[i], (self.thumb_width, self.thumb_height))
         self.bar = pygame.image.load(settings.bar)
@@ -53,7 +53,7 @@ class ScrollBar:
             else:
                 self.thumb_status = 0
             if self.is_dragging:
-                self.thumb_top = e.pos[1]
+                self.thumb_top = e.pos[1]-pos_offset[1]
         self.thumb_top = max(self.top, min(self.thumb_top, self.top + self.height - self.thumb_height))
 
 

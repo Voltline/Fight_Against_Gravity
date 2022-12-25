@@ -6,12 +6,14 @@ from content.UI.scrollbar import ScrollBar
 from content.UI.panel_class import Panel
 from content.UI.label_class import Label
 from content.scene.scene_font import SceneFont
+from content.online.player_info import PlayerInfo
 from content.UI.hp import HP
 
 
 class UIFunction:
     @staticmethod
     def new_start_logo(scene):
+        """开始界面的logo"""
         start_title = pygame.image.load(scene.path + "assets\\texture\\FAGWhite.png")  # 用作画图
         start_title = pygame.transform.smoothscale(start_title, (514, 200))
         start_title = start_title.convert_alpha()
@@ -19,8 +21,9 @@ class UIFunction:
 
     @staticmethod
     def new_online_button(scene):
+        """开始界面的在线游戏按钮"""
         start_font = SceneFont.start_font
-        start_rect = pygame.Rect(455, 280, 290, 100)
+        start_rect = pygame.Rect(455, 250, 290, 100)
         online_game_button = Button("onlinegame", scene.online_is_clicked, start_rect,
                                     scene.path + "assets\\Img\\start_unpressed.png", 1, '在线游戏', start_font)  # 用作画图
         online_game_button.add_img(scene.path + "assets\\Img\\start_press.png")
@@ -28,6 +31,7 @@ class UIFunction:
 
     @staticmethod
     def new_login_button(scene):
+        """开始界面的登录按钮"""
         login_rect = pygame.Rect(1120, 20, 60, 40)
         login_button = Button("login", scene.login_is_clicked, login_rect,
                               scene.settings.btbg_light, 0, '登录', SceneFont.log_font)
@@ -36,11 +40,47 @@ class UIFunction:
 
     @staticmethod
     def new_local_button(scene):
-        local_rect = pygame.Rect(455, 450, 290, 100)
+        """开始界面的本地登录按钮"""
+        local_rect = pygame.Rect(455, 420, 290, 100)
         local_button = Button('local game', scene.local_is_clicked, local_rect,
                               scene.path + "assets\\Img\\start_unpressed.png", 0, '本地游戏', SceneFont.start_font)
         local_button.add_img(scene.path + "assets\\Img\\start_press.png")
         return local_button
+
+    @staticmethod
+    def new_reg_labels():
+        """注册界面四个输入框之前的文本提示"""
+        r_email_label = Label(315, 180, 98, "请输入您的邮箱", SceneFont.white_font)
+        r_id_label = Label(315, 260, 106, "请输入您的用户名", SceneFont.white_font)
+        r_password_label = Label(315, 340, 42, "设置您的密码", SceneFont.white_font)
+        r_check_label = Label(315, 420, 40, "验证码", SceneFont.white_font)
+        labels = [r_email_label, r_id_label, r_password_label, r_check_label]
+        return labels
+
+    @staticmethod
+    def new_reg_boxes():
+        """注册界面的四个输入框，分别是邮箱、用户名、密码、验证码"""
+        r_email_box = InputBox(pygame.Rect(450, 180, 350, 35))
+        r_id_box = InputBox(pygame.Rect(450, 260, 350, 35))
+        r_password_box = InputBox(pygame.Rect(450, 340, 350, 35))
+        r_check_box = InputBox(pygame.Rect(450, 420, 350, 35))
+        boxes = [r_email_box, r_id_box, r_password_box, r_check_box]
+        return boxes
+
+    @staticmethod
+    def new_register_buttons(scene):
+        """注册界面的 确认注册 和 发送验证码 按钮"""
+        r_rect = pygame.Rect(650, 500, 100, 40)
+        r_button = Button("r", scene.confirm_reg_clicked, r_rect,
+                          scene.settings.btbg_light, 0, '确认注册', SceneFont.log_font)
+        r_button.add_img(scene.settings.btbg_light_pressed)
+        check_rect = pygame.Rect(430, 500, 110, 40)
+        r_check_button = Button('check', scene.send_checkcode_clicked, check_rect,
+                                scene.settings.btbg_light, 0, '发送验证码', SceneFont.log_font)
+        r_check_button.add_img(scene.settings.btbg_light_pressed)
+        buttons = [r_button, r_check_button, scene.back, scene.set_button]  # 包含了返回和设置
+        return buttons
+
 
     @staticmethod
     def new_select_map_button(scene, name):
