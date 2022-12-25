@@ -70,7 +70,6 @@ class OptType:
     {
         "opt" : 12
         "user" : "str"
-        "roomname" : "str"
         "roomid" : "str"
         "status" : "ACK"/"NAK"
     }
@@ -100,11 +99,12 @@ class OptType:
     {
         "opt" : 15
         "roomlist" : [{
-            "roomid" : roomid
-            "owner" : user
-            "size" : int #玩家人数
-            "maxsize" : int 最多玩家人数
-            "started" : "YES" / "NO"
+            "roomid": roomid,
+            "owner": owner,
+            "size": size,
+            "started": started,
+            "roommap" : roommap,
+            "roomname" : roomname
         }]
     }
     """

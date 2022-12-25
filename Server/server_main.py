@@ -76,7 +76,6 @@ class ServerMain:
         elif status == "close":
             return True
         else:
-            # print("ServerReturnError!")
             return False
 
     def login(self, message):
@@ -244,14 +243,19 @@ class ServerMain:
         messageAdr, messageMsg = message
         roomid = messageMsg["roomid"]
         username = messageMsg["user"]
+        if username not in self.user_list:
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
         user = self.user_list[username]
         if roomid not in self.room_list:
             # 不存在的房间
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
         room = self.room_list[roomid]
         if len(room.get_userlist()) == self.get_map_size(room.get_roommap()):
             # 房间人数上限
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
         room.join_user(user)
         user.set_roomid(room.get_roomid())
         sendMsg = messageMsg
@@ -298,9 +302,10 @@ class ServerMain:
         reslist = []
         for roomid, room in self.room_list.items():
             owner = room.owner.get_name()
-            maxsize = self.get_map_size(room.get_roommap())
             size = len(room.get_userlist())
             started = room.get_started()
+            roommap = room.get_roommap()
+            roomname = room.get_roomname()
             if started:
                 started = "YES"
             else:
@@ -310,8 +315,9 @@ class ServerMain:
                     "roomid": roomid,
                     "owner": owner,
                     "size": size,
-                    "maxsize": maxsize,
-                    "started": started
+                    "started": started,
+                    "roommap" : roommap,
+                    "roomname" : roomname
                 }
             )
         sendMsg = messageMsg
