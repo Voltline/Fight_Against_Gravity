@@ -11,7 +11,7 @@ import time
 
 class RoomScene(Scene):
 
-    def __init__(self, isowner: bool = False):
+    def __init__(self, isowner: bool = False, roomid = None):
         super().__init__()
         self.confirm_quit_bool = False
         self.last_update_time = 0
@@ -21,6 +21,7 @@ class RoomScene(Scene):
         self.is_ready = False
         self.client.creatroom("test", self.roommap)
         self.is_owner = True
+        # self.client.joinroom("f0699daa-8449-11ed-9442-27c29e6f1d88")
         # TODO:测试用 创建了个房间
 
         # 左侧房间信息初始化
@@ -137,6 +138,7 @@ class RoomScene(Scene):
                 self.is_ready = True
 
     def start_is_clicked(self):
+        self.not_allready_lable.is_show = False
         res = self.client.startgame()
         if not res:
             self.not_allready_lable.is_show = True
@@ -161,6 +163,7 @@ class RoomScene(Scene):
                 self.user_name_lable[0].set_text(owner)
                 self.user_name_lable[0].is_show = True
                 now = 1
+                has_dready = False
                 for user, ready in userlist:
                     if user == owner:
                         continue
@@ -168,11 +171,14 @@ class RoomScene(Scene):
                         self.user_ready_lable[now].is_show = True
                         self.user_dready_lable[now].is_show = False
                     else:
+                        has_dready = True
                         self.user_ready_lable[now].is_show = False
                         self.user_dready_lable[now].is_show = True
                     self.user_name_lable[now].set_text(user)
                     self.user_name_lable[now].is_show = True
                     now += 1
+                if not has_dready:
+                    self.not_allready_lable.is_show = False
                 for i in range(now, 8):
                     self.user_ready_lable[i].is_show = False
                     self.user_name_lable[i].is_show = False
