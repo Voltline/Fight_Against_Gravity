@@ -11,17 +11,14 @@ import time
 
 class RoomScene(Scene):
 
-    def __init__(self):
+    def __init__(self, is_owner:bool, ):
         super().__init__()
         self.confirm_quit_bool = False
         self.last_update_time = 0
         self.roomname = "默认房间名"
         self.roommap = "地月系统"
-        self.is_owner = False  # 是否是房主
+        self.is_owner = is_owner  # 是否是房主
         self.is_ready = False
-        if not self.client.is_in_room():
-            self.client.creatroom("test", self.roommap)
-            self.is_owner = True
         # 左侧房间信息初始化
         r_roomname_lable = Label(100, 160, 800, "房间名：" + self.roomname, SceneFont.white_font)
         r_roomname_lable.r_xy = 0.1, 1 / 10 * 0.8
