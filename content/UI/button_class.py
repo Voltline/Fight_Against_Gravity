@@ -17,7 +17,7 @@ class Control:
         text: 文本内容, font_info: 字体设置
         属性：is_show: 是否显示这个控件，is_active:控件是否被激活，is_able:控件是否可响应点击，
         status:用于标记这个按钮的状态，当一个按钮有多个状态时，status可用于索引对应素材。
-        __img: 被加载好的图像，img_width:底图的长度，sub_img_width:子图宽度
+        __img: 被加载好的图像，
         r_xy：二元组，在本对象作为成员传入panel时起作用
 
         """

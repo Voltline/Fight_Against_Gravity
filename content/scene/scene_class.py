@@ -16,17 +16,17 @@ class Scene:
     path = None
 
     def __init__(self):
-        self.loaded = {'img': [], 'label': [], 'box': [], 'button': [], 'panel': []}
+        self.loaded = {'img': None, 'label': None, 'box': None, 'button': None, 'panel': None}
         """全局组件，返回按钮、设置按钮、关闭按钮"""
         back_rect = pygame.Rect(20, 20, 45, 45)
         self.back = Button("back", self.back_is_clicked, back_rect, self.path + "assets\\Img\\back.png", 1)
         self.reminder_panel_rect = pygame.Rect(200, 300, 800, 200)
         self.reminder_panel_rect_small = pygame.Rect(450, 300, 300, 100)
         self.menu_like_panel_rect = pygame.Rect(300, 200, 600, 400)
-        set_rect = pygame.Rect(1120, 745, 35, 35)
-        self.set_button = Button('setting', self.set_is_clicked, set_rect, self.path + "assets/Img/setting_light.png",
-                                 1)
-        self.set_button.add_img(self.path + "assets/Img/setting_light_pressed.png")
+        set_rect = pygame.Rect(455, 590, 290, 100)
+        self.set_button = Button('setting', self.set_is_clicked, set_rect, self.path + "assets\\Img\\start_unpressed.png",
+                                 0, '设置', SceneFont.start_font)
+        self.set_button.add_img(self.path + "assets\\Img\\start_press.png")
         self.switcher = 0
         self.box_is_able = True
         close_rect = pygame.Rect(0, 0, 20, 20)
@@ -54,6 +54,7 @@ class Scene:
                                text_pos=0)
 
     def ban_inputbox(self):
+        """禁用输入框"""
         self.box_is_able = False
 
     def deal_event(self, e) -> bool:
