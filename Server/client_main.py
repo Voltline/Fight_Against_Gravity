@@ -152,6 +152,16 @@ class ClientMain:
         """返回是不是在房间里"""
         return self.roomid is not None
 
+    def local_get_user(self):
+        return self.user
+
+    def local_isowner(self):
+        res = self.getroom()
+        if res:
+            return self.user == res["owner"]
+        else:
+            return False
+
     def leftroom(self):
         if self.roomid is None:
             return False
