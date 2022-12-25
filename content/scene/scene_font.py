@@ -50,7 +50,7 @@ class SceneFont:
             'valign': 1
         }
         SceneFont.nickname_font = {
-            'font': pygame.font.Font(scene_settings.font_path_normal, 11),
+            'font': pygame.font.Font(scene_settings.font_path_normal, 14),
             'tc': (255, 255, 255),
             'bc': None,
             'align': 0,
@@ -58,7 +58,7 @@ class SceneFont:
         }
         SceneFont.hp_value_font = {
             'font': pygame.font.Font(scene_settings.font_path_normal, 9),
-            'tc': (255, 255, 255),
+            'tc': (0, 0, 0),
             'bc': None,
             'align': 1,
             'valign': 1
