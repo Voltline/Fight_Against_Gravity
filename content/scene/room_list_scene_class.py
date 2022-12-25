@@ -51,7 +51,7 @@ class RoomListScene(Scene):
     def room_bar_clicked(self, room_id):
         """点击房间，加入房间"""
         if self.client.joinroom(room_id):
-            ScenePlayer.push(RoomScene())
+            ScenePlayer.push(RoomScene(False))
         else:
             self.join_fail_panel.is_show = True
             self.join_fail_panel.is_able = True
