@@ -43,20 +43,21 @@ class Panel(Control):
 
     def render(self, screen: pygame.Surface):
         """把东西画到panel上，再把panel画到screen上"""
-        pygame.draw.rect(self.surface, self.color,
-                         pygame.Rect(0, 0, self.rect.width, self.rect.height), border_radius=self.border_radius)
-        width, height = self.text_surface.get_size()
-        if self.text_pos == 1:
-            left = int((self.rect.width - width) / 2)
-            top = int((self.rect.height - height) / 2)
-        else:  # self.text_pos == 0
-            left = int((self.rect.width - width) / 2)
-            top = 20
-        self.surface.blit(self.text_surface, (left, top))
-        for objs in self.loaded.values():
-            for obj in objs:
-                obj.render(self.surface)
-        screen.blit(self.surface, self.rect)
+        if self.is_show:
+            pygame.draw.rect(self.surface, self.color,
+                             pygame.Rect(0, 0, self.rect.width, self.rect.height), border_radius=self.border_radius)
+            width, height = self.text_surface.get_size()
+            if self.text_pos == 1:
+                left = int((self.rect.width - width) / 2)
+                top = int((self.rect.height - height) / 2)
+            else:  # self.text_pos == 0
+                left = int((self.rect.width - width) / 2)
+                top = 20
+            self.surface.blit(self.text_surface, (left, top))
+            for objs in self.loaded.values():
+                for obj in objs:
+                    obj.render(self.surface)
+            screen.blit(self.surface, self.rect)
 
     def update(self, event, pos_offset=(0, 0)) -> bool:
         pos_offset0 = pos_offset  # 判断自己时的偏移量
