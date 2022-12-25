@@ -60,6 +60,8 @@ class Panel(Control):
             screen.blit(self.surface, self.rect)
 
     def update(self, event, pos_offset=(0, 0)) -> bool:
+        if not self.is_able:
+            return False
         pos_offset0 = pos_offset  # 判断自己时的偏移量
         pos_offset = (self.rect[0]+pos_offset[0], self.rect[1]+pos_offset[1])  # 判断自己的元素时的偏移量
         if self.deal_event_mouse(event, pos_offset, pos_offset0):
