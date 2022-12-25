@@ -11,7 +11,7 @@ import time
 
 class RoomScene(Scene):
 
-    def __init__(self, is_owner:bool, ):
+    def __init__(self, is_owner: bool = False):
         super().__init__()
         self.confirm_quit_bool = False
         self.last_update_time = 0
