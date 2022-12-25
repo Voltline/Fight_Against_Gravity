@@ -57,16 +57,16 @@ class RoomScene(Scene):
         if self.is_owner:
             self.r_ready_button = Button("start", self.start_is_clicked, r_rect, self.settings.btbg_light, 0,
                                          "开始游戏", SceneFont.log_font)
-        r_change_map_button = Button("changemap", self.change_map_is_clicked, pygame.Rect(100, 470, 200, 50),
-                                     self.settings.btbg_light, 0, "更改地图", SceneFont.log_font)
-        r_change_map_button.r_xy = 0.1, 1 / 10 * 7
+        self.r_change_map_button = Button("changemap", self.change_map_is_clicked, pygame.Rect(100, 470, 200, 50),
+                                          self.settings.btbg_light, 0, "更改地图", SceneFont.log_font)
+        self.r_change_map_button.r_xy = 0.1, 1 / 10 * 7
         self.r_roommap_button = Button("roommap", lambda: 1, pygame.Rect(100, 240, 200, 200),
                                        self.path + "/assets/texture/thumbnail/" + self.roommap + ".png", 0, "",
                                        SceneFont.log_font)
         self.r_roommap_button.r_xy = 0.1, 1 / 10 * 2.8
-        r_change_name_button = Button("changename", self.change_name_is_clicked, pygame.Rect(100, 570, 200, 50),
-                                      self.settings.btbg_light, 0, "更改房间名", SceneFont.log_font)
-        r_change_name_button.r_xy = 0.1, 1 / 10 * 8.55
+        self.r_change_name_button = Button("changename", self.change_name_is_clicked, pygame.Rect(100, 570, 200, 50),
+                                           self.settings.btbg_light, 0, "更改房间名", SceneFont.log_font)
+        self.r_change_name_button.r_xy = 0.1, 1 / 10 * 8.55
         r_confirm_button = Button("changename", self.confirm_quit_is_clicked, pygame.Rect(0, 0, 100, 50),
                                   self.settings.btbg_light, 0, "确认", SceneFont.log_font)
         r_confirm_button.r_xy = 0.1, 0.55
@@ -77,7 +77,7 @@ class RoomScene(Scene):
                                    self.settings.btbg_light, 0, "确认", SceneFont.log_font)
         r_confirm_button_.r_xy = 0.4, 0.55
         self.buttons = [self.back, self.r_ready_button]
-        self.room_buttons = [r_change_map_button, r_change_name_button]
+        self.room_buttons = [self.r_change_map_button, self.r_change_name_button]
         self.room_lables.append(self.r_roommap_button)
         user_panel = Panel(pygame.Rect(400, 150, 700, 500), "", 28, others=self.user_lables)
         """用户信息"""
@@ -94,6 +94,7 @@ class RoomScene(Scene):
         self.owner_quit_warning_panel.is_show = False
         self.owner_quit_warning_panel.is_able = False
         self.panel = [user_panel, room_panel, self.user_confirm_quit_panel, self.owner_quit_warning_panel]
+        self.update_user()
         self.loaded = {'label': self.labels, 'box': [], 'button': self.buttons, 'panel': self.panel}
 
     def show(self):
@@ -151,6 +152,17 @@ class RoomScene(Scene):
             self.last_update_time = time.time()
             res = self.client.getroom()
             if res:
+                self.is_owner = (res["owner"] == self.client.local_get_user())
+                if self.is_owner:
+                    self.r_change_map_button.is_show = True
+                    self.r_change_map_button.is_able = True
+                    self.r_change_name_button.is_show = True
+                    self.r_change_name_button.is_able = True
+                else:
+                    self.r_change_map_button.is_show = False
+                    self.r_change_map_button.is_able = False
+                    self.r_change_name_button.is_show = False
+                    self.r_change_name_button.is_able = False
                 self.roommap = res["roommap"]
                 self.roomname = res["roomname"]
                 self.r_roommap_lable.set_text(self.roommap)
