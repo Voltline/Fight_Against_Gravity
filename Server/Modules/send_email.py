@@ -540,7 +540,8 @@ def send_email(user_name: str, target_email: str, id_code: str) -> None:
 
     msg = MIMEText(content2, 'HTML', 'utf-8')
     msg['From'] = Header("Fight Against Gravity<fag_identify_norep@yeah.net>")
-    msg['To'] = Header(user_name+f"<{target_email}>")
+    head = user_name+f"<{target_email}>"
+    msg['To'] = Header(head)
     msg["Subject"] = Header("验证您的身份")
 
     server = smtplib.SMTP_SSL(smtp_server)
