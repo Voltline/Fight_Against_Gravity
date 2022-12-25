@@ -7,7 +7,7 @@ from content.scene.scene_player_class import ScenePlayer
 from content.scene.login_scene_class import LogInScene
 from content.scene.room_scene import RoomScene
 from content.UI.ui_function import UIFunction
-
+from content.online.player_info import PlayerInfo
 
 class StartScene(Scene):
     def __init__(self):
@@ -26,7 +26,10 @@ class StartScene(Scene):
         ScenePlayer.push(RoomScene())
 
     def login_is_clicked(self):
-        ScenePlayer.push(LogInScene())
+        if PlayerInfo.player_name == '':
+            ScenePlayer.push(LogInScene())
+        else:
+            self.loaded['button'][0].set_text('已登录')
 
     def local_is_clicked(self):
         self.loaded['panel'].append(UIFunction.new_select_map_panel(self))
@@ -38,6 +41,8 @@ class StartScene(Scene):
     def show(self):
         self.screen.fill((10, 10, 10))
         self.screen.blit(self.loaded['img'], (10, 10))
+        if PlayerInfo.player_name != '':
+            self.loaded['button'][0].set_text('已登录')
         self.draw_elements()
         pygame.display.flip()
 

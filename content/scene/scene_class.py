@@ -34,7 +34,7 @@ class Scene:
                                    self.path + 'assets\\Img\\close_unclicked.png', 0)
         self.close_button.add_img(self.path + 'assets\\Img\\close_clicked.png')
         """用于判断按下回车键时是否相应，如果是登录界面，敲下回车应该等同于登录，如果注册界面，敲下回车等同于进行注册"""
-        self.id = 0  # 0对应登录，1对应注册，2对应设置改键，3对应无响应。
+        self.id = 0  # 0对应未登录，1对应注册
         # 设置界面
 
         # 确认修改键位P1

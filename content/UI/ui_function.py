@@ -6,6 +6,7 @@ from content.UI.scrollbar import ScrollBar
 from content.UI.panel_class import Panel
 from content.UI.label_class import Label
 from content.scene.scene_font import SceneFont
+from content.online.player_info import PlayerInfo
 from content.UI.hp import HP
 
 

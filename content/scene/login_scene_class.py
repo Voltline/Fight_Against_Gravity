@@ -6,6 +6,7 @@ from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.register_scene_class import RegScene
 from content.scene.menu_scene import MenuScene
+from content.online.player_info import PlayerInfo
 import pygame
 
 
@@ -33,7 +34,7 @@ class LogInScene(Scene):
         login_button.add_img(self.settings.btbg_light_pressed)
 
         self.loaded = {'img': None, 'label': [id_label, password_label], 'box': boxL,
-                       'button': [self.back, register_button, login_button, self.set_button],
+                       'button': [self.back, register_button, login_button],
                        'panel': []}
 
     def show(self):
@@ -51,6 +52,7 @@ class LogInScene(Scene):
         answer = self.client.login(userid, userpw)
         if answer:
             print("登录成功")
-            ScenePlayer.push(MenuScene())
+            PlayerInfo.player_name = userid
+            ScenePlayer.pop()
         else:
             print("failed")
