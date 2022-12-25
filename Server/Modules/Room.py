@@ -77,12 +77,18 @@ class Room:
     def get_roomname(self):
         return self.roomname
 
+    def changeroomname(self, new_roomname):
+        self.roomname = new_roomname
+
     def get_roomid(self):
         return self.roomid
 
     def get_owener(self) -> User:
         """返回房主 User"""
         return self.owner
+
+    def change_ownener(self, user: User):
+        self.owner = user
 
     def get_roommap(self):
         return self.roommap

@@ -15,7 +15,7 @@ class ClientMain:
         client_level = Flogger.L_INFO
         if _debug_:
             self.absolute_setting_path = path + "settings/settings_local.json"
-            client_models = Flogger.FILE_AND_CONSOLE
+            # client_models = Flogger.FILE_AND_CONSOLE
             client_level = Flogger.L_DEBUG
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
@@ -88,6 +88,22 @@ class ClientMain:
             "user": self.user,
             "roommap": roommap,
             "roomid": self.roomid
+        }
+        self.client.send(msg)
+        recv = self.client.receive()
+        if recv["status"] == "NAK":
+            return False
+        elif recv["status"] == "ACK":
+            return True
+        else:
+            pass
+
+    def changeroomname(self, new_roomname):
+        msg = {
+            "opt": OptType.changeroomname,
+            "user": self.user,
+            "roomid": self.roomid,
+            "new_roomname": new_roomname
         }
         self.client.send(msg)
         recv = self.client.receive()
@@ -321,6 +337,9 @@ class ClientMain:
             if opt == 10:
                 new_roommap = input("input the new roommap")
                 print(self.changemap(new_roommap))
+            if opt == 11:
+                new_roomname = input("input the new roomname")
+                print(self.changeroomname(new_roomname))
             else:
                 continue
         self.client.close()

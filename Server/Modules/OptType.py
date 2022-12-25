@@ -158,6 +158,17 @@ class OptType:
         }
     }
     """
+    changeroomname = 41
+    """
+    用户更改房间名
+    {
+        "opt" : 41
+        "user" : "str"
+        "roomid" : "id"
+        "new_roomname" : "str"
+        "status" : "ACK"/”NAK“
+    }
+    """
     """
     传输时,msg={
         "opt":msg_opt(int)
