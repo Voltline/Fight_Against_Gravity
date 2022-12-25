@@ -72,14 +72,15 @@ class Panel(Control):
             for bt in self.loaded['ctrlrs'][::-1]:
                 if bt.update(event, pos_offset):
                     return True
-            if self.box_is_able:
+            if self.box_is_able and event.type == pygame.MOUSEBUTTONDOWN:
                 for i in range(len(self.loaded['boxes'])):
                     if self.loaded['boxes'][i].check_click(event, pos_offset):  # 若按下鼠标且位置在文本框
                         self.loaded['boxes'][i].active = True
                         self.switcher = i
                     else:
                         self.loaded['boxes'][i].active = False
-            return True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                return True
         return False
 
     def deal_event_key(self, event):
