@@ -32,12 +32,13 @@ class ServerMain:
         ip = settings["Client"]["Game_Local_IP"]
         port = settings["Client"]["Game_Port"]
         heart_beat = settings["Client"]["heart_beat"]
+        self.msg_len = settings["Client"]["msg_len"]
         self.user_list: {str: User} = {}
         """{"username" : User}"""
         self.room_list: {str: Room} = {}
         """"{"roomid": Room}"""
         self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat,
-                                              models=server_model, logpath=path, level=server_level)
+                                              models=server_model, logpath=path, level=server_level, msg_len=self.msg_len)
         self.game_settings = game_settings
 
     @staticmethod
@@ -334,10 +335,6 @@ class ServerMain:
             started = room.get_started()
             roommap = room.get_roommap()
             roomname = room.get_roomname()
-            if started:
-                started = "YES"
-            else:
-                started = "NO"
             reslist.append(
                 {
                     "roomid": roomid,
@@ -422,7 +419,7 @@ class ServerMain:
                     self.ready(message)
                 elif opt == OptType.changeroomname:
                     self.changeroomname(message)
-                elif 26 <= opt <= 20:
+                elif 26 <= opt <= 30:
                     room_id = messageMsg['args'][0]
                     room: Room = self.room_list[room_id]
                     room.release_message(message)
