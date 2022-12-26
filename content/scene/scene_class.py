@@ -23,7 +23,7 @@ class Scene:
         self.reminder_panel_rect = pygame.Rect(200, 300, 800, 200)
         self.reminder_panel_rect_small = pygame.Rect(450, 300, 300, 100)
         self.menu_like_panel_rect = pygame.Rect(300, 200, 600, 400)
-        set_rect = pygame.Rect(455, 590, 290, 100)
+        set_rect = pygame.Rect(455, 480, 290, 80)
         self.set_button = Button('setting', self.set_is_clicked, set_rect, self.path + "assets\\Img\\start_unpressed.png",
                                  0, '设置', SceneFont.start_font)
         self.set_button.add_img(self.path + "assets\\Img\\start_press.png")

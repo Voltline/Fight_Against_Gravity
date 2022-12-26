@@ -22,7 +22,7 @@ class SceneFont:
     def init(scene_settings):
         """类变量初始化"""
         SceneFont.start_font = {
-            'font': pygame.font.Font(scene_settings.font_path_light, 65),
+            'font': pygame.font.Font(scene_settings.font_path_light, 63),
             'tc': (36, 41, 47),
             'bc': None,
             'align': 1,
