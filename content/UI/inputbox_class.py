@@ -36,6 +36,7 @@ class InputBox:
         # self.bg = pygame.Color(52, 52, 52)
 
     def deal_event(self, event: pygame.event.Event):
+        pygame.scrap.init()
         if self.active:
             self.color = self.color_active
             self.color_inside = self.color_inside_active
@@ -45,9 +46,11 @@ class InputBox:
         if event.type == pygame.KEYDOWN:
             # 键盘输入响应
             if self.active:
+                key_name = pygame.key.name(event.key)
+                print(key_name, event.mod)
                 if event.key == pygame.K_RETURN:
                     print('*'+self.text+'*')
-                elif event.key == 118 and (event.mod == 64 or event.mod == 1024):
+                elif event.key == 118 and (event.mod == 4160 or event.mod == 4224):
                     scrap_text = pygame.scrap.get(SCRAP_TEXT)
                     if scrap_text:
                         if 'Windows' in platform.platform():
