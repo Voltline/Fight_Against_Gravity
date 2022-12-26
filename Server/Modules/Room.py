@@ -54,12 +54,16 @@ class Room:
 
     def start(self):
         self.started = True
+        user_adr = {}
+        for user in self.userlist:
+            user_adr[user.get_name()] = user.get_address()
         self.game = server_game.ServerGame(
             settings=self.game_settings,
             net=self.server_,
             room_id=self.roomid,
             map_name=self.roommap,
-            player_names=self.get_userlist()
+            player_names=self.get_userlist(),
+            addresses=user_adr
         )
         thread = threading.Thread(target=self.game.main)
         thread.setDaemon(True)
@@ -118,6 +122,7 @@ class Room:
             roomname : "str"
             owner: "str"
             roommap: "str"
+            is_run: bool
             userlist : {
                 user:ready
             }
@@ -132,6 +137,7 @@ class Room:
             "roomname": self.roomname,
             "owner": self.owner.get_name(),
             "roommap": self.roommap,
+            "is_run": self.started,
             "userlist": userlist
         }
         return res
