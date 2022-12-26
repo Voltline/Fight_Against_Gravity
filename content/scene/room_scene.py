@@ -1,13 +1,13 @@
+import pygame
+import time
 from content.scene.scene_class import Scene
 from content.UI.button_class import Button
-from content.UI.inputbox_class import InputBox
 from content.UI.label_class import Label
 from content.scene.scene_font import SceneFont
 from content.UI.panel_class import Panel
 from content.scene.scene_player_class import ScenePlayer
 from content.UI.ui_function import UIFunction as UIF
-import pygame
-import time
+from content.scene.client_game_scene_class import ClientGameScene
 
 
 class RoomScene(Scene):
@@ -20,6 +20,7 @@ class RoomScene(Scene):
         self.roommap = "地月系统"
         self.is_owner = is_owner  # 是否是房主
         self.is_ready = False
+        self.is_start = False
         # 左侧房间信息初始化
         self.r_roomname_lable = Label(100, 160, 800, "房间名：" + self.roomname, SceneFont.white_font)
         self.r_roomname_lable.r_xy = 0.1, 1 / 10 * 0.8
@@ -233,6 +234,10 @@ class RoomScene(Scene):
                     self.user_ready_lable[i].is_show = False
                     self.user_name_lable[i].is_show = False
                     self.user_dready_lable[i].is_show = False
+                if res['is_run'] and not self.is_start:
+                    # 开始游戏
+                    ScenePlayer.push(ClientGameScene(res['roommap'], [u[0] for u in res['userlist']]))
+                self.is_start = res['is_run']
 
     def update(self):
         self.update_user()
