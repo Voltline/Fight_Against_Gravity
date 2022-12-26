@@ -189,15 +189,14 @@ class ClientMain:
         }
         self.client.send(msg)
         recv = self.client.receive()
-        try:
+        if "status" in recv:
             if recv["status"] == "NAK":
                 return False
             elif recv["status"] == "ACK":
                 return True
             else:
                 pass
-        except Exception as err:
-            self.logger.error(str(err))
+        else:
             return True
 
     def startgame(self):
@@ -220,6 +219,7 @@ class ClientMain:
         except Exception as err:
             self.logger.error(str(err))
             return True
+
     def getroom(self):
         """
         {

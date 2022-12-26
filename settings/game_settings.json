@@ -10,7 +10,7 @@
     "icon_img_path": "assets/texture/icon1.png"
   },
   "Physics": {
-    "physics_dt": 0.025
+    "physics_dt": 0.1
   },
   "SpaceObj": {
     "space_obj_image_path": "assets/texture/space_obj.png"
