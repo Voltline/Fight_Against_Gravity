@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 from pygame import Vector2
 from math import sin
@@ -28,7 +30,9 @@ class Ship(SpaceObj):
         self.go_acc = settings.ship_go_acc  # 引擎的加速度
         self.turn_spd = settings.ship_turn_spd  # 转向的角速度
 
-        self.status_bar = StatusBar(settings, self.player_name)
+        #TODO:ll
+        if "--nogui" not in sys.argv:
+            self.status_bar = StatusBar(settings, self.player_name)
 
         # 主动状态
         self.is_go_ahead = False  # 是否在前进
@@ -95,11 +99,13 @@ class Ship(SpaceObj):
             self.image = None
 
     def display(self, camera):
-        if self.image is not None:
-            super().display(camera)
-        if self.is_alive:  # 还活着就更新并显示status_bar
-            self.status_bar.update_hp(self.hp)
-            camera.display_status_bar(self.status_bar, self.rect.center, self.rect0.width)
+        #TODO:ll
+        if "--nogui" not in sys.argv:
+            if self.image is not None:
+                super().display(camera)
+            if self.is_alive:  # 还活着就更新并显示status_bar
+                self.status_bar.update_hp(self.hp)
+                camera.display_status_bar(self.status_bar, self.rect.center, self.rect0.width)
 
     def fire_bullet(self, settings, bullets) -> Bullet:
         """
