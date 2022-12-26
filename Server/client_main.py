@@ -189,6 +189,7 @@ class ClientMain:
         }
         self.client.send(msg)
         recv = self.client.receive()
+
         if "status" in recv:
             if recv["status"] == "NAK":
                 return False
