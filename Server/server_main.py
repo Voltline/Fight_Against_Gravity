@@ -38,7 +38,8 @@ class ServerMain:
         self.room_list: {str: Room} = {}
         """"{"roomid": Room}"""
         self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat,
-                                              models=server_model, logpath=path, level=server_level, msg_len=self.msg_len)
+                                              models=server_model, logpath=path, level=server_level,
+                                              msg_len=self.msg_len)
         self.game_settings = game_settings
 
     @staticmethod
@@ -327,6 +328,7 @@ class ServerMain:
         self.server.send(messageAdr, sendMsg)
 
     def getroomlist(self, message):
+        """拆分消息实现"""
         messageAdr, messageMsg = message
         reslist = []
         for roomid, room in self.room_list.items():
@@ -346,8 +348,12 @@ class ServerMain:
                 }
             )
         sendMsg = messageMsg
-        sendMsg["roomlist"] = reslist[:]
+        sendMsg["length"] = len(reslist)
         self.server.send(messageAdr, sendMsg)
+        for i in range(len(reslist)):
+            sendMsg["id"] = i
+            sendMsg["roomlist"] = reslist[i]
+            self.server.send(messageAdr, sendMsg)
 
     def clear(self):
         """
