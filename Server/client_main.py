@@ -238,12 +238,28 @@ class ClientMain:
         return res
 
     def getroomlist(self):
+        """
+        拆分消息实现，
+        [{
+            "roomid": uuid(str),
+            "owner": 房主名(str),
+            "size": 玩家人数(int),
+            "started": 是否在游戏中(int:0/1),
+            "roommap" : 地图名(str),
+            "roomname" : 房间名(str)
+        }]
+        """
         msg = {
             "opt": OptType.getRoomlist,
         }
         self.client.send(msg)
         recv = self.client.receive()
-        return recv["roomlist"]
+        lenth = recv["length"]
+        reslist = []
+        for i in range(lenth):
+            recv = self.client.receive()
+            reslist.append(recv["roomlist"])
+        return reslist
 
     def ready(self):
         if self.roomid is None:

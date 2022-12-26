@@ -98,14 +98,16 @@ class OptType:
     """
     {
         "opt" : 15
-        "roomlist" : [{
+        "length" : int
+        "id" : int
+        "roomlist" : {
             "roomid": uuid(str),
             "owner": 房主名(str),
             "size": 玩家人数(int),
             "started": 是否在游戏中(int:0/1),
             "roommap" : 地图名(str),
             "roomname" : 房间名(str)
-        }]
+        }
     }
     """
     startgame = 16
