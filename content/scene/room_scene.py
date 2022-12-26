@@ -57,6 +57,8 @@ class RoomScene(Scene):
                                    SceneFont.log_font)
         self.start_button = Button("start", self.start_is_clicked, r_rect, self.settings.btbg_light, 0,
                                    "开始游戏", SceneFont.log_font)
+        self.ready_button.add_img(self.settings.btbg_light_pressed)
+        self.start_button.add_img(self.settings.btbg_light_pressed)
         self.ready_button.is_show = self.ready_button.is_able = False
         self.start_button.is_show = self.start_button.is_able = False
         if self.is_owner:
@@ -66,6 +68,7 @@ class RoomScene(Scene):
 
         self.r_change_map_button = Button("changemap", self.change_map_clicked, pygame.Rect(100, 470, 200, 50),
                                           self.settings.btbg_light, 0, "更改地图", SceneFont.log_font)
+        self.r_change_map_button.add_img(self.settings.btbg_light_pressed)
         self.r_change_map_button.r_xy = 0.1, 1 / 10 * 7
         self.r_roommap_button = Button("roommap", lambda: 1, pygame.Rect(100, 240, 200, 200),
                                        self.path + "/assets/texture/thumbnail/" + self.roommap + ".png", 0, "",
@@ -73,15 +76,19 @@ class RoomScene(Scene):
         self.r_roommap_button.r_xy = 0.1, 1 / 10 * 2.8
         self.r_change_name_button = Button("changename", self.change_name_clicked, pygame.Rect(100, 570, 200, 50),
                                            self.settings.btbg_light, 0, "更改房间名", SceneFont.log_font)
+        self.r_change_name_button.add_img(self.settings.btbg_light_pressed)
         self.r_change_name_button.r_xy = 0.1, 1 / 10 * 8.55
         r_confirm_button = Button("changename", self.confirm_quit_is_clicked, pygame.Rect(0, 0, 100, 50),
                                   self.settings.btbg_light, 0, "确认", SceneFont.log_font)
+        r_confirm_button.add_img(self.settings.btbg_light_pressed)
         r_confirm_button.r_xy = 0.1, 0.55
         r_dconfirm_button = Button("changename", self.dconfirm_quit_is_clicked, pygame.Rect(0, 0, 100, 50),
                                    self.settings.btbg_light, 0, "取消", SceneFont.log_font)
+        r_dconfirm_button.add_img(self.settings.btbg_light_pressed)
         r_dconfirm_button.r_xy = 0.6, 0.55
         r_confirm_button_ = Button("changename", self.confirm__is_clicked, pygame.Rect(0, 0, 100, 50),
                                    self.settings.btbg_light, 0, "确认", SceneFont.log_font)
+        r_confirm_button_.add_img(self.settings.btbg_light_pressed)
         r_confirm_button_.r_xy = 0.4, 0.55
         self.buttons = [self.back, self.ready_button, self.start_button]
         self.room_buttons = [self.r_change_map_button, self.r_change_name_button]
