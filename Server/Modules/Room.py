@@ -54,12 +54,15 @@ class Room:
 
     def start(self):
         self.started = True
+        user_name_list = []
+        for user in self.userlist:
+            user_name_list.append(user.get_name())
         self.game = server_game.ServerGame(
             settings=self.game_settings,
             net=self.server_,
             room_id=self.roomid,
             map_name=self.roommap,
-            player_names=self.get_userlist()
+            player_names=user_name_list
         )
         thread = threading.Thread(target=self.game.main)
         thread.setDaemon(True)

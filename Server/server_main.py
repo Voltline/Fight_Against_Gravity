@@ -425,7 +425,7 @@ class ServerMain:
                     self.ready(message)
                 elif opt == OptType.changeroomname:
                     self.changeroomname(message)
-                elif 20 <= opt <= 30:
+                elif 27 <= opt <= 29:
                     room_id = messageMsg['args'][0]
                     room: Room = self.room_list[room_id]
                     room.release_message(message)
