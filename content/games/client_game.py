@@ -172,6 +172,7 @@ class ClientGame(OnlineGame):
         dead_bullets_msg = []
         for msg in self.net.get_message_list():
             opt = msg['opt']
+            tick = 0
             if 'time' in msg:
                 time = msg['time']
             if 'tick' in msg:
