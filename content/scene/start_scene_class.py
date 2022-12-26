@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 from content.scene.local_game_scene import LocalGameScene
 from content.scene.scene_class import Scene
@@ -19,9 +21,10 @@ class StartScene(Scene):
         login_button = UIFunction.new_login_button(self)
         online_game_button = UIFunction.new_online_button(self)
         local_button = UIFunction.new_local_button(self)
+        exit_button = UIFunction.new_exit_button(self)
 
         """集合组件，loaded"""
-        self.loaded = {'img': start_title, 'label': [], 'box': None, 'button': [login_button, online_game_button, local_button, self.set_button], 'panel': []}
+        self.loaded = {'img': start_title, 'label': [], 'box': None, 'button': [login_button, online_game_button, local_button, self.set_button, exit_button], 'panel': []}
 
     def online_is_clicked(self):
         if PlayerInfo.player_name == '':
@@ -37,6 +40,10 @@ class StartScene(Scene):
 
     def local_is_clicked(self):
         self.loaded['panel'].append(UIFunction.new_select_map_panel(self))
+
+    def exit_is_clicked(self):
+        pygame.quit()
+        sys.exit()
 
     def select_map_button_clicked(self, name: str):
         self.loaded['panel'] = []

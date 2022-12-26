@@ -22,7 +22,7 @@ class UIFunction:
     def new_online_button(scene):
         """开始界面的在线游戏按钮"""
         start_font = SceneFont.start_font
-        start_rect = Rect(455, 250, 290, 100)
+        start_rect = Rect(455, 220, 290, 80)
         online_game_button = Button("onlinegame", scene.online_is_clicked, start_rect,
                                     scene.path + "assets\\Img\\start_unpressed.png", 1, '在线游戏', start_font)  # 用作画图
         online_game_button.add_img(scene.path + "assets\\Img\\start_press.png")
@@ -40,12 +40,18 @@ class UIFunction:
     @staticmethod
     def new_local_button(scene):
         """开始界面的本地登录按钮"""
-        local_rect = Rect(455, 420, 290, 100)
+        local_rect = Rect(455, 350, 290, 80)
         local_button = Button('local game', scene.local_is_clicked, local_rect,
                               scene.path + "assets\\Img\\start_unpressed.png", 0, '本地游戏', SceneFont.start_font)
         local_button.add_img(scene.path + "assets\\Img\\start_press.png")
         return local_button
 
+    @staticmethod
+    def new_exit_button(scene):
+        exit_rect = Rect(455, 610, 290, 80)
+        exit_button = Button('exit', scene.exit_is_clicked, exit_rect, scene.path + "assets\\Img\\start_unpressed.png",
+                                 0, '退出游戏', SceneFont.start_font)
+        return exit_button
     @staticmethod
     def new_reg_labels():
         """注册界面四个输入框之前的文本提示"""
@@ -77,7 +83,7 @@ class UIFunction:
         r_check_button = Button('check', scene.send_checkcode_clicked, check_rect,
                                 scene.settings.btbg_light, 0, '发送验证码', SceneFont.log_font)
         r_check_button.add_img(scene.settings.btbg_light_pressed)
-        buttons = [r_button, r_check_button, scene.back, scene.set_button]  # 包含了返回和设置
+        buttons = [r_button, r_check_button, scene.back]  # 包含了返回
         return buttons
 
     @staticmethod
