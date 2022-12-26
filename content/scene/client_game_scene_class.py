@@ -28,11 +28,11 @@ class ClientGameScene(Scene):
         self.pause_panel.is_show = self.pause_panel.is_able = False
         self.game.is_pause = False
 
-    @staticmethod
-    def quit_button_clicked():
-        ClientGameScene.client.leftroom()
-        ScenePlayer.pop()
-        ScenePlayer.pop()
+    # @staticmethod
+    # def quit_button_clicked():
+    #     ClientGameScene.client.leftroom()
+    #     ScenePlayer.pop()
+    #     ScenePlayer.pop()
 
     def show(self):
         self.draw_elements()

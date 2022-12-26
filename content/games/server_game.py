@@ -40,22 +40,22 @@ class ServerGame(OnlineGame):
         self.sended_tick = 20 * self.physics_dt
 
     def get_start_time(self) -> float:
-        print('开始发送游戏开始时间')
-        start_time = gf.get_time()+3.5
-        time.sleep(0.5)
+        start_time = gf.get_time()+4
         self.send_start_game_time(start_time)
-        print('游戏开始时间发送成功')
         return start_time
 
     def send_start_game_time(self, start_time):
         """向所有玩家广播游戏开始时间"""
+        print('开始发送游戏开始时间')
         msg = {
             'opt': OptType.ServerStartGameTime,
             'time': start_time,
+            'tick': 0,
             'args': [self.room_id],
             'kwargs': {}
         }
         self.send_all(msg)
+        print('游戏开始时间发送成功')
 
     def send_all(self, msg: dict):
         """向所有玩家广播msg"""
