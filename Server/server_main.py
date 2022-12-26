@@ -1,3 +1,5 @@
+import sys
+
 from Server.Modules import OptType, safeclient, safeserver
 from Server.Modules.Flogger import Flogger
 from Server.Modules.User import User
@@ -25,6 +27,7 @@ class ServerMain:
         server_level = Flogger.L_INFO
         if _debug_:
             self.absolute_setting_path = path + "settings/settings_local.json"
+        if ("--logger" in sys.argv) or _debug_:
             server_model = Flogger.FILE_AND_CONSOLE
             server_level = Flogger.L_DEBUG
         with open(self.absolute_setting_path, "r") as f:
@@ -286,6 +289,10 @@ class ServerMain:
             # 房间人数上限
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             return False
+        if room.get_started():
+            # 游戏已开始
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
         room.join_user(user)
         user.set_roomid(room.get_roomid())
         sendMsg = messageMsg
@@ -309,10 +316,10 @@ class ServerMain:
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             return False
 
+        self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         room.del_user(user)
         user.set_roomid(None)
         self.logger.info("[game info]user {} left the room {}".format(username, room.get_roomname()))
-        self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         return True
 
     def getroom(self, message):
@@ -425,7 +432,7 @@ class ServerMain:
                     self.ready(message)
                 elif opt == OptType.changeroomname:
                     self.changeroomname(message)
-                elif 27 <= opt <= 29:
+                elif 27 <= opt <= 30:
                     room_id = messageMsg['args'][0]
                     room: Room = self.room_list[room_id]
                     room.release_message(message)

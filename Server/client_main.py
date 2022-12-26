@@ -205,13 +205,16 @@ class ClientMain:
         }
         self.client.send(msg)
         recv = self.client.receive()
-        if recv["status"] == "NAK":
-            return False
-        elif recv["status"] == "ACK":
+        try:
+            if recv["status"] == "NAK":
+                return False
+            elif recv["status"] == "ACK":
+                return True
+            else:
+                pass
+        except Exception as err:
+            self.logger.error(str(err))
             return True
-        else:
-            pass
-
     def getroom(self):
         """
         {
