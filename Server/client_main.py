@@ -25,9 +25,10 @@ class ClientMain:
         self.reg_ip = settings["Client"]["Reg_IP"]
         self.reg_port = settings["Client"]["Reg_Port"]
         self.aes_key = settings["AES_Key"]
+        self.msg_len = settings["Client"]["msg_len"]
         try:
             self.client = safeclient.SocketClient(self.ip, self.port, heart_beat=self.heart_beat, models=client_models,
-                                                  logpath=path, level=client_level)
+                                                  logpath=path, level=client_level, msg_len=self.msg_len)
         except Exception as err:
             self.logger.error("客户端启动失败" + str(err))
             # exit(-1)
