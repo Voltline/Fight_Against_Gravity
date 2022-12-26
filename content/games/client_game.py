@@ -89,6 +89,7 @@ class ClientGame(OnlineGame):
 
     def get_server_start_game_time(self, room_id):
         """等待直到获取服务器开始游戏的时间"""
+        self.send_get_server_start_time_msg(room_id)
         msg = None
         while not msg:
             msg = self.net.receive()
@@ -99,10 +100,13 @@ class ClientGame(OnlineGame):
                 msg = None
         return msg['time']
 
-    def events_loop(self):
-        """更新消息的循环"""
-        self.camera.mouse_loc.update(self.mouse_loc)
-        super().events_loop()
+    def send_get_server_start_time_msg(self, room_id):
+        """发送向服务器请求开始游戏时间的消息"""
+        msg = {
+            'opt': OptType.ServerStartGameTime,
+            'args': [room_id]
+        }
+        self.net.send(msg)
 
     def deal_event(self, event):
         """处理消息"""
@@ -110,6 +114,11 @@ class ClientGame(OnlineGame):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 2:  # 是否按下鼠标中键
                 self.camera.change_mode()
+            elif event.button == 1:  # 按下鼠标左键
+                self.player_ship.is_fire = True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:  # 松开鼠标左键
+                self.player_ship.is_fire = False
         elif event.type == pygame.MOUSEMOTION:
             mouse_keys = pygame.mouse.get_pressed()
             if mouse_keys[2]:  # 如果鼠标右键被按下
@@ -224,6 +233,7 @@ class ClientGame(OnlineGame):
     def display(self):
         """更新屏幕"""
         surplus_ratio = self.surplus_dt / self.physics_dt
+        self.camera.mouse_loc.update(self.mouse_loc)
         gf.update_screen(self.settings, self.gm, self.camera,
                          self.traces, surplus_ratio, self.now_time)
 

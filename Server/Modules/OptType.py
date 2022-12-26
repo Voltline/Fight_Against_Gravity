@@ -223,6 +223,7 @@ class OptType:
     CheckClock = 29
 
     # 客户端接收，服务器真正开始游戏的时间
+    # 服务器接收，给客户端发送服务器开始游戏的时间
     # msg_args=[room_id]
     ServerStartGameTime = 30
 
