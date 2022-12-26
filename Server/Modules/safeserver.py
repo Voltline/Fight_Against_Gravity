@@ -182,13 +182,10 @@ class SocketServer:
                 # 粘连包切片
                 tmpmsg = self.decode(recv)
                 for message in tmpmsg:
-                    if len(message) <= 50:
-                        self.logger.debug("{recv %d lenth msg from%s}:%s" % (len(message), address, message))
-                    else:
-                        self.logger.debug("{recv %d lenth msg from%s}" % (len(message), address))
                     try:
                         message = json.loads(message)
                         if message["opt"] != 0:
+                            self.logger.debug("{recv %d lenth msg from%s}:%s" % (len(message), address, message))
                             # 0是heart beat 不存入消息队列
                             self.que.put((address, message))
                     except Exception as err:
