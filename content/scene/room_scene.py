@@ -17,7 +17,6 @@ class RoomScene(Scene):
         self.confirm_quit_bool = False
         self.last_update_time = 0
         self.roomname = "默认房间名"
-        # TODO:get信息
         self.roommap = "地月系统"
         self.is_owner = is_owner  # 是否是房主
         self.is_ready = False

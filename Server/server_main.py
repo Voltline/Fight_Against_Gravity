@@ -188,7 +188,10 @@ class ServerMain:
             return False
         room = self.room_list[roomid]
         room.changeroomname(messageMsg["new_roomname"])
+        self.logger.info(
+            "room {},id{},changed roomname to {}".format(room.get_roomname(), roomid, messageMsg["new_roomname"]))
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
+
     def deleteroom(self, message):
         """
         删除房间
@@ -226,6 +229,10 @@ class ServerMain:
         messageAdr, messageMsg = message
         roomid = messageMsg["roomid"]
         username = messageMsg["user"]
+        if roomid not in self.room_list:
+            """非法房间"""
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
         room = self.room_list[roomid]
         if room.get_owener().get_name() != username:
             # 非房主不允许开始游戏
@@ -236,6 +243,10 @@ class ServerMain:
             if not game_user.get_ready() and game_user != room.get_owener():
                 self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
                 return False
+        if room.get_started():
+            """游戏已经开始，不能重复开始"""
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
         self.logger.info("[game info]room ({}{}) start game".format(room.get_roomname(), room.get_roomid()))
         room.start()
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))

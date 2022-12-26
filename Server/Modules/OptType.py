@@ -152,6 +152,7 @@ class OptType:
             roomname : "str"
             owner: "str"
             roommap: "str"
+            is_run: bool
             userlist : {
                 user:ready
             }
