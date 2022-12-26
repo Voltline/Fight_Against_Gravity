@@ -334,10 +334,6 @@ class ServerMain:
             started = room.get_started()
             roommap = room.get_roommap()
             roomname = room.get_roomname()
-            if started:
-                started = "YES"
-            else:
-                started = "NO"
             reslist.append(
                 {
                     "roomid": roomid,
