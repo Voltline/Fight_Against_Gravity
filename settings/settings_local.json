@@ -5,7 +5,8 @@
     "Game_Local_IP": "127.0.0.1",
     "Game_Online_IP": "127.0.0.1",
     "Game_Port": 25555,
-    "heart_beat": 5
+    "heart_beat": 5,
+    "msg_len": 2048
   },
   "Email": {
     "Addr": "fag_identify_norep@yeah.net",
