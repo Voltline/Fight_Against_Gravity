@@ -231,10 +231,7 @@ class SocketServer:
             client = self.conn_poll[address]
             if type(message) == dict:
                 message = json.dumps(message)
-            if len(message) <= 50:
-                self.logger.debug("{send %d lenth msg to %s}:%s" % (len(message), address, message))
-            else:
-                self.logger.debug("{send %d lenth msg to %s}" % (len(message), address))
+            self.logger.debug("{send %d lenth msg to %s}:%s" % (len(message), address, message))
             message = self.encode(message)
             if self.password:
                 message = self.encrypt(message)
