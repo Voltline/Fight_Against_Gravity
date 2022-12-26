@@ -54,12 +54,16 @@ class Room:
 
     def start(self):
         self.started = True
+        user_adr = {}
+        for user in self.userlist:
+            user_adr[user.get_name()] = user.get_address()
         self.game = server_game.ServerGame(
             settings=self.game_settings,
             net=self.server_,
             room_id=self.roomid,
             map_name=self.roommap,
-            player_names=self.get_userlist()
+            player_names=self.get_userlist(),
+            addresses=user_adr
         )
         thread = threading.Thread(target=self.game.main)
         thread.setDaemon(True)
