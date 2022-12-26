@@ -189,11 +189,16 @@ class ClientMain:
         }
         self.client.send(msg)
         recv = self.client.receive()
-        if recv["status"] == "ACK":
-            self.roomid = None
+        try:
+            if recv["status"] == "NAK":
+                return False
+            elif recv["status"] == "ACK":
+                return True
+            else:
+                pass
+        except Exception as err:
+            self.logger.error(str(err))
             return True
-        elif recv["status"] == "NAK":
-            return False
 
     def startgame(self):
         if self.roomid is None:
