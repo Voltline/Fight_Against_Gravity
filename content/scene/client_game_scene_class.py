@@ -1,10 +1,7 @@
 import sys
 import pygame
 from content.scene.scene_class import Scene
-from content.UI.button_class import Button
-from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
-from content.UI.panel_class import Panel
 from content.games.client_game import ClientGame
 from content.UI.ui_function import UIFunction as UIF
 from content.online.player_info import PlayerInfo
@@ -30,6 +27,12 @@ class ClientGameScene(Scene):
     def continue_button_clicked(self):
         self.pause_panel.is_show = self.pause_panel.is_able = False
         self.game.is_pause = False
+
+    @staticmethod
+    def quit_button_clicked():
+        ClientGameScene.client.leftroom()
+        ScenePlayer.pop()
+        ScenePlayer.pop()
 
     def show(self):
         self.draw_elements()

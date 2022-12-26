@@ -171,28 +171,30 @@ class UIFunction:
         player_num：玩家数量
         is_play：是否游戏中
         """
-        width = scene.screen.get_width() - 25
+        screen_width = scene.screen.get_width()
+        width = screen_width - 25
         max_num = len(Map(map_name).ships_info)
         name_label = Label(0, 0, 100, name)
-        name_label.r_xy = (0.02, 0)
+        name_label.r_xy = 0.01*(screen_width-10)/width, 0
         owner_label = Label(0, 0, 100, owner)
-        owner_label.r_xy = (0.23, 0)
+        owner_label.r_xy = 0.21*(screen_width-10)/width, 0
         map_label = Label(0, 0, 100, map_name)
-        map_label.r_xy = (0.44, 0)
+        map_label.r_xy = 0.41*(screen_width-10)/width, 0
         player_num_label = Label(0, 0, 100, str(player_num)+'/'+str(max_num))
-        player_num_label.r_xy = (0.65, 0)
-        if is_play:
+        player_num_label.r_xy = 0.61*(screen_width-10)/width, 0
+        if is_play == 'YES':
             is_play = '游戏中'
         else:
             is_play = '房间中'
         is_play_label = Label(0, 0, 100, is_play)
-        is_play_label.r_xy = (0.86, 0.01)
+        is_play_label.r_xy = 0.81*(screen_width-10)/width, 0
         others = [name_label, owner_label, map_label, player_num_label, is_play_label]
 
         height = name_label.rect.height
         room_bar_rect = Rect(0, 0, width, height)
         room_bar_button = Button('join_room', lambda: scene.room_bar_clicked(room_id), room_bar_rect.copy(),
                                  scene.path+'assets/texture/void.png', 0)
+        room_bar_button.add_img(scene.path+'assets/texture/translucent20.png')
         room_bar_panel = Panel(room_bar_rect, '', 10, ctrlrs=[room_bar_button], others=others, border_radius=0)
         room_bar_panel.color = (60, 60, 60)
         return room_bar_panel

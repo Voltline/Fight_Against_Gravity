@@ -135,9 +135,6 @@ class ClientGame(OnlineGame):
         elif event.key == self.settings.ship1_k_fire:
             self.player_ship.is_fire = True
 
-        elif event.key == pygame.K_ESCAPE:  # TODO:暂定退出game按键为Esc
-            self.is_run = False
-
     def check_events_keyup(self, event):
         """处理松开按键"""
         if event.key == self.settings.ship1_k_go_ahead:

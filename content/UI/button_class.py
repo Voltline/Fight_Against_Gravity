@@ -121,26 +121,34 @@ class Button(Control):
 
     # update :按钮更新状态，并上传事件
     def update(self, event, pos_offset=(0, 0)) -> bool:
-        if self.check_click(event, pos_offset):  # 响应点击
-            print(self.name, "clicked")
-            self.clicked_func()
+        if self.update_mouse_click(event, pos_offset):
             return True
             # data = {"from_ui": self.name, "status": self.status}
             # ev = pygame.event.Event(self.event_id, data)
             # pygame.event.post(ev)
-        elif event.type == pygame.MOUSEMOTION:  # 响应鼠标移动
+        self.update_mouse_motion(event, pos_offset)
+        return False
+
+    def update_mouse_click(self, event, pos_offset=(0, 0)) -> bool:
+        if self.check_click(event, pos_offset):  # 响应点击
+            print(self.name, "clicked")
+            self.clicked_func()
+            return True
+        return False
+
+    def update_mouse_motion(self, event, pos_offset=(0, 0)):
+        if event.type == pygame.MOUSEMOTION:  # 响应鼠标移动
             if len(self.imgList) > 1:
                 if self.is_over(event.pos, pos_offset):
                     self.status = 1
                 else:
                     self.status = 0
-        return False
 
     def change_new_image(self, img_file):
-        """修改默认图片"""
-        self.__img = pygame.image.load(img_file)
-        self.__img = pygame.transform.smoothscale(self.__img, (self.rect.width, self.rect.height))
-        self.imgList[0] = self.__img
+            """修改默认图片"""
+            self.__img = pygame.image.load(img_file)
+            self.__img = pygame.transform.smoothscale(self.__img, (self.rect.width, self.rect.height))
+            self.imgList[0] = self.__img
 
 
 class CheckBox(Control):

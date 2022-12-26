@@ -84,7 +84,13 @@ class Panel(Control):
                         self.loaded['boxes'][i].active = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 return True
+        self.update_mouse_motion(event, pos_offset0)
         return False
+
+    def update_mouse_motion(self, event, pos_offset):
+        for bt in self.loaded['ctrlrs'][::-1]:
+            if hasattr(bt, 'update_mouse_motion'):
+                bt.update_mouse_motion(event, (self.rect[0]+pos_offset[0], self.rect[1]+pos_offset[1]))
 
     def deal_event_key(self, event):
         """处理键盘事件"""
