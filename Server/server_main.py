@@ -27,6 +27,8 @@ class ServerMain:
         server_level = Flogger.L_INFO
         if _debug_:
             self.absolute_setting_path = path + "settings/settings_local.json"
+        if "--sakura" in sys.argv:
+            self.absolute_setting_path = path + "settings/settings_sakura.json"
         if ("--logger" in sys.argv) or _debug_:
             server_model = Flogger.FILE_AND_CONSOLE
             server_level = Flogger.L_DEBUG
