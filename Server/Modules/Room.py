@@ -51,6 +51,9 @@ class Room:
         elif mopt == OptType.CheckClock:
             room_id, player_name = args
             self.game.send_check_clock_msg(player_name, address)
+        elif mopt == OptType.ServerStartGameTime:
+            if self.game.start_time:
+                self.game.send_start_game_time(self.game.start_time)
 
     def start(self):
         self.started = True

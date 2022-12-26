@@ -35,7 +35,6 @@ _debug_ = "--debug" in sys.argv
 s = client_main.ClientMain(path, _debug_=_debug_)
 if "--nogui" in sys.argv:
     s.start()
-print('111')
 sc = gf.init_pygame_window(settings)
 Scene.init(settings, sc, s)
 print(os.getcwd())

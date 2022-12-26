@@ -99,10 +99,10 @@ class Ship(SpaceObj):
             self.image = None
 
     def display(self, camera):
+        if self.image is not None:
+            super().display(camera)
         #TODO:ll
         if "--nogui" not in sys.argv:
-            if self.image is not None:
-                super().display(camera)
             if self.is_alive:  # 还活着就更新并显示status_bar
                 self.status_bar.update_hp(self.hp)
                 camera.display_status_bar(self.status_bar, self.rect.center, self.rect0.width)
