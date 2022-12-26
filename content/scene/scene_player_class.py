@@ -19,4 +19,3 @@ class ScenePlayer:
         while True:
             ScenePlayer.STACK[-1].update()
             ScenePlayer.STACK[-1].show()
-
