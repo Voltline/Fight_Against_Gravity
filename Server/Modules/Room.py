@@ -118,6 +118,7 @@ class Room:
             roomname : "str"
             owner: "str"
             roommap: "str"
+            is_run: bool
             userlist : {
                 user:ready
             }
@@ -132,6 +133,7 @@ class Room:
             "roomname": self.roomname,
             "owner": self.owner.get_name(),
             "roommap": self.roommap,
+            "is_run": self.started,
             "userlist": userlist
         }
         return res
