@@ -1,6 +1,6 @@
 import pygame
 from pygame import Vector2
-
+import sys
 from content.maps.map_obj import Map
 from content.space_objs.game_manager import GameManager
 import content.game_modules.game_function as gf
@@ -72,13 +72,14 @@ class FAGGame:
 
     def print_debug(self):
         """输出调试的信息"""
-        print('now:', self.now_time, '; tick:', self.now_tick)
-        print('fps:', 1/self.delta_t)
-        print('飞船信息:')
-        for ship in self.gm.ships:
-            print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length(), ship.make_ctrl_msg())
-        print('子弹总数:', len(self.gm.bullets))
-        print()
+        if "--nogui" not in sys.argv:
+            print('now:', self.now_time, '; tick:', self.now_tick)
+            print('fps:', 1/self.delta_t)
+            print('飞船信息:')
+            for ship in self.gm.ships:
+                print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length(), ship.make_ctrl_msg())
+            print('子弹总数:', len(self.gm.bullets))
+            print()
 
     def end(self):
         """主循环结束之后要做的事情"""
