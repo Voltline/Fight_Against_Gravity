@@ -9,6 +9,7 @@ from settings.all_settings import Settings
 settings = Settings(path)  # 初始化设置类
 _debug_ = "--debug" in sys.argv
 os.environ['SDL_VIDEODRIVER'] = 'dummy'
+os.environ['SDL_AUDIODRIVER'] = 'dsp'
 s = server_main.ServerMain(game_settings=settings, path=path, _debug_=_debug_)
 # try:
 s.start()
@@ -16,3 +17,4 @@ s.start()
 #     print(err)
 #     raise Exception(err)
 del os.environ['SDL_VIDEODRIVER']
+del os.environ['SDL_AUDIODRIVER']
