@@ -185,7 +185,7 @@ class SocketServer:
                     try:
                         message = json.loads(message)
                         if message["opt"] != 0:
-                            self.logger.debug("{recv %d lenth msg from%s}:%s" % (len(message), address, message))
+                            # self.logger.debug("{recv %d lenth msg from%s}:%s" % (len(message), address, message))
                             # 0是heart beat 不存入消息队列
                             self.que.put((address, message))
                     except Exception as err:

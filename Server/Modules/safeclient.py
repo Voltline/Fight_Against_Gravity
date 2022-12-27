@@ -126,7 +126,7 @@ class SocketClient:
                     try:
                         message = json.loads(item)
                         if message["opt"] != 0:
-                            self.logger.debug("receive:" + str(message) + ",length:" + str(len(str(message))))
+                            # self.logger.debug("receive:" + str(message) + ",length:" + str(len(str(message))))
                             self.que.put(message)
                     except Exception as err:
                         self.logger.warning("消息{}不是json格式报文,未解析".format(message) + str(err))
