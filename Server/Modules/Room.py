@@ -115,6 +115,11 @@ class Room:
         """
         if user in self.userlist:
             self.userlist.remove(user)
+        if self.owner not in self.userlist:
+            if len(self.userlist):
+                self.owner = self.userlist[0]
+            else:
+                self.owner = None
 
     def join_user(self, user: User):
         self.userlist.append(user)
