@@ -75,10 +75,23 @@ class ServerGame(OnlineGame):
     def send_msgs_physic_loop(self):
         """发送消息"""
         self.update_addresses()
-        self.send_all_ships_msg()
-        self.send_add_del_bullets_msg()
+        # self.send_all_ships_msg()
+        # self.send_add_del_bullets_msg()
+        self.send_all_objs_msg()
 
         # self.send_part_bullets_msg()
+
+    def send_all_objs_msg(self):
+        """广播all_ships和add_del_bullets"""
+        msg = {
+            'opt': OptType.AllObjs,
+            'tick': self.now_tick,
+            'args': [[self.gm.make_ships_msg(),
+                      self.gm.make_dead_players_name_msg()],
+                     [self.make_new_bullets_msg(),
+                      self.make_dead_bullets_msg()]]
+        }
+        self.send_all(msg)
 
     def send_add_del_bullets_msg(self):
         """广播new_bullets和dead_bullets"""
