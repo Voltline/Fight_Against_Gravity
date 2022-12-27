@@ -99,7 +99,7 @@ class SocketServer:
         while True:
             client, address = self.__socket.accept()
             self.logger.info("client {0} connected".format(address))
-            # client.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
+            client.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
             self.conn_poll.update({address: client})
             if self.heart_time > 0:
                 client.settimeout(self.heart_time)
@@ -137,8 +137,8 @@ class SocketServer:
     @staticmethod
     def encode(message: str):
         message = base64.b64encode(message.encode())
-        message = message.decode()
-        message = "-S-" + message + "-E-"
+        # message = message.decode()
+        message = b"-S-" + message + b"-E-"
         return message
 
     def message_handle(self, client: socket.socket, address):
@@ -234,9 +234,11 @@ class SocketServer:
             self.logger.debug("{send %d lenth msg to %s}:%s" % (len(message), address, message))
             message = self.encode(message)
             if self.password:
+                message = message.decode()
                 message = self.encrypt(message)
             else:
-                message = message.encode()
+                # message = message.encode()
+                pass
             client.sendall(message)
         except Exception as err:
             self.logger.error("[in send]" + str(err) + "发送失败")
