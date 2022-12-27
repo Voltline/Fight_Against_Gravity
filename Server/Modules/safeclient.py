@@ -54,7 +54,7 @@ class SocketClient:
             raise Exception("秘钥长度非16" + password)
         try:
             self.__socket.connect((self.__host, self.__port))
-            self.__socket.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
+            # self.__socket.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
         except Exception as err:
             self.logger.error(str(err) + "无法连接到服务器")
             raise Exception(str(err) + "无法连接到服务器")

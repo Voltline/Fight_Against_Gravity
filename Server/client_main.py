@@ -1,3 +1,5 @@
+import time
+
 from Server.Modules import OptType, safeclient
 from Server.Modules.Flogger import Flogger
 from Server.identify_client import IdentifyClient
@@ -327,6 +329,10 @@ class ClientMain:
         if not self.login(self.user, password):
             self.client.close()
             exit(-1)
+        # for i in range(1000):
+        #     st = time.time()
+        #     self.deleteroom()
+        #     print(time.time() - st)
         while True:
             ints = input()
             opt = -1
