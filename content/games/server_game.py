@@ -1,5 +1,6 @@
 import pygame
 import time
+from queue import Queue
 from content.games.online_game import OnlineGame
 import content.game_modules.game_function as gf
 from Server.Modules.OptType import OptType
@@ -12,8 +13,9 @@ class ServerGame(OnlineGame):
         self.new_bullets = dict()  # 上次发消息到这次发消息新增的子弹
         self.dead_bullets_id = set()  # 上次发消息到这次发消息减少的子弹
 
-        # self.camera = None  # TODO：调试完成后去掉screen和camera
+        # self.camera = None
         self.addresses = addresses  # {player_name: address}
+        self.quit_players = Queue()  # 退出房间的玩家在每轮循环结束时统一处理，防止addresses在使用时改变长度
 
         self.send_bullets_beg = 0  # 这次发送子弹消息的起始index
         self.send_bullets_num = 50  # 每次发送多少子弹的消息
@@ -72,6 +74,7 @@ class ServerGame(OnlineGame):
 
     def send_msgs_physic_loop(self):
         """发送消息"""
+        self.update_addresses()
         self.send_all_ships_msg()
         self.send_add_del_bullets_msg()
 
@@ -211,3 +214,14 @@ class ServerGame(OnlineGame):
             msg.append(bullet_id)
         self.dead_bullets_id.clear()
         return msg
+
+    def player_quit(self, player_name):
+        """给外部调用，记录退出房间的玩家"""
+        self.quit_players.put(player_name)
+
+    def update_addresses(self):
+        """把退出游戏的玩家从addresses中删除"""
+        while not self.quit_players.empty():
+            name = self.quit_players.get()
+            if name in self.addresses:
+                del self.addresses[name]
