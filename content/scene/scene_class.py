@@ -126,8 +126,7 @@ class Scene:
         """点击暂停panel中的设置按钮或是开始界面中的设置按钮"""
         pass
 
-    @staticmethod
-    def quit_button_clicked():
+    def quit_button_clicked(self):
         """点击暂停panel中的退出按钮"""
         ScenePlayer.pop()
 

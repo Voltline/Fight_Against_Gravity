@@ -28,9 +28,12 @@ class ClientGameScene(Scene):
         self.pause_panel.is_show = self.pause_panel.is_able = False
         self.game.is_pause = False
 
-    @staticmethod
-    def quit_button_clicked():
+    def quit_button_clicked(self):
+        while not self.client.client.que.empty():  # 清空消息队列
+
+            self.client.client.que.get()
         ClientGameScene.client.leftroom()
+
         ScenePlayer.pop()
         ScenePlayer.pop()
 
