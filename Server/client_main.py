@@ -133,6 +133,8 @@ class ClientMain:
         }
         self.client.send(msg)
         recv = self.client.receive()
+        while 'status' not in recv:
+            recv = self.client.receive()
         if recv["status"] == "NAK":
             return False
         elif recv["status"] == "ACK":
@@ -168,6 +170,8 @@ class ClientMain:
         }
         self.client.send(msg)
         recv = self.client.receive()
+        while 'status' not in recv:
+            recv = self.client.receive()
         if recv["status"] == "ACK":
             self.roomid = recv["roomid"]
             return True
