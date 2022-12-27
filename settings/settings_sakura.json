@@ -1,0 +1,19 @@
+{
+  "Client": {
+    "Reg_IP": "124.223.215.89",
+    "Reg_Port": 25555,
+    "Game_Local_IP": "127.0.0.1",
+    "Game_Online_IP": "43.249.193.233",
+    "Game_Local_Port": 25555,
+    "Game_Online_Port": 33669,
+    "heart_beat": 5,
+    "msg_len": 2048
+  },
+  "Email": {
+    "Addr": "fag_identify_norep@yeah.net",
+    "Password": "",
+    "SMTP_Server": "smtp.yeah.net",
+    "SMTP_Port": 465
+  },
+  "AES_Key": "I4YYTad9pvg2Wg9W"
+}

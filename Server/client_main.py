@@ -1,6 +1,7 @@
 from Server.Modules import OptType, safeclient
 from Server.Modules.Flogger import Flogger
 from Server.identify_client import IdentifyClient
+import sys
 import json
 
 OptType = OptType.OptType
@@ -17,10 +18,12 @@ class ClientMain:
             self.absolute_setting_path = path + "settings/settings_local.json"
             client_models = Flogger.FILE_AND_CONSOLE
             client_level = Flogger.L_DEBUG
+        if "--sakura" in sys.argv:
+            self.absolute_setting_path = path + "settings/settings_sakura.json"
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         self.ip = settings["Client"]["Game_Online_IP"]
-        self.port = settings["Client"]["Game_Port"]
+        self.port = settings["Client"]["Game_Online_Port"]
         self.heart_beat = settings["Client"]["heart_beat"]
         self.reg_ip = settings["Client"]["Reg_IP"]
         self.reg_port = settings["Client"]["Reg_Port"]
@@ -189,6 +192,7 @@ class ClientMain:
         }
         self.client.send(msg)
         recv = self.client.receive()
+
         if "status" in recv:
             if recv["status"] == "NAK":
                 return False
