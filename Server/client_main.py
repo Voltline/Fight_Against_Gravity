@@ -23,7 +23,10 @@ class ClientMain:
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         self.ip = settings["Client"]["Game_Online_IP"]
-        self.port = settings["Client"]["Game_Online_Port"]
+        if "--sakura" in sys.argv:
+            self.port = settings["Client"]["Game_Online_Port"]
+        else:
+            self.port = settings["Client"]["Game_Port"]
         self.heart_beat = settings["Client"]["heart_beat"]
         self.reg_ip = settings["Client"]["Reg_IP"]
         self.reg_port = settings["Client"]["Reg_Port"]
