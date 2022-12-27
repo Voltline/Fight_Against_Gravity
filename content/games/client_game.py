@@ -185,6 +185,14 @@ class ClientGame(OnlineGame):
             print(tick, self.now_tick)
             if tick > self.now_tick:  # 如果消息过新就塞回消息队列
                 self.net.que.put(msg)
+            elif opt == OptType.AllObjs:
+                if not all_ships_msg or all_ships_msg_tick < tick:
+                    all_ships_msg_tick = tick
+                    all_ships_msg = args[0]
+                new_bullets_msg_tick = tick
+                new_bullets_msg, dead_bullets_msg = args[1]
+                self.add_bullets(new_bullets_msg, new_bullets_msg_tick)
+                self.del_bullets(dead_bullets_msg)
             elif opt == OptType.AllShips:
                 if not all_ships_msg or all_ships_msg_tick < tick:
                     all_ships_msg_tick = tick
@@ -194,11 +202,10 @@ class ClientGame(OnlineGame):
                     bullets_msg_tick = tick
                     bullets_msg = args
             elif opt == OptType.AddDelBullets:
-                if not new_bullets_msg or new_bullets_msg_tick < tick:
-                    new_bullets_msg_tick = tick
-                    new_bullets_msg, dead_bullets_msg = args
-                    self.add_bullets(new_bullets_msg, new_bullets_msg_tick)
-                    self.del_bullets(dead_bullets_msg)
+                new_bullets_msg_tick = tick
+                new_bullets_msg, dead_bullets_msg = args
+                self.add_bullets(new_bullets_msg, new_bullets_msg_tick)
+                self.del_bullets(dead_bullets_msg)
 
         if all_ships_msg:
             self.ping_ms = (self.now_tick-all_ships_msg_tick)*self.physics_dt*1000

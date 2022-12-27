@@ -203,7 +203,7 @@ class OptType:
     AddDelBullets = 24
 
     # 客户端接收信息：所有objs信息
-    # msg_args=[planets_msg,[ships_msg, dead_players_name],bullets_msg]
+    # msg_args=[[ships_msg, dead_players_name],[new_bullets_msg, dead_bullets_msg]]
     AllObjs = 25
 
     # 服务端接收信息：开始游戏
