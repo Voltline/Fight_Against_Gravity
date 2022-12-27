@@ -58,7 +58,7 @@ class FAGGame:
         while self.is_run:
             if self.now_time - printed_time > 1:  # 每1秒输出一次fps等信息
                 printed_time = self.now_time
-                self.print_debug()
+                # self.print_debug()
             self.main_update()
 
     def main_update(self):
@@ -72,14 +72,13 @@ class FAGGame:
 
     def print_debug(self):
         """输出调试的信息"""
-        if "--nogui" not in sys.argv:
-            print('now:', self.now_time, '; tick:', self.now_tick)
-            print('fps:', 1/self.delta_t)
-            print('飞船信息:')
-            for ship in self.gm.ships:
-                print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length(), ship.make_ctrl_msg())
-            print('子弹总数:', len(self.gm.bullets))
-            print()
+        print('now:', self.now_time, '; tick:', self.now_tick)
+        print('fps:', 1/self.delta_t)
+        print('飞船信息:')
+        for ship in self.gm.ships:
+            print('\t', ship.player_name, ':', ship.hp, ship.loc, ship.spd.length(), ship.make_ctrl_msg())
+        print('子弹总数:', len(self.gm.bullets))
+        print()
 
     def end(self):
         """主循环结束之后要做的事情"""

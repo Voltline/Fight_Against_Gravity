@@ -1,5 +1,7 @@
 import sys
 
+import pygame
+
 from Server.Modules import OptType, safeclient, safeserver
 from Server.Modules.Flogger import Flogger
 from Server.Modules.User import User
@@ -403,8 +405,11 @@ class ServerMain:
 
     def start(self):
         self.logger.critical("[game info] server start")
+        pygame.init()
+        clock = pygame.time.Clock()
         while True:
             # 处理消息队列
+            clock.tick(1/self.game_settings.physics_dt)
             messages = self.server.get_message()
             for message in messages:
                 self.logger.debug("[debug info]message" + str(message))

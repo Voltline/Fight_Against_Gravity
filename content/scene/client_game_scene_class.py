@@ -1,4 +1,6 @@
 import sys
+import time
+
 import pygame
 from content.scene.scene_class import Scene
 from content.scene.scene_player_class import ScenePlayer
@@ -29,10 +31,9 @@ class ClientGameScene(Scene):
         self.game.is_pause = False
 
     def quit_button_clicked(self):
-        while not self.client.client.que.empty():  # 清空消息队列
-
-            self.client.client.que.get()
         ClientGameScene.client.leftroom()
+        time.sleep(1)
+        self.client.client.get_message_list()
 
         ScenePlayer.pop()
         ScenePlayer.pop()

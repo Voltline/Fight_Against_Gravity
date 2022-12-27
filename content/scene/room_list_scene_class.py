@@ -24,11 +24,13 @@ class RoomListScene(Scene):
         refresh_button_rect = Rect(screen_rect.width-150, 30, 100, 35)
         self.refresh_button = Button('刷新', self.refresh_button_clicked, refresh_button_rect,
                                      self.settings.btbg_light, 0, '刷新', SceneFont.log_font)
+        self.refresh_button.add_img(self.settings.btbg_light_pressed)
         create_room_button_rect = Rect(0, 30, 100, 35)
         create_room_button_rect.centerx = screen_rect.centerx
 
         self.create_room_button = Button('创建房间', self.create_room_button_clicked, create_room_button_rect,
                                          self.settings.btbg_light, 0, '创建房间', SceneFont.log_font)
+        self.create_room_button.add_img(self.settings.btbg_light_pressed)
         self.all_room_list_panel = UIF.new_all_room_list_panel(self)
         self.join_fail_panel = UIF.new_join_fail_panel(self)
         self.loaded = {'img': None, 'label': [self.search_label], 'box': [self.search_box],
