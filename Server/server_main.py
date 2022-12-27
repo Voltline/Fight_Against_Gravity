@@ -314,11 +314,14 @@ class ServerMain:
         room = self.room_list[roomid]
         user = self.user_list[username]
         if user.get_name() == room.get_owener().get_name():
-            # 房主不允许离开
-            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            # 房主调用删除房间来离开
+            # self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            self.deleteroom(message)
             return False
 
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
+        if room.get_started():
+            room.game.player_quit(user.get_name())
         room.del_user(user)
         user.set_roomid(None)
         self.logger.info("[game info]user {} left the room {}".format(username, room.get_roomname()))
