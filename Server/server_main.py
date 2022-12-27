@@ -94,7 +94,7 @@ class ServerMain:
                 self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)):
             newUser = User(messageAdr, messageMsg["user"])
             self.user_list[messageMsg["user"]] = newUser
-            self.logger.info("[game info]user {} join the game".format(newUser.get_name()))
+            self.logger.info("[game info]user {},ip{},join the game".format(newUser.get_name(), str(messageAdr)))
             self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         else:
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
