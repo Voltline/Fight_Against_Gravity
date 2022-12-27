@@ -447,8 +447,9 @@ class ServerMain:
                     self.changeroomname(message)
                 elif 27 <= opt <= 30:
                     room_id = messageMsg['args'][0]
-                    room: Room = self.room_list[room_id]
-                    room.release_message(message)
+                    if room_id in self.room_list:
+                        room: Room = self.room_list[room_id]
+                        room.release_message(message)
                 else:
                     self.logger.warning("unexpected opt" + str(message))
             self.clear()
