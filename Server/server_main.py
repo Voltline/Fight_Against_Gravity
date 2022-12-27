@@ -35,7 +35,7 @@ class ServerMain:
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         ip = settings["Client"]["Game_Local_IP"]
-        port = settings["Client"]["Game_Port"]
+        port = settings["Client"]["Game_Local_Port"]
         heart_beat = settings["Client"]["heart_beat"]
         self.msg_len = settings["Client"]["msg_len"]
         self.user_list: {str: User} = {}
