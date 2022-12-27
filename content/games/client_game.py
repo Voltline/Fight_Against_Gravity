@@ -182,7 +182,7 @@ class ClientGame(OnlineGame):
                 args = msg['args']
             if 'kwargs' in msg:
                 kwargs = msg['kwargs']
-            print(tick, self.now_tick)
+            # print(tick, self.now_tick)
             if tick > self.now_tick:  # 如果消息过新就塞回消息队列
                 self.net.que.put(msg)
             elif opt == OptType.AllShips:
