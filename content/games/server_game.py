@@ -9,7 +9,7 @@ from Server.Modules.OptType import OptType
 class ServerGame(OnlineGame):
     def __init__(self, settings, net, room_id, map_name, player_names, addresses: dict={}):
         super().__init__(settings, None, net, room_id, map_name, player_names)
-
+        self.max_fps = 1/self.settings.physics_dt
         self.new_bullets = dict()  # 上次发消息到这次发消息新增的子弹
         self.dead_bullets_id = set()  # 上次发消息到这次发消息减少的子弹
 
