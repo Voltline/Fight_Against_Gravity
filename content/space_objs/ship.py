@@ -19,9 +19,9 @@ class Ship(SpaceObj):
                  angle: float = 0, player_name='?Unknown Player?'):
         super().__init__(settings, 1 * loc0, 1 * spd0)
         self.image0 = self.image
-        self.explosion_images = self.__get_explosion_images__(settings)
         self.rect0 = self.image0.get_rect()  # 原始图片的rect
         self.angle = angle
+        self.angle0 = 0
         self.update_image()
         self.player_name = player_name  # 飞船所属玩家的名字
         self.hp = settings.ship_hp  # 生命值
@@ -32,6 +32,7 @@ class Ship(SpaceObj):
 
         if "--nogui" not in sys.argv:
             self.status_bar = StatusBar(settings, self.player_name)
+            self.explosion_images = self.__get_explosion_images__(settings)
 
         # 主动状态
         self.is_go_ahead = False  # 是否在前进
@@ -70,6 +71,7 @@ class Ship(SpaceObj):
 
     def update_angle(self, delta_t):
         """根据玩家操作更新飞船朝向的角度"""
+        self.angle0 = self.angle
         if self.is_turn_left:
             self.angle -= self.turn_spd * delta_t
         if self.is_turn_right:
@@ -83,16 +85,17 @@ class Ship(SpaceObj):
 
     def update_image(self):
         """根据飞船目前angle，旋转image0得到目前实际的image"""
-        self.image = pygame.transform.rotate(self.image0, -degrees(self.angle))
-        center = self.rect.center
-        self.rect = self.image.get_rect()
-        self.rect.center = center
-        self.mask = pygame.mask.from_surface(self.image)  # 更新mask
+        if self.angle != self.angle0:
+            self.image = pygame.transform.rotate(self.image0, -degrees(self.angle))
+            center = self.rect.center
+            self.rect = self.image.get_rect()
+            self.rect.center = center
+            self.mask = pygame.mask.from_surface(self.image)  # 更新mask
 
     def update_explosion_image(self, time):
         """死亡之后的短暂时间里更新爆炸的图片"""
         i = int((time - self.dead_time) / 0.05)
-        if i < 10:
+        if "--nogui" not in sys.argv and i < 10:
             self.image = self.explosion_images[i]
         else:
             self.image = None
@@ -127,8 +130,11 @@ class Ship(SpaceObj):
         self.is_alive = False
         self.hp = 0
         self.dead_time = dead_time
-        self.image = self.explosion_images[0]
-        self.rect = self.image.get_rect()
+        if "--nogui" not in sys.argv:
+            self.image = self.explosion_images[0]
+            self.rect = self.image.get_rect()
+        else:
+            self.image = None
         self.rect.center = self.loc
         ships.remove(self)
         dead_ships.add(self)
