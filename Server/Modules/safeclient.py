@@ -103,8 +103,8 @@ class SocketClient:
     @staticmethod
     def encode(message: str):
         message = base64.b64encode(message.encode())
-        message = message.decode()
-        message = "-S-" + message + "-E-"
+        # message = message.decode()
+        message = b"-S-" + message + b"-E-"
         return message
 
     def message_handler(self):
@@ -152,9 +152,11 @@ class SocketClient:
             message = json.dumps(message)
         message = self.encode(message)  # base64
         if self.password:
+            message = message.decode()
             message = self.encrypt(message)
         else:
-            message = message.encode()
+            # message = message.encode()
+            pass
         self.__socket.sendall(message)
 
     def receive(self):
