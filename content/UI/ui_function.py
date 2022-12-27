@@ -51,6 +51,7 @@ class UIFunction:
         exit_rect = Rect(455, 610, 290, 80)
         exit_button = Button('exit', scene.exit_is_clicked, exit_rect, scene.path + "assets\\Img\\start_unpressed.png",
                                  0, '退出游戏', SceneFont.start_font)
+        exit_button.add_img(scene.settings.btbg_light_pressed)
         return exit_button
     @staticmethod
     def new_reg_labels():
