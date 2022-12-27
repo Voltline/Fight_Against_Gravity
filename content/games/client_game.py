@@ -47,6 +47,7 @@ class ClientGame(OnlineGame):
         self.last_bullets_update_tick = 0
 
     def get_start_time(self) -> float:
+        print('开始获取服务器游戏开始时间')
         server_start_time = self.get_server_start_game_time(self.room_id)
         print('服务器游戏开始时间获取成功:', server_start_time)  # TODO: debug
         print(server_start_time - self.lag_time)
@@ -181,7 +182,7 @@ class ClientGame(OnlineGame):
                 args = msg['args']
             if 'kwargs' in msg:
                 kwargs = msg['kwargs']
-
+            print(tick, self.now_tick)
             if tick > self.now_tick:  # 如果消息过新就塞回消息队列
                 self.net.que.put(msg)
             elif opt == OptType.AllShips:

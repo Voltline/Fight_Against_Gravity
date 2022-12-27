@@ -23,12 +23,13 @@ class ServerGame(OnlineGame):
         gf.init_pygame_window()
         # self.camera = Camera(self.settings, self.screen)
 
-        print('开始校时')
-        # 校时并确定每个player对应的address
-        while len(self.addresses) != len(self.player_names):
-            # print(self.addresses)
-            pass
-        print('完成校时')
+        # print('开始校时')
+        # # 校时并确定每个player对应的address
+        # while len(self.addresses) != len(self.player_names):
+        #     # print(self.addresses)
+        #     pass
+        # print('完成校时')
+        time.sleep(1)
 
         super().main()
 
@@ -126,7 +127,7 @@ class ServerGame(OnlineGame):
 
     def send_check_clock_msg(self, player_name, addr):
         """对玩家发送校时消息"""
-        self.addresses[player_name] = addr
+        # self.addresses[player_name] = addr
 
         msg = {
             'opt': OptType.CheckClock,
