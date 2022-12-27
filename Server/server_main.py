@@ -31,7 +31,7 @@ class ServerMain:
             self.absolute_setting_path = path + "settings/settings_local.json"
         if "--sakura" in sys.argv:
             self.absolute_setting_path = path + "settings/settings_sakura.json"
-        if ("--logger" in sys.argv) or _debug_:
+        if "--logger" in sys.argv:
             server_model = Flogger.FILE_AND_CONSOLE
             server_level = Flogger.L_DEBUG
         with open(self.absolute_setting_path, "r") as f:
@@ -319,7 +319,10 @@ class ServerMain:
             # 房主调用删除房间来离开
             # self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
             self.deleteroom(message)
-            return False
+            if room.get_started():
+                room.game.player_quit(user.get_name())
+            self.logger.info("[game info]user {} left the room {}".format(username, room.get_roomname()))
+            return True
 
         self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         if room.get_started():
@@ -405,11 +408,11 @@ class ServerMain:
 
     def start(self):
         self.logger.critical("[game info] server start")
-        pygame.init()
-        clock = pygame.time.Clock()
+        # pygame.init()
+        # clock = pygame.time.Clock()
         while True:
             # 处理消息队列
-            clock.tick(1/self.game_settings.physics_dt)
+            # clock.tick(1/self.game_settings.physics_dt)
             messages = self.server.get_message()
             for message in messages:
                 self.logger.debug("[debug info]message" + str(message))

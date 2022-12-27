@@ -16,10 +16,11 @@ class ClientMain:
         client_level = Flogger.L_INFO
         if _debug_:
             self.absolute_setting_path = path + "settings/settings_local.json"
-            client_models = Flogger.FILE_AND_CONSOLE
-            client_level = Flogger.L_DEBUG
         if "--sakura" in sys.argv:
             self.absolute_setting_path = path + "settings/settings_sakura.json"
+        if "--logger" in sys.argv:
+            client_models = Flogger.FILE_AND_CONSOLE
+            client_level = Flogger.L_DEBUG
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         self.ip = settings["Client"]["Game_Online_IP"]
