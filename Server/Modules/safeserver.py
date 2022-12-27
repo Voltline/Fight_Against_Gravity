@@ -99,7 +99,7 @@ class SocketServer:
         while True:
             client, address = self.__socket.accept()
             self.logger.info("client {0} connected".format(address))
-            # client.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
+            client.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
             self.conn_poll.update({address: client})
             if self.heart_time > 0:
                 client.settimeout(self.heart_time)
