@@ -207,10 +207,12 @@ class ClientMain:
             if recv["status"] == "NAK":
                 return False
             elif recv["status"] == "ACK":
+                self.roomid = None
                 return True
             else:
                 pass
         else:
+            self.roomid = None
             return True
 
     def startgame(self):

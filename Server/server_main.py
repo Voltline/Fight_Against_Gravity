@@ -324,11 +324,11 @@ class ServerMain:
             self.logger.info("[game info]user {} left the room {}".format(username, room.get_roomname()))
             return True
 
-        self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         if room.get_started():
             room.game.player_quit(user.get_name())
         room.del_user(user)
         user.set_roomid(None)
+        self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         self.logger.info("[game info]user {} left the room {}".format(username, room.get_roomname()))
         return True
 
@@ -390,9 +390,6 @@ class ServerMain:
             roomid = user.get_roomid()
             if roomid in self.room_list:
                 room = self.room_list[roomid]
-                if room.get_owener() == user:
-                    useer_list = room.get_userlist()
-                    room.change_ownener(useer_list[0])
                 room.del_user(user)
             self.user_list.pop(item)
         to_del.clear()
