@@ -4,7 +4,8 @@
     "Reg_Port": 25555,
     "Game_Local_IP": "192.168.0.57",
     "Game_Online_IP": "124.70.162.60",
-    "Game_Port": 25555,
+    "Game_Local_Port": 25555,
+    "Game_Online_Port": 25555,
     "heart_beat": 5,
     "msg_len": 2048
   },
