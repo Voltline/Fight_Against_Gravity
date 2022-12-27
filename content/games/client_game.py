@@ -182,7 +182,7 @@ class ClientGame(OnlineGame):
                 args = msg['args']
             if 'kwargs' in msg:
                 kwargs = msg['kwargs']
-            print(tick, self.now_tick)
+            # print(tick, self.now_tick)
             if tick > self.now_tick:  # 如果消息过新就塞回消息队列
                 self.net.que.put(msg)
             elif opt == OptType.AllObjs:
@@ -308,7 +308,7 @@ class ClientGame(OnlineGame):
                     or not math.isclose(msg.angle, ships_angle[msg.player_name])\
                     or msg.hp != ships_hp[msg.player_name]\
                     or ships_ctrl_msg[msg.player_name] != msg.ctrl_msg:
-                ship = Ship(self.settings, player_name=msg.player_name)
+                ship = Ship(self.settings, player_name=msg.player_name, is_snapshot=True)
                 ship.update_by_msg(ship_msg, splanets)
                 problem_ships.append(ship)
         return problem_ships

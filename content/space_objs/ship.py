@@ -16,10 +16,17 @@ class Ship(SpaceObj):
     # TODO: 增加尾焰特效；增加玩家抬头信息
     def __init__(self, settings,
                  loc0: Vector2 = Vector2(0, 0), spd0: Vector2 = Vector2(0, 0),
-                 angle: float = 0, player_name='?Unknown Player?'):
+                 angle: float = 0, player_name='?Unknown Player?', is_snapshot=False):
         super().__init__(settings, 1 * loc0, 1 * spd0)
+        self.is_snapshot = is_snapshot
         self.image0 = self.image
         self.rect0 = self.image0.get_rect()  # 原始图片的rect
+        self.angles = 1440  # 总共有多少角度
+        if not self.is_snapshot:
+            self.images = [None]*self.angles
+            self.rects = [None]*self.angles
+            self.masks = [None]*self.angles
+            self.make_images_rects_masks()
         self.angle = angle
         self.angle0 = 0
         self.update_image()
@@ -30,7 +37,7 @@ class Ship(SpaceObj):
         self.go_acc = settings.ship_go_acc  # 引擎的加速度
         self.turn_spd = settings.ship_turn_spd  # 转向的角速度
 
-        if "--nogui" not in sys.argv:
+        if "--nogui" not in sys.argv and not self.is_snapshot:
             self.status_bar = StatusBar(settings, self.player_name)
             self.explosion_images = self.__get_explosion_images__(settings)
 
@@ -80,22 +87,39 @@ class Ship(SpaceObj):
     def move(self, delta_t, planets: pygame.sprite.Group):
         """重载，因为飞船的move还需要update_angle"""
         self.update_angle(delta_t)
-        self.update_image()
+        if not self.is_snapshot:
+            self.update_image()
         self.update_loc_spd(delta_t, planets)
 
     def update_image(self):
         """根据飞船目前angle，旋转image0得到目前实际的image"""
-        if self.angle != self.angle0:
-            self.image = pygame.transform.rotate(self.image0, -degrees(self.angle))
+        if self.angle != self.angle0:  # 这里用!=判断不是因为忘了float要用isclose
+            deg = -degrees(self.angle)
+            deg = ((deg % 360) + 360) % 360
+            i = int(deg/360*self.angles)
+            self.image = self.images[i]
             center = self.rect.center
-            self.rect = self.image.get_rect()
+            self.rect = self.rects[i].copy()
             self.rect.center = center
-            self.mask = pygame.mask.from_surface(self.image)  # 更新mask
+            self.mask = self.masks[i]
+            self.angle0 = self.angle
+
+    def make_image_rect_mask_i(self, i: int, n: int):
+        """制作第i个角度的image,rect,mask"""
+        image = pygame.transform.rotate(self.image0, 360*i/n)
+        rect = image.get_rect()
+        mask = pygame.mask.from_surface(image)
+        return image, rect, mask
+
+    def make_images_rects_masks(self):
+        for i in range(self.angles):
+            self.images[i], self.rects[i], self.masks[i] =\
+                self.make_image_rect_mask_i(i, self.angles)
 
     def update_explosion_image(self, time):
         """死亡之后的短暂时间里更新爆炸的图片"""
         i = int((time - self.dead_time) / 0.05)
-        if "--nogui" not in sys.argv and i < 10:
+        if "--nogui" not in sys.argv and i < 10 and not self.is_snapshot:
             self.image = self.explosion_images[i]
         else:
             self.image = None
@@ -103,7 +127,7 @@ class Ship(SpaceObj):
     def display(self, camera):
         if self.image is not None:
             super().display(camera)
-        if "--nogui" not in sys.argv:
+        if "--nogui" not in sys.argv and not self.is_snapshot:
             if self.is_alive:  # 还活着就更新并显示status_bar
                 self.status_bar.update_hp(self.hp)
                 camera.display_status_bar(self.status_bar, self.rect.center, self.rect0.width)
