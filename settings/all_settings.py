@@ -132,8 +132,7 @@ class Settings:
 
     def make_ship_explosion_image_path(self, index: int) -> str:
         """根据index返回爆炸的图片。index范围：[0,9]"""
-        s1, s2 = self.ship_explosion_image_path.split('.')
-        return s1 + str(index) + '.' + s2
+        return self.ship_explosion_image_path + str(index) + '.png'
 
     def change_window(self, new_width: int, new_height: int, new_fps: int):
         """修改分辨率
