@@ -92,15 +92,18 @@ class ServerMain:
         处理用户登录请求
         """
         messageAdr, messageMsg = message
-        if (messageMsg["user"] not in self.user_list) and (
-                self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)):
+        recv = False
+        try:
+            recv = self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)
+        except Exception as err:
+            self.logger.error("验证服已被关闭"+ str(err))
+        if (messageMsg["user"] not in self.user_list) and recv:
             newUser = User(messageAdr, messageMsg["user"])
             self.user_list[messageMsg["user"]] = newUser
             self.logger.info("[game info]user {},ip{},join the game".format(newUser.get_name(), str(messageAdr)))
             self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
         else:
             self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
-            # self.server.close(messageAdr)
 
     def logout(self, message):
         """
