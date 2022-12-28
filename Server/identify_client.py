@@ -28,7 +28,7 @@ class IdentifyClient:
             "user": username,
             "email": email
         }
-        self.__reg_client.send(json.dumps(msg_opt1))
+        self.__reg_client.send(msg_opt1)
         check_code = self.__reg_client.receive()
         if check_code != "DUPLICATE":
             return check_code
@@ -47,7 +47,7 @@ class IdentifyClient:
             "email": email,
             "password": password
         }
-        self.__reg_client.send(json.dumps(msg_opt2))
+        self.__reg_client.send(msg_opt2)
         status = self.__reg_client.receive()
         self.__reg_client.close()
         if status == "ERROR" or status == "DUPLICATE":
@@ -68,7 +68,7 @@ class IdentifyClient:
             "user": username,
             "password": password
         }
-        game_client.send(json.dumps(msg_opt))
+        game_client.send(msg_opt)
         status = game_client.receive()['status']
         game_client.close()
         if status == "ACK":
