@@ -24,7 +24,8 @@ class Scene:
         self.reminder_panel_rect_small = pygame.Rect(450, 300, 300, 100)
         self.menu_like_panel_rect = pygame.Rect(300, 200, 600, 400)
         set_rect = pygame.Rect(455, 480, 290, 80)
-        self.set_button = Button('setting', self.set_is_clicked, set_rect, self.path + "assets\\Img\\start_unpressed.png",
+        self.set_button = Button('setting', self.set_is_clicked, set_rect,
+                                 self.path + "assets\\Img\\start_unpressed.png",
                                  0, '设置', SceneFont.start_font)
         self.set_button.add_img(self.path + "assets\\Img\\start_press.png")
         self.switcher = 0
@@ -40,18 +41,26 @@ class Scene:
         # 确认修改键位P1
         set_boxes = []
 
-        for i in range(10):
+        for i in range(5, 10):
             box = InputBox(pygame.Rect(0, 0, 80, 35))
-            box.r_xy = (i % 5)/5, i / 5
+            box.r_xy = (i % 5) / 5, i / 5
             set_boxes.append(box)
+
+        is_full_screen = "窗口化" if Scene.settings.full_screen == 0 else "全屏幕"
+        set_full_screen_rect = pygame.Rect(250, 200, 150, 50)
+        set_full_screen_button = Button('全屏', Scene.settings.change_full_screen, set_full_screen_rect,
+                                        self.settings.btbg_light, 0, is_full_screen, SceneFont.log_font)
+        set_full_screen_button.add_img(self.settings.btbg_light_pressed)
         set_key_confirm_rect = pygame.Rect(450, 200, 150, 50)
         set_key_confirm_button = Button('确认修改', self.set_key_clicked, set_key_confirm_rect,
                                         self.settings.btbg_light, 0, "确认修改", SceneFont.log_font)
+        set_key_confirm_button.add_img(self.settings.btbg_light_pressed)
         self.close_button.r_xy = 0.95, 0.03
-        set_key_confirm_button.r_xy = 0.25, 0.4
+        set_key_confirm_button.r_xy = 0.4, 0.4
+        set_full_screen_button.r_xy = 0.4, 0.2
         self.set_panel = ScrollablePanel(self.settings, pygame.Rect(200, 50, 800, 700), '设置', 25,
-                               [self.close_button, set_key_confirm_button], set_boxes, [],
-                               text_pos=0)
+                                         [self.close_button, set_key_confirm_button, set_full_screen_button],
+                                         set_boxes, [], text_pos=0)
 
     def ban_inputbox(self):
         """禁用输入框"""

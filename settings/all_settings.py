@@ -20,6 +20,7 @@ class Settings:
         self.game_title = window["game_title"]
         self.max_fps = window["max_fps"]  # 最大帧率
         self.path = path
+        self.full_screen = window["full_screen"] # 是否全屏，1为是，0为否
         del window
 
         # 开场设置
@@ -147,8 +148,20 @@ class Settings:
             inf["Window"]["screen_width"] = new_width
             inf["Window"]["screen_height"] = new_height
             inf["Window"]["max_fps"] = new_fps
-        with open(self.path + "game_settings.json", "r") as g:
-            json.dump(inf, g)
+        with open(self.path + "game_settings.json", "w") as g:
+            json.dump(inf, g, indent = 0)
+
+    def change_full_screen(self):
+        """修改分辨率
+        :参数：new_full_screen 0为非全屏，1为全屏
+        :返回：无返回值
+        """
+        self.full_screen = self.full_screen ^ 1
+        with open(self.path + "settings/game_settings.json", "r") as f:
+            inf = json.load(f)
+            inf["Window"]["full_screen"] = self.full_screen
+        with open(self.path + "settings/game_settings.json", "w") as g:
+            json.dump(inf, g, indent = 1)
 
     def change_key(self, sector: str, target_key: str, new_key: pygame.key):
         """修改键位
@@ -166,6 +179,6 @@ class Settings:
         with open(self.path + "settings/game_settings.json", "r") as f:
             inf = json.load(f)
             inf[sector][target_key] = str(new_key)
-        with open(self.path + "settings/game_settings.json", "r") as g:
-            json.dump(inf, g)
+        with open(self.path + "settings/game_settings.json", "w") as g:
+            json.dump(inf, g, indent = 1)
         self.__init__(self.path)  # 重新调用初始化函数改变键位参数

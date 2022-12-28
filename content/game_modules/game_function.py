@@ -161,7 +161,11 @@ def init_pygame_window(settings=None) -> pygame.Surface:
     if settings is not None:
         icon = pygame.image.load(settings.icon_img_path)
         pygame.display.set_icon(icon)
-        screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))  # 设置窗口大小
+        if settings.full_screen == 1:
+            infoObj = pygame.display.Info()
+            screen = pygame.display.set_mode((infoObj.current_w, infoObj.current_h), pygame.FULLSCREEN)  # 设置窗口大小
+        else:
+            screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))
         pygame.display.set_caption(settings.game_title)  # 设置窗口标题
         return screen
     else:
