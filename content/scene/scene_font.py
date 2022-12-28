@@ -42,6 +42,13 @@ class SceneFont:
             'align': 0,
             'valign': 0
         }  # 白字用于黑底
+        SceneFont.white_font_msgbox = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 19),
+            'tc': (169, 183, 198),
+            'bc': None,
+            'align': 0,
+            'valign': 0
+        }  # 白字用于黑底
         SceneFont.menu_font = {
             'font': pygame.font.Font(scene_settings.font_path_normal, 58),
             'tc': (36, 41, 47),
