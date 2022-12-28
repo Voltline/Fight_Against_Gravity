@@ -15,9 +15,9 @@ class RegScene(Scene):
         self.id = 1
         self.check_code = ''
 
-        labels = UI.new_reg_labels()  # label，分别为邮箱，用户名，密码，验证码
+        labels = UI.new_reg_labels(self)  # label，分别为邮箱，用户名，密码，验证码
 
-        boxes = UI.new_reg_boxes()  # 输入框，分别为邮箱，用户名，密码，验证码
+        boxes = UI.new_reg_boxes(self)  # 输入框，分别为邮箱，用户名，密码，验证码
 
         buttons = UI.new_register_buttons(self)
         """显示验证码错误的panel"""
@@ -31,8 +31,12 @@ class RegScene(Scene):
         self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': []}
 
     def show(self):
+        self.width = self.screen.get_rect().width
+        self.height = self.screen.get_rect().height
         self.screen.fill((10, 10, 10))
-        pygame.draw.rect(self.screen, (46, 46, 46), (300, 150, 600, 400), border_radius=15)
+        pygame.draw.rect(self.screen, (46, 46, 46),
+                         (self.width*0.25, self.height*0.20, self.width*0.5, self.height*0.5),
+                         border_radius=15)
         self.draw_elements()
         pygame.display.flip()
 

@@ -11,7 +11,7 @@ class MenuScene(Scene):
         super().__init__()
         labels = []
         boxes = []
-        menu_online_rect = pygame.Rect(455, 360, 290, 80)
+        menu_online_rect = pygame.Rect(0.3792*self.width, 0.45*self.height, 0.242*self.width, 0.1*self.height)
         menu_online_button = Button('online game', self.online_is_clicked, menu_online_rect,
                                     self.settings.btbg_light, 0, '线上房间', SceneFont.menu_font)
         menu_online_button.add_img(self.settings.btbg_light_pressed)
@@ -20,7 +20,7 @@ class MenuScene(Scene):
 
     def show(self):
         self.screen.fill((10, 10, 10))
-        pygame.draw.rect(self.screen, (46, 46, 46), (300, 150, 600, 400), border_radius=15)
+        pygame.draw.rect(self.screen, (46, 46, 46), (0.25*self.width, 0.25*self.height, 0.5*self.width, 0.5*self.height), border_radius=15)
         self.draw_elements()
         pygame.display.flip()
 

@@ -22,7 +22,7 @@ class UIFunction:
     def new_online_button(scene):
         """开始界面的在线游戏按钮"""
         start_font = SceneFont.start_font
-        start_rect = Rect(455, 220, 290, 80)
+        start_rect = Rect(0.4*scene.width, 0.275*scene.height, 290, 80)
         online_game_button = Button("onlinegame", scene.online_is_clicked, start_rect,
                                     scene.path + "assets\\Img\\start_unpressed.png", 1, '在线游戏', start_font)  # 用作画图
         online_game_button.add_img(scene.path + "assets\\Img\\start_press.png")
@@ -31,7 +31,7 @@ class UIFunction:
     @staticmethod
     def new_login_button(scene):
         """开始界面的登录按钮"""
-        login_rect = Rect(1120, 20, 60, 40)
+        login_rect = Rect(0.933*scene.width, 0.025*scene.height, 60, 40)
         login_button = Button("login", scene.login_is_clicked, login_rect,
                               scene.settings.btbg_light, 0, '登录', SceneFont.log_font)
         login_button.add_img(scene.settings.btbg_light_pressed)
@@ -40,7 +40,7 @@ class UIFunction:
     @staticmethod
     def new_local_button(scene):
         """开始界面的本地登录按钮"""
-        local_rect = Rect(455, 350, 290, 80)
+        local_rect = Rect(0.4*scene.width, 0.4375*scene.height, 290, 80)
         local_button = Button('local game', scene.local_is_clicked, local_rect,
                               scene.path + "assets\\Img\\start_unpressed.png", 0, '本地游戏', SceneFont.start_font)
         local_button.add_img(scene.path + "assets\\Img\\start_press.png")
@@ -48,38 +48,39 @@ class UIFunction:
 
     @staticmethod
     def new_exit_button(scene):
-        exit_rect = Rect(455, 610, 290, 80)
+        exit_rect = Rect(0.4*scene.width, 0.7625*scene.height, 290, 80)
         exit_button = Button('exit', scene.exit_is_clicked, exit_rect, scene.path + "assets\\Img\\start_unpressed.png",
                                  0, '退出游戏', SceneFont.start_font)
+        exit_button.add_img(scene.path + "assets\\Img\\start_press.png")
         return exit_button
     @staticmethod
-    def new_reg_labels():
+    def new_reg_labels(scene):
         """注册界面四个输入框之前的文本提示"""
-        r_email_label = Label(315, 180, 98, "请输入您的邮箱", SceneFont.white_font)
-        r_id_label = Label(315, 260, 106, "请输入您的用户名", SceneFont.white_font)
-        r_password_label = Label(315, 340, 42, "设置您的密码", SceneFont.white_font)
-        r_check_label = Label(315, 420, 40, "验证码", SceneFont.white_font)
+        r_email_label = Label(scene.width*0.28, 0.225*scene.height, 98, "请输入您的邮箱", SceneFont.white_font)
+        r_id_label = Label(scene.width*0.28, 0.325*scene.height, 106, "请输入您的用户名", SceneFont.white_font)
+        r_password_label = Label(scene.width*0.28, 0.425*scene.height, 42, "设置您的密码", SceneFont.white_font)
+        r_check_label = Label(scene.width*0.28, 0.525*scene.height, 40, "验证码", SceneFont.white_font)
         labels = [r_email_label, r_id_label, r_password_label, r_check_label]
         return labels
 
     @staticmethod
-    def new_reg_boxes():
+    def new_reg_boxes(scene):
         """注册界面的四个输入框，分别是邮箱、用户名、密码、验证码"""
-        r_email_box = InputBox(Rect(450, 180, 350, 35))
-        r_id_box = InputBox(Rect(450, 260, 350, 35))
-        r_password_box = InputBox(Rect(450, 340, 350, 35))
-        r_check_box = InputBox(Rect(450, 420, 350, 35))
+        r_email_box = InputBox(Rect(0.42*scene.width, 0.225*scene.height, 0.292*scene.width, 0.04375*scene.height))
+        r_id_box = InputBox(Rect(0.42*scene.width, 0.325*scene.height, 0.292*scene.width, 0.04375*scene.height))
+        r_password_box = InputBox(Rect(0.42*scene.width, 0.425*scene.height, 0.292*scene.width, 0.04375*scene.height))
+        r_check_box = InputBox(Rect(0.42*scene.width, 0.525*scene.height, 0.292*scene.width, 0.04375*scene.height))
         boxes = [r_email_box, r_id_box, r_password_box, r_check_box]
         return boxes
 
     @staticmethod
     def new_register_buttons(scene):
         """注册界面的 确认注册 和 发送验证码 按钮"""
-        r_rect = Rect(650, 500, 100, 40)
+        r_rect = Rect(0.542*scene.width, 0.625*scene.height, 0.0833*scene.width, 0.05*scene.height)
         r_button = Button("r", scene.confirm_reg_clicked, r_rect,
                           scene.settings.btbg_light, 0, '确认注册', SceneFont.log_font)
         r_button.add_img(scene.settings.btbg_light_pressed)
-        check_rect = Rect(430, 500, 110, 40)
+        check_rect = Rect(0.3583*scene.width, 0.625*scene.height, 0.09167*scene.width, 0.05*scene.height)
         r_check_button = Button('check', scene.send_checkcode_clicked, check_rect,
                                 scene.settings.btbg_light, 0, '发送验证码', SceneFont.log_font)
         r_check_button.add_img(scene.settings.btbg_light_pressed)
@@ -250,7 +251,7 @@ class UIFunction:
     @staticmethod
     def new_pause_panel(scene) -> Panel:
         """用于游戏场景的暂停panel"""
-        button_rect = Rect(0, 0, 300, 65)
+        button_rect = Rect(0, 0, 0.25*scene.width, 0.08125*scene.height)
         continue_button = Button('继续游戏', scene.continue_button_clicked, button_rect.copy(),
                                  scene.settings.btbg_light, 0, '继续游戏', SceneFont.log_font)
         continue_button.add_img(scene.settings.btbg_light_pressed)
@@ -264,7 +265,7 @@ class UIFunction:
         quit_button.add_img(scene.settings.btbg_light_pressed)
         quit_button.r_xy = 0.25, 0.65
 
-        pause_panel_rect = Rect(300, 200, 600, 500)
+        pause_panel_rect = Rect(0.25*scene.width, 0.22*scene.height, 0.5*scene.width, 0.625*scene.height)
         pause_panel = Panel(pause_panel_rect, '已暂停', 23,
                             ctrlrs=[continue_button, settings_button, quit_button], text_pos=0)
         return pause_panel

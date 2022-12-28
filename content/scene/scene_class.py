@@ -18,12 +18,14 @@ class Scene:
     def __init__(self):
         self.loaded = {'img': None, 'label': [], 'box': [], 'button': [], 'panel': []}
         """全局组件，返回按钮、设置按钮、关闭按钮"""
+        self.width = Scene.screen.get_rect().width
+        self.height = Scene.screen.get_rect().height
         back_rect = pygame.Rect(20, 20, 45, 45)
         self.back = Button("back", self.back_is_clicked, back_rect, self.path + "assets\\Img\\back.png", 1)
         self.reminder_panel_rect = pygame.Rect(200, 300, 800, 200)
         self.reminder_panel_rect_small = pygame.Rect(450, 300, 300, 100)
         self.menu_like_panel_rect = pygame.Rect(300, 200, 600, 400)
-        set_rect = pygame.Rect(455, 480, 290, 80)
+        set_rect = pygame.Rect(0.4*self.width, 0.6*self.height, 290, 80)
         self.set_button = Button('setting', self.set_is_clicked, set_rect,
                                  self.path + "assets\\Img\\start_unpressed.png",
                                  0, '设置', SceneFont.start_font)
@@ -47,18 +49,19 @@ class Scene:
             set_boxes.append(box)
 
         is_full_screen = "窗口化" if Scene.settings.full_screen == 0 else "全屏幕"
-        set_full_screen_rect = pygame.Rect(250, 200, 150, 50)
+        set_full_screen_rect = pygame.Rect(0.2083*self.width, 0.25*self.height, 150, 50)
         set_full_screen_button = Button('全屏', Scene.settings.change_full_screen, set_full_screen_rect,
                                         self.settings.btbg_light, 0, is_full_screen, SceneFont.log_font)
         set_full_screen_button.add_img(self.settings.btbg_light_pressed)
-        set_key_confirm_rect = pygame.Rect(450, 200, 150, 50)
+        set_key_confirm_rect = pygame.Rect(0.375*self.width, 0.25*self.height, 150, 50)
         set_key_confirm_button = Button('确认修改', self.set_key_clicked, set_key_confirm_rect,
                                         self.settings.btbg_light, 0, "确认修改", SceneFont.log_font)
         set_key_confirm_button.add_img(self.settings.btbg_light_pressed)
         self.close_button.r_xy = 0.95, 0.03
-        set_key_confirm_button.r_xy = 0.4, 0.4
-        set_full_screen_button.r_xy = 0.4, 0.2
-        self.set_panel = ScrollablePanel(self.settings, pygame.Rect(200, 50, 800, 700), '设置', 25,
+        set_key_confirm_button.r_xy = 0.425, 0.4
+        set_full_screen_button.r_xy = 0.425, 0.2
+        self.set_panel = ScrollablePanel(self.settings,
+                                         pygame.Rect(0.1667*self.width, 0.0625*self.height, 0.667*self.width, 0.875*self.height), '设置', 25,
                                          [self.close_button, set_key_confirm_button, set_full_screen_button],
                                          set_boxes, [], text_pos=0)
 

@@ -22,25 +22,25 @@ class RoomScene(Scene):
         self.is_ready = False
         self.is_start = False
         # 左侧房间信息初始化
-        self.r_roomname_lable = Label(100, 160, 800, "房间名：" + self.roomname, SceneFont.white_font)
+        self.r_roomname_lable = Label(0.0833*self.width, 0.2*self.height, 800, "房间名：" + self.roomname, SceneFont.white_font)
         self.r_roomname_lable.r_xy = 0.1, 1 / 10 * 0.8
         """房间名"""
-        self.r_roommap_lable = Label(100, 200, 800, "房间地图：" + self.roommap, SceneFont.white_font)
+        self.r_roommap_lable = Label(0.0833*self.width, 0.25*self.height, 800, "房间地图：" + self.roommap, SceneFont.white_font)
         self.r_roommap_lable.r_xy = 0.1, 1 / 10 * 1.6
         """房间地图名"""
-        self.not_allready_lable = Label(570, 710, 800, "有玩家未准备", SceneFont.red_font)
+        self.not_allready_lable = Label(0.475*self.width, 0.8875*self.height, 800, "有玩家未准备", SceneFont.red_font)
         self.not_allready_lable.is_show = False
         self.user_name_lable = {}
         self.user_ready_lable = {}
         self.user_dready_lable = {}
         for i in range(8):
-            self.user_name_lable[i] = Label(170, 200 + 50 * i, 200, "玩家" + str(i), SceneFont.user_name_font)
+            self.user_name_lable[i] = Label(0.1417*self.width, 0.2*self.height + 0.0625*self.height * i, 200, "玩家" + str(i), SceneFont.user_name_font)
             self.user_name_lable[i].r_xy = 0.1, 0.05 + 1 / 10 * i
             self.user_name_lable[i].is_show = False
-            self.user_ready_lable[i] = Label(470, 200 + 50 * i, 200, "已准备", SceneFont.ready_font)
+            self.user_ready_lable[i] = Label(0.3917*self.width, 0.2*self.height + 0.0625*self.height * i, 200, "已准备", SceneFont.ready_font)
             self.user_ready_lable[i].r_xy = 0.6, 0.05 + 1 / 10 * i
             self.user_ready_lable[i].is_show = False
-            self.user_dready_lable[i] = Label(470, 200 + 50 * i, 200, "未准备", SceneFont.dready_font)
+            self.user_dready_lable[i] = Label(0.3917*self.width, 0.2*self.height + 0.0625*self.height * i, 200, "未准备", SceneFont.dready_font)
             self.user_dready_lable[i].r_xy = 0.6, 0.05 + 1 / 10 * i
             self.user_dready_lable[i].is_show = False
         self.labels = [self.not_allready_lable]
@@ -52,7 +52,7 @@ class RoomScene(Scene):
             self.user_lables.append(self.user_name_lable[i])
             self.user_lables.append(self.user_ready_lable[i])
             self.user_lables.append(self.user_dready_lable[i])
-        r_rect = pygame.Rect(600, 700, 300, 50)
+        r_rect = pygame.Rect(0.5*self.width, 0.895*self.height, 0.25*self.width, 0.0725*self.height)
         self.ready_button = Button("ready", self.ready_is_clicked, r_rect, self.settings.btbg_light, 0, "准备",
                                    SceneFont.log_font)
         self.start_button = Button("start", self.start_is_clicked, r_rect, self.settings.btbg_light, 0,
@@ -66,15 +66,16 @@ class RoomScene(Scene):
         else:
             self.ready_button.is_show = self.ready_button.is_able = True
 
-        self.r_change_map_button = Button("changemap", self.change_map_clicked, pygame.Rect(100, 470, 200, 50),
+        self.r_change_map_button = Button("changemap", self.change_map_clicked,
+                                          pygame.Rect(0.0833*self.width, 0.5875*self.height, 0.1667*self.width, 0.0625*self.height),
                                           self.settings.btbg_light, 0, "更改地图", SceneFont.log_font)
         self.r_change_map_button.add_img(self.settings.btbg_light_pressed)
         self.r_change_map_button.r_xy = 0.1, 1 / 10 * 7
-        self.r_roommap_button = Button("roommap", lambda: 1, pygame.Rect(100, 240, 200, 200),
+        self.r_roommap_button = Button("roommap", lambda: 1, pygame.Rect(0.0833*self.width, 0.2*self.height, 0.1667*self.width, 0.1667*self.width),
                                        self.path + "/assets/texture/thumbnail/" + self.roommap + ".png", 0, "",
                                        SceneFont.log_font)
-        self.r_roommap_button.r_xy = 0.1, 1 / 10 * 2.8
-        self.r_change_name_button = Button("changename", self.change_name_clicked, pygame.Rect(100, 570, 200, 50),
+        self.r_roommap_button.r_xy = 0.1, 1 / 10 * 2.6
+        self.r_change_name_button = Button("changename", self.change_name_clicked, pygame.Rect(0.0833*self.width, 0.7125*self.width, 0.1667*self.width, 0.0625*self.height),
                                            self.settings.btbg_light, 0, "更改房间名", SceneFont.log_font)
         self.r_change_name_button.add_img(self.settings.btbg_light_pressed)
         self.r_change_name_button.r_xy = 0.1, 1 / 10 * 8.55
@@ -93,13 +94,13 @@ class RoomScene(Scene):
         self.buttons = [self.back, self.ready_button, self.start_button]
         self.room_buttons = [self.r_change_map_button, self.r_change_name_button]
         self.room_lables.append(self.r_roommap_button)
-        user_panel = Panel(pygame.Rect(400, 150, 700, 500), "", 28, others=self.user_lables)
+        user_panel = Panel(pygame.Rect(0.333*self.width, 0.1275*self.height, 0.5833*self.width, 0.725*self.height), "", 28, others=self.user_lables)
         """用户信息"""
-        room_panel = Panel(pygame.Rect(80, 150, 250, 500), "", 28, others=self.room_lables, ctrlrs=self.room_buttons)
+        room_panel = Panel(pygame.Rect(0.0667*self.width, 0.1275*self.height, 0.2083*self.width, 0.725*self.height), "", 28, others=self.room_lables, ctrlrs=self.room_buttons)
         """房间信息"""
-        self.user_confirm_quit_panel = Panel(pygame.Rect(450, 300, 300, 180), "确认退出?", 28,
+        self.user_confirm_quit_panel = Panel(pygame.Rect(0.375*self.width, 0.375*self.height, 0.25*self.width, 0.225*self.height), "确认退出?", 28,
                                              ctrlrs=[r_confirm_button, r_dconfirm_button], text_pos=0.5)
-        self.owner_quit_warning_panel = Panel(pygame.Rect(450, 300, 400, 180), "有玩家未退出，无法退出房间", 25,
+        self.owner_quit_warning_panel = Panel(pygame.Rect(0.375*self.width, 0.375*self.height, 0.333*self.width, 0.225*self.height), "有玩家未退出，无法退出房间", 25,
                                               ctrlrs=[r_confirm_button_], text_pos=0.5)
         self.user_confirm_quit_panel.color = (13, 13, 13)
         self.owner_quit_warning_panel.color = (13, 13, 13)
