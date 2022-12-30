@@ -17,19 +17,19 @@ class LogInScene(Scene):
         super().__init__()
         self.id = 0
         self.bg = (10, 10, 10)
-        id_label = Label(0.275*self.width, 0.3125*self.height, 98, "账号(用户名)")
-        password_label = Label(0.275*self.width, 0.4375*self.height, 42, "密码")
-        id_box = InputBox(pygame.Rect(0.375*self.width, 0.3125*self.height, 0.271*self.width, 0.04375*self.height))  # 输入框的宽不由传入参数决定。
-        password_box = InputBox(pygame.Rect(0.375*self.width, 0.4375*self.height, 0.271*self.width, 0.04375*self.height),
+        id_label = Label(0.305*self.width, 0.3125*self.height, 98, "账号(用户名)")
+        password_label = Label(0.305*self.width, 0.4375*self.height, 42, "密码")
+        id_box = InputBox(pygame.Rect(0.41*self.width, 0.3125*self.height, 0.271*self.width, 0.04375*self.height))  # 输入框的宽不由传入参数决定。
+        password_box = InputBox(pygame.Rect(0.41*self.width, 0.4375*self.height, 0.271*self.width, 0.04375*self.height),
                                 is_pw=1)
         boxL = [id_box, password_box]
         """注册按钮"""
-        register_rect = pygame.Rect(0.5*self.width, 0.5625*self.height, 0.15*self.width, 0.05*self.height)
+        register_rect = pygame.Rect(0.5*self.width, 0.5725*self.height, 0.15*self.width, 0.05*self.height)
         register_button = Button("register", self.register_is_clicked, register_rect,
                                  self.settings.btbg_light, 0, '没有账号?注册', SceneFont.log_font)
         register_button.add_img(self.settings.btbg_light_pressed)
         """登录按钮"""
-        login_rect = pygame.Rect(0.375*self.width, 0.5625*self.height, 0.0583*self.width, 0.05*self.height)
+        login_rect = pygame.Rect(0.375*self.width, 0.5725*self.height, 0.0583*self.width, 0.05*self.height)
         login_button = Button("login", self.login_is_clicked, login_rect,
                               self.settings.btbg_light, 0, "登录", SceneFont.log_font)
         login_button.add_img(self.settings.btbg_light_pressed)

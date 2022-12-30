@@ -87,7 +87,7 @@ class InputBox:
         for i in range(len(self.text)):
             password += '*'
         password_surface = self.font.render(password, True, self.font_color)
-        width = max(325, password_surface.get_width() + 10)  # 当文字过长时，延长文本框
+        width = max(0.2708*screen.get_rect().width, password_surface.get_width() + 10)  # 当文字过长时，延长文本框
         self.rect.w = width
         pygame.draw.rect(screen, self.color_inside, self.rect, 0, border_radius=15)
         pygame.draw.rect(screen, self.color, self.rect, 4, border_radius=15)

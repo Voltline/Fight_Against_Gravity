@@ -48,9 +48,9 @@ class Scene:
             box.r_xy = (i % 5) / 5, i / 5
             set_boxes.append(box)
 
-        is_full_screen = "窗口化" if Scene.settings.full_screen == 0 else "全屏幕"
+        is_full_screen = "切换到全屏幕" if Scene.settings.full_screen == 0 else "切换到窗口化"
         set_full_screen_rect = pygame.Rect(0.2083*self.width, 0.25*self.height, 150, 50)
-        set_full_screen_button = Button('全屏', Scene.settings.change_full_screen, set_full_screen_rect,
+        set_full_screen_button = Button('全屏', Scene.set_full_screen, set_full_screen_rect,
                                         self.settings.btbg_light, 0, is_full_screen, SceneFont.log_font)
         set_full_screen_button.add_img(self.settings.btbg_light_pressed)
         set_key_confirm_rect = pygame.Rect(0.375*self.width, 0.25*self.height, 150, 50)
@@ -144,6 +144,12 @@ class Scene:
 
     def show(self):
         pass
+
+    @staticmethod
+    def set_full_screen():
+        Scene.settings.change_full_screen()
+        pygame.quit()
+        sys.exit()
 
     @staticmethod
     def init(settings, screen, client):
