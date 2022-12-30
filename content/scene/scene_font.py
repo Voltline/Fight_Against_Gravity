@@ -105,4 +105,18 @@ class SceneFont:
             'align': 0,
             'valign': 1
         }
+        SceneFont.set_title_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 25),
+            'tc': (255, 255, 255),
+            'bc': None,
+            'align': 0,
+            'valign': 1
+        }
+        SceneFont.set_label_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 21),
+            'tc': (169, 183, 198),
+            'bc': None,
+            'align': 0,
+            'valign': 1
+        }
 

@@ -61,20 +61,26 @@ class Settings:
 
         # Ship1
         ship1 = inf["Ship1"]
-        self.ship1_k_go_ahead = eval(ship1["k_go_ahead"])
-        self.ship1_k_go_back = eval(ship1["k_go_back"])
-        self.ship1_k_turn_left = eval(ship1["k_turn_left"])
-        self.ship1_k_turn_right = eval(ship1["k_turn_right"])
-        self.ship1_k_fire = eval(ship1["k_fire"])
+        self.ship1_k_go_ahead = ship1["k_go_ahead"]
+        self.ship1_k_go_back = ship1["k_go_back"]
+        self.ship1_k_turn_left = ship1["k_turn_left"]
+        self.ship1_k_turn_right = ship1["k_turn_right"]
+        self.ship1_k_fire = ship1["k_fire"]
+        self.ship1_keys = {"前进": self.ship1_k_go_ahead, "后退": self.ship1_k_go_back,
+                           "左转": self.ship1_k_turn_left, "右转": self.ship1_k_turn_right,
+                           "开火": self.ship1_k_fire}
         del ship1
 
         # Ship2
         ship2 = inf["Ship2"]
-        self.ship2_k_go_ahead = eval(ship2["k_go_ahead"])
-        self.ship2_k_go_back = eval(ship2["k_go_back"])
-        self.ship2_k_turn_left = eval(ship2["k_turn_left"])
-        self.ship2_k_turn_right = eval(ship2["k_turn_right"])
-        self.ship2_k_fire = eval(ship2["k_fire"])
+        self.ship2_k_go_ahead = ship2["k_go_ahead"]
+        self.ship2_k_go_back = ship2["k_go_back"]
+        self.ship2_k_turn_left = ship2["k_turn_left"]
+        self.ship2_k_turn_right = ship2["k_turn_right"]
+        self.ship2_k_fire = ship2["k_fire"]
+        self.ship2_keys = {"前进": self.ship2_k_go_ahead, "后退": self.ship2_k_go_back,
+                           "左转": self.ship2_k_turn_left, "右转": self.ship2_k_turn_right,
+                           "开火": self.ship2_k_fire}
         del ship2
 
         # Camera
@@ -82,7 +88,7 @@ class Settings:
         self.camera_move_speed = camera['camera_move_speed']  # 视角移动速度系数
         self.camera_zoom_speed = camera['camera_zoom_speed']  # 视角缩放速度系数
         self.camera_zoom_max = camera['camera_zoom_max']  # 视角缩放倍数上限
-        self.camera_k_change_mode = eval(camera['camera_k_change_mode'])  # 视角模式切换按键
+        self.camera_k_change_mode = camera['camera_k_change_mode']  # 视角模式切换按键
         # self.camera_k_move =
         del camera
 
@@ -149,7 +155,7 @@ class Settings:
             inf["Window"]["screen_height"] = new_height
             inf["Window"]["max_fps"] = new_fps
         with open(self.path + "game_settings.json", "w") as g:
-            json.dump(inf, g, indent = 0)
+            json.dump(inf, g, indent = 1)
 
     def change_full_screen(self):
         """修改分辨率
@@ -178,7 +184,7 @@ class Settings:
         """
         with open(self.path + "settings/game_settings.json", "r") as f:
             inf = json.load(f)
-            inf[sector][target_key] = str(new_key)
+            inf[sector][target_key] = new_key
         with open(self.path + "settings/game_settings.json", "w") as g:
             json.dump(inf, g, indent = 1)
         self.__init__(self.path)  # 重新调用初始化函数改变键位参数

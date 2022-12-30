@@ -22,7 +22,7 @@ class UIFunction:
     def new_online_button(scene):
         """开始界面的在线游戏按钮"""
         start_font = SceneFont.start_font
-        start_rect = Rect(0.4*scene.width, 0.275*scene.height, 290, 80)
+        start_rect = Rect(0.4 * scene.width, 0.275 * scene.height, 290, 80)
         online_game_button = Button("onlinegame", scene.online_is_clicked, start_rect,
                                     scene.path + "assets\\Img\\start_unpressed.png", 1, '在线游戏', start_font)  # 用作画图
         online_game_button.add_img(scene.path + "assets\\Img\\start_press.png")
@@ -31,7 +31,7 @@ class UIFunction:
     @staticmethod
     def new_login_button(scene):
         """开始界面的登录按钮"""
-        login_rect = Rect(0.933*scene.width, 0.025*scene.height, 60, 40)
+        login_rect = Rect(0.933 * scene.width, 0.025 * scene.height, 60, 40)
         login_button = Button("login", scene.login_is_clicked, login_rect,
                               scene.settings.btbg_light, 0, '登录', SceneFont.log_font)
         login_button.add_img(scene.settings.btbg_light_pressed)
@@ -40,7 +40,7 @@ class UIFunction:
     @staticmethod
     def new_local_button(scene):
         """开始界面的本地登录按钮"""
-        local_rect = Rect(0.4*scene.width, 0.4375*scene.height, 290, 80)
+        local_rect = Rect(0.4 * scene.width, 0.4375 * scene.height, 290, 80)
         local_button = Button('local game', scene.local_is_clicked, local_rect,
                               scene.path + "assets\\Img\\start_unpressed.png", 0, '本地游戏', SceneFont.start_font)
         local_button.add_img(scene.path + "assets\\Img\\start_press.png")
@@ -48,39 +48,43 @@ class UIFunction:
 
     @staticmethod
     def new_exit_button(scene):
-        exit_rect = Rect(0.4*scene.width, 0.7625*scene.height, 290, 80)
+        exit_rect = Rect(0.4 * scene.width, 0.7625 * scene.height, 290, 80)
         exit_button = Button('exit', scene.exit_is_clicked, exit_rect, scene.path + "assets\\Img\\start_unpressed.png",
-                                 0, '退出游戏', SceneFont.start_font)
+                             0, '退出游戏', SceneFont.start_font)
         exit_button.add_img(scene.path + "assets\\Img\\start_press.png")
         return exit_button
+
     @staticmethod
     def new_reg_labels(scene):
         """注册界面四个输入框之前的文本提示"""
-        r_email_label = Label(scene.width*0.28, 0.225*scene.height, 98, "请输入您的邮箱", SceneFont.white_font)
-        r_id_label = Label(scene.width*0.28, 0.325*scene.height, 106, "请输入您的用户名", SceneFont.white_font)
-        r_password_label = Label(scene.width*0.28, 0.425*scene.height, 42, "设置您的密码", SceneFont.white_font)
-        r_check_label = Label(scene.width*0.28, 0.525*scene.height, 40, "验证码", SceneFont.white_font)
+        r_email_label = Label(scene.width * 0.28, 0.225 * scene.height, 98, "请输入您的邮箱", SceneFont.white_font)
+        r_id_label = Label(scene.width * 0.28, 0.325 * scene.height, 106, "请输入您的用户名", SceneFont.white_font)
+        r_password_label = Label(scene.width * 0.28, 0.425 * scene.height, 42, "设置您的密码", SceneFont.white_font)
+        r_check_label = Label(scene.width * 0.28, 0.525 * scene.height, 40, "验证码", SceneFont.white_font)
         labels = [r_email_label, r_id_label, r_password_label, r_check_label]
         return labels
 
     @staticmethod
     def new_reg_boxes(scene):
         """注册界面的四个输入框，分别是邮箱、用户名、密码、验证码"""
-        r_email_box = InputBox(Rect(0.42*scene.width, 0.225*scene.height, 0.292*scene.width, 0.04375*scene.height))
-        r_id_box = InputBox(Rect(0.42*scene.width, 0.325*scene.height, 0.292*scene.width, 0.04375*scene.height))
-        r_password_box = InputBox(Rect(0.42*scene.width, 0.425*scene.height, 0.292*scene.width, 0.04375*scene.height))
-        r_check_box = InputBox(Rect(0.42*scene.width, 0.525*scene.height, 0.292*scene.width, 0.04375*scene.height))
+        r_email_box = InputBox(
+            Rect(0.42 * scene.width, 0.225 * scene.height, 0.292 * scene.width, 0.04375 * scene.height))
+        r_id_box = InputBox(Rect(0.42 * scene.width, 0.325 * scene.height, 0.292 * scene.width, 0.04375 * scene.height))
+        r_password_box = InputBox(
+            Rect(0.42 * scene.width, 0.425 * scene.height, 0.292 * scene.width, 0.04375 * scene.height))
+        r_check_box = InputBox(
+            Rect(0.42 * scene.width, 0.525 * scene.height, 0.292 * scene.width, 0.04375 * scene.height))
         boxes = [r_email_box, r_id_box, r_password_box, r_check_box]
         return boxes
 
     @staticmethod
     def new_register_buttons(scene):
         """注册界面的 确认注册 和 发送验证码 按钮"""
-        r_rect = Rect(0.542*scene.width, 0.625*scene.height, 0.0833*scene.width, 0.05*scene.height)
+        r_rect = Rect(0.542 * scene.width, 0.625 * scene.height, 0.0833 * scene.width, 0.05 * scene.height)
         r_button = Button("r", scene.confirm_reg_clicked, r_rect,
                           scene.settings.btbg_light, 0, '确认注册', SceneFont.log_font)
         r_button.add_img(scene.settings.btbg_light_pressed)
-        check_rect = Rect(0.3583*scene.width, 0.625*scene.height, 0.09167*scene.width, 0.05*scene.height)
+        check_rect = Rect(0.3583 * scene.width, 0.625 * scene.height, 0.09167 * scene.width, 0.05 * scene.height)
         r_check_button = Button('check', scene.send_checkcode_clicked, check_rect,
                                 scene.settings.btbg_light, 0, '发送验证码', SceneFont.log_font)
         r_check_button.add_img(scene.settings.btbg_light_pressed)
@@ -109,7 +113,7 @@ class UIFunction:
 
         close_rect = Rect(0, 0, 20, 20)
         close_button = Button('close', scene.close_is_clicked, close_rect,
-                                   scene.path + 'assets\\Img\\close_unclicked.png', 0)
+                              scene.path + 'assets\\Img\\close_unclicked.png', 0)
         close_button.r_xy = 0.968, 0.020
         close_button.add_img(scene.path + 'assets\\Img\\close_clicked.png')
 
@@ -137,7 +141,7 @@ class UIFunction:
         rooms_is_play_label.r_xy = (0.81, 0.01)
         others = [rooms_name_label, rooms_owner_label, rooms_map_label, rooms_player_num_label, rooms_is_play_label]
         ctrlrs = [UIFunction.new_room_list_panel(scene, [], '')]
-        all_room_list_panel_rect = Rect(5, 80, screen_rect.width-10, screen_rect.height-85)
+        all_room_list_panel_rect = Rect(5, 80, screen_rect.width - 10, screen_rect.height - 85)
         all_room_list_panel = Panel(all_room_list_panel_rect, '', 10, ctrlrs=ctrlrs, others=others, border_radius=10)
         return all_room_list_panel
 
@@ -151,15 +155,16 @@ class UIFunction:
         screen_rect = scene.screen.get_rect()
         r_y = 0
         ry = 0.06
-        room_list_panel_rect = Rect(0, 0, screen_rect.width-10, (1-ry)*(screen_rect.height-85)-10)
+        room_list_panel_rect = Rect(0, 0, screen_rect.width - 10, (1 - ry) * (screen_rect.height - 85) - 10)
         ctrlrs = []
         for room in room_list:
 
             if key in room['roomname']:
                 room_bar_panel = UIFunction.new_room_bar_panel(scene, room['roomid'],
-                    room['roomname'], room['owner'], room['roommap'], room['size'], room['started'])
+                                                               room['roomname'], room['owner'], room['roommap'],
+                                                               room['size'], room['started'])
                 room_bar_panel.r_xy = (0, r_y)
-                r_y += (5+room_bar_panel.rect.height)/room_list_panel_rect.height
+                r_y += (5 + room_bar_panel.rect.height) / room_list_panel_rect.height
                 ctrlrs.append(room_bar_panel)
 
         room_list_panel = ScrollablePanel(scene.settings, room_list_panel_rect, '', 10, ctrlrs=ctrlrs)
@@ -182,26 +187,26 @@ class UIFunction:
         width = screen_width - 25
         max_num = len(Map(map_name).ships_info)
         name_label = Label(0, 0, 100, name)
-        name_label.r_xy = 0.01*(screen_width-10)/width, 0
+        name_label.r_xy = 0.01 * (screen_width - 10) / width, 0
         owner_label = Label(0, 0, 100, owner)
-        owner_label.r_xy = 0.21*(screen_width-10)/width, 0
+        owner_label.r_xy = 0.21 * (screen_width - 10) / width, 0
         map_label = Label(0, 0, 100, map_name)
-        map_label.r_xy = 0.41*(screen_width-10)/width, 0
-        player_num_label = Label(0, 0, 100, str(player_num)+'/'+str(max_num))
-        player_num_label.r_xy = 0.61*(screen_width-10)/width, 0
+        map_label.r_xy = 0.41 * (screen_width - 10) / width, 0
+        player_num_label = Label(0, 0, 100, str(player_num) + '/' + str(max_num))
+        player_num_label.r_xy = 0.61 * (screen_width - 10) / width, 0
         if is_play == 'YES':
             is_play = '游戏中'
         else:
             is_play = '房间中'
         is_play_label = Label(0, 0, 100, is_play)
-        is_play_label.r_xy = 0.81*(screen_width-10)/width, 0
+        is_play_label.r_xy = 0.81 * (screen_width - 10) / width, 0
         others = [name_label, owner_label, map_label, player_num_label, is_play_label]
 
         height = name_label.rect.height
         room_bar_rect = Rect(0, 0, width, height)
         room_bar_button = Button('join_room', lambda: scene.room_bar_clicked(room_id), room_bar_rect.copy(),
-                                 scene.path+'assets/texture/void.png', 0)
-        room_bar_button.add_img(scene.path+'assets/texture/translucent20.png')
+                                 scene.path + 'assets/texture/void.png', 0)
+        room_bar_button.add_img(scene.path + 'assets/texture/translucent20.png')
         room_bar_panel = Panel(room_bar_rect, '', 10, ctrlrs=[room_bar_button], others=others, border_radius=0)
         room_bar_panel.color = (60, 60, 60)
         return room_bar_panel
@@ -243,7 +248,8 @@ class UIFunction:
         box.r_xy = (0.25, 0.3)
         change_room_name_panel_rect = Rect(0, 0, 400, 250)
         change_room_name_panel_rect.center = scene.screen.get_rect().center
-        change_room_name_panel = Panel(change_room_name_panel_rect, '', 23, ctrlrs=[confirm_button, cancel_button], boxes=[box], others=[hint_label])
+        change_room_name_panel = Panel(change_room_name_panel_rect, '', 23, ctrlrs=[confirm_button, cancel_button],
+                                       boxes=[box], others=[hint_label])
         change_room_name_panel.color = (80, 80, 80)
         change_room_name_panel.is_show = change_room_name_panel.is_able = False
         return change_room_name_panel
@@ -251,7 +257,7 @@ class UIFunction:
     @staticmethod
     def new_pause_panel(scene) -> Panel:
         """用于游戏场景的暂停panel"""
-        button_rect = Rect(0, 0, 0.25*scene.width, 0.08125*scene.height)
+        button_rect = Rect(0, 0, 0.25 * scene.width, 0.08125 * scene.height)
         continue_button = Button('继续游戏', scene.continue_button_clicked, button_rect.copy(),
                                  scene.settings.btbg_light, 0, '继续游戏', SceneFont.log_font)
         continue_button.add_img(scene.settings.btbg_light_pressed)
@@ -265,7 +271,71 @@ class UIFunction:
         quit_button.add_img(scene.settings.btbg_light_pressed)
         quit_button.r_xy = 0.25, 0.65
 
-        pause_panel_rect = Rect(0.25*scene.width, 0.22*scene.height, 0.5*scene.width, 0.625*scene.height)
+        pause_panel_rect = Rect(0.25 * scene.width, 0.22 * scene.height, 0.5 * scene.width, 0.625 * scene.height)
         pause_panel = Panel(pause_panel_rect, '已暂停', 23,
                             ctrlrs=[continue_button, settings_button, quit_button], text_pos=0)
         return pause_panel
+
+    @staticmethod
+    def new_setting_all_panel(scene) -> Panel:
+        width = scene.screen.get_rect().width
+        height = scene.screen.get_rect().height
+        close_rect = pygame.Rect(0, 0, 20, 20)
+        close_button = Button('close', scene.set_close_is_clicked, close_rect,
+                              scene.path + 'assets\\Img\\close_unclicked.png', 0)
+        close_button.add_img(scene.path + 'assets\\Img\\close_clicked.png')
+        close_button.r_xy = 0.95, 0.03
+
+        setting_all_rect = pygame.Rect(0.1667 * width, 0.0625 * height, 0.667 * width, 0.875 * height)
+        setting_all_panel = Panel(setting_all_rect, '设置', 25, [close_button], [], [], 0)
+        return setting_all_panel
+
+    @staticmethod
+    def new_setting_scrollpanel(scene) -> ScrollablePanel:
+        width = scene.screen.get_rect().width
+        height = scene.screen.get_rect().height
+        setting_scroll_rect = pygame.Rect(0.1697 * width, 0.1325 * height, 0.66 * width, 0.8 * height)
+
+        is_full_screen = "切换到全屏幕" if scene.settings.full_screen == 0 else "切换到窗口化"
+        set_full_screen_rect = pygame.Rect(0.2083 * width, 0.25 * height, 150, 50)
+        set_full_screen_button = Button('全屏', scene.set_full_screen, set_full_screen_rect,
+                                        scene.settings.btbg_light, 0, is_full_screen, SceneFont.log_font)
+        set_full_screen_button.add_img(scene.settings.btbg_light_pressed)
+        set_key_confirm_rect = pygame.Rect(0.375 * width, 0.25 * height, 150, 50)
+        set_key_confirm_button = Button('确认修改', scene.set_key_clicked, set_key_confirm_rect,
+                                        scene.settings.btbg_light, 0, "确认修改", SceneFont.log_font)
+        set_key_confirm_button.add_img(scene.settings.btbg_light_pressed)
+        set_key_confirm_button.r_xy = 0.225, 0.9
+        set_full_screen_button.r_xy = 0.625, 0.9
+
+        labels = [Label(0, 0, 25, "飞船1/在线游戏", SceneFont.set_title_font),
+                  Label(0, 0, 25, "飞船2", SceneFont.set_title_font)]
+        labels[0].r_xy = 0.15, 0.05
+        labels[1].r_xy = 0.68, 0.05
+
+        set_boxes = []
+        i = 0
+        for key, value in scene.settings.ship1_keys.items():
+            label = Label(0, 0, 20, key, SceneFont.set_label_font)
+            label.r_xy = 0.15, 0.15 + 0.15 * i
+            labels.append(label)
+            box = InputBox(pygame.Rect(0, 0, 40, 35), is_set=True)
+            box.r_xy = 0.25, 0.15 + 0.15 * i
+            box.text = " " + pygame.key.name(value).upper()
+            set_boxes.append(box)
+            i += 1
+
+        i = 0
+        for key, value in scene.settings.ship2_keys.items():
+            label = Label(0, 0, 20, key, SceneFont.set_label_font)
+            label.r_xy = 0.65, 0.15 + 0.15 * i
+            labels.append(label)
+            box = InputBox(pygame.Rect(0, 0, 40, 35), is_set=True)
+            box.r_xy = 0.75, 0.15 + 0.15 * i
+            box.text = " " + pygame.key.name(value).upper()
+            set_boxes.append(box)
+            i += 1
+
+        set_scroll_panel = ScrollablePanel(scene.settings, setting_scroll_rect, ' ', 25,
+                                           [set_key_confirm_button, set_full_screen_button], set_boxes, labels, text_pos=0)
+        return set_scroll_panel

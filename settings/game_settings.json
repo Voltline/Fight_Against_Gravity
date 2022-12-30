@@ -49,24 +49,24 @@
   "ship_turn_spd": 1.7
  },
  "Ship1": {
-  "k_go_ahead": "pygame.K_w",
-  "k_go_back": "pygame.K_s",
-  "k_turn_left": "pygame.K_a",
-  "k_turn_right": "pygame.K_d",
-  "k_fire": "pygame.K_e"
+  "k_go_ahead": 119,
+  "k_go_back": 115,
+  "k_turn_left": 97,
+  "k_turn_right": 100,
+  "k_fire": 101
  },
  "Ship2": {
-  "k_go_ahead": "pygame.K_i",
-  "k_go_back": "pygame.K_k",
-  "k_turn_left": "pygame.K_j",
-  "k_turn_right": "pygame.K_l",
-  "k_fire": "pygame.K_u"
+  "k_go_ahead": 105,
+  "k_go_back": 107,
+  "k_turn_left": 106,
+  "k_turn_right": 108,
+  "k_fire": 117
  },
  "Camera": {
   "camera_move_speed": -1,
   "camera_zoom_speed": 1.2,
   "camera_zoom_max": 5,
-  "camera_k_change_mode": "pygame.K_LCTRL"
+  "camera_k_change_mode": 1073742048
  },
  "Trace": {
   "trace_life_sec": 3,

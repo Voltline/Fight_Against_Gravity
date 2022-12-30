@@ -9,7 +9,7 @@ import platform
 
 
 class InputBox:
-    def __init__(self, rect: pygame.Rect, is_pw=0) -> None:
+    def __init__(self, rect: pygame.Rect, is_pw=0, is_set=False) -> None:
         """
         rect，传入矩形实体，传达输入框的位置和大小
         """
@@ -24,6 +24,7 @@ class InputBox:
         self.active = False
         self.text = ''
         self.done = False
+        self.is_set = is_set
 
         if hasattr(sys, 'frozen'):
             path = os.path.dirname(sys.executable) + '/'
@@ -47,23 +48,32 @@ class InputBox:
             # 键盘输入响应
             if self.active:
                 key_name = pygame.key.name(event.key)
-                print(key_name, event.mod)
-                if event.key == pygame.K_RETURN:
-                    print('*'+self.text+'*')
-                elif event.key == 118 and (event.mod == 4160 or event.mod == 4224):
-                    scrap_text = pygame.scrap.get(SCRAP_TEXT)
-                    if scrap_text:
-                        if 'Windows' in platform.platform():
-                            scrap_text = scrap_text.decode('gbk').strip('\x00')
-                        self.text = self.text + scrap_text
-                elif event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]
-                elif event.key == pygame.K_SPACE:
-                    pass
-                elif event.key == pygame.K_TAB:
-                    pass
+                print(key_name, event.key)
+                if not self.is_set:
+                    if event.key == pygame.K_RETURN:
+                        print('*' + self.text + '*')
+                    elif event.key == 118 and (event.mod == 4160 or event.mod == 4224):
+                        scrap_text = pygame.scrap.get(SCRAP_TEXT)
+                        if scrap_text:
+                            if 'Windows' in platform.platform():
+                                scrap_text = scrap_text.decode('gbk').strip('\x00')
+                            self.text = self.text + scrap_text
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.text = self.text[:-1]
+                    elif event.key == pygame.K_SPACE:
+                        pass
+                    elif event.key == pygame.K_TAB:
+                        pass
+                    elif event.key == pygame.K_ESCAPE:
+                        self.switch()
+                    else:
+                        self.text += event.unicode
                 else:
-                    self.text += event.unicode
+                    if event.key == pygame.K_ESCAPE:
+                        self.switch()
+                    else:
+                        self.text = " " + event.unicode.upper()
+                        self.switch()
 
     def render(self, screen: pygame.surface.Surface):
         if self.is_pw:
@@ -87,7 +97,7 @@ class InputBox:
         for i in range(len(self.text)):
             password += '*'
         password_surface = self.font.render(password, True, self.font_color)
-        width = max(0.2708*screen.get_rect().width, password_surface.get_width() + 10)  # 当文字过长时，延长文本框
+        width = max(0.2708 * screen.get_rect().width, password_surface.get_width() + 10)  # 当文字过长时，延长文本框
         self.rect.w = width
         pygame.draw.rect(screen, self.color_inside, self.rect, 0, border_radius=15)
         pygame.draw.rect(screen, self.color, self.rect, 4, border_radius=15)
@@ -99,7 +109,7 @@ class InputBox:
 
     def is_over(self, point, pos_offset=(0, 0)) -> bool:
         """检测鼠标位置是否在按钮上，并检测按钮是否可用"""
-        flag = self.rect.collidepoint(point[0]-pos_offset[0], point[1]-pos_offset[1])
+        flag = self.rect.collidepoint(point[0] - pos_offset[0], point[1] - pos_offset[1])
         return flag
 
     def check_click(self, event, pos_offset=(0, 0)):
