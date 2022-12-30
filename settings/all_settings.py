@@ -66,9 +66,9 @@ class Settings:
         self.ship1_k_turn_left = ship1["k_turn_left"]
         self.ship1_k_turn_right = ship1["k_turn_right"]
         self.ship1_k_fire = ship1["k_fire"]
-        self.ship1_keys = {"前进": self.ship1_k_go_ahead, "后退": self.ship1_k_go_back,
-                           "左转": self.ship1_k_turn_left, "右转": self.ship1_k_turn_right,
-                           "开火": self.ship1_k_fire}
+        self.ship1_keys = {"前进": ["k_go_ahead", self.ship1_k_go_ahead], "后退": ["k_go_back", self.ship1_k_go_back],
+                           "左转": ["k_turn_left", self.ship1_k_turn_left], "右转": ["k_turn_right", self.ship1_k_turn_right],
+                           "开火": ["k_fire", self.ship1_k_fire]}
         del ship1
 
         # Ship2
@@ -78,9 +78,9 @@ class Settings:
         self.ship2_k_turn_left = ship2["k_turn_left"]
         self.ship2_k_turn_right = ship2["k_turn_right"]
         self.ship2_k_fire = ship2["k_fire"]
-        self.ship2_keys = {"前进": self.ship2_k_go_ahead, "后退": self.ship2_k_go_back,
-                           "左转": self.ship2_k_turn_left, "右转": self.ship2_k_turn_right,
-                           "开火": self.ship2_k_fire}
+        self.ship2_keys = {"前进": ["k_go_ahead", self.ship2_k_go_ahead], "后退": ["k_go_back", self.ship2_k_go_back],
+                           "左转": ["k_turn_left", self.ship2_k_turn_left], "右转": ["k_turn_right", self.ship2_k_turn_right],
+                           "开火": ["k_fire", self.ship2_k_fire]}
         del ship2
 
         # Camera
@@ -169,22 +169,22 @@ class Settings:
         with open(self.path + "settings/game_settings.json", "w") as g:
             json.dump(inf, g, indent = 1)
 
-    def change_key(self, sector: str, target_key: str, new_key: pygame.key):
+    def change_key(self, sector: str, new_keys: list):
         """修改键位
         :参数：sector：修改的部分(Ship1/Ship2)
-              target_key：目标键位：{
-                "k_go_ahead": 前进,
-                "k_go_back": 后退,
-                "k_turn_left": 左转,
-                "k_turn_right": 右转,
-                "k_fire": 开火
-              }
-              new_key：新键位（pygame.key对象）
+              new_keys：键位列表：[
+                ["k_go_ahead", key_int],
+                ["k_go_back", key_int],
+                ["k_turn_left", key_int],
+                ["k_turn_right", key_int],
+                ["k_fire", key_int]
+              ]
         :返回：无返回值
         """
         with open(self.path + "settings/game_settings.json", "r") as f:
             inf = json.load(f)
-            inf[sector][target_key] = new_key
+            for item in new_keys:
+                inf[sector][item[0]] = item[1]
         with open(self.path + "settings/game_settings.json", "w") as g:
             json.dump(inf, g, indent = 1)
         self.__init__(self.path)  # 重新调用初始化函数改变键位参数

@@ -104,7 +104,40 @@ class Scene:
         self.loaded['panel'] = [self.set_out_panel, self.set_panel]
 
     def set_key_clicked(self):
-        pass
+        new_key_set = self.set_panel.loaded['boxes']
+        new_ship1_keys = Scene.settings.ship1_keys.copy()
+        for key in new_ship1_keys:
+            new_ship1_keys[key] = Scene.settings.ship1_keys[key].copy()
+        new_ship2_keys = Scene.settings.ship2_keys.copy()
+        for key in new_ship2_keys:
+            new_ship2_keys[key] = Scene.settings.ship2_keys[key].copy()
+        labels = ['前进', '后退', '左转', '右转', '开火']
+
+        all_keys = set()
+
+        cnt = 0
+
+        for box in new_key_set:
+            if cnt < 5:
+                new_ship1_keys[labels[cnt % 5]][1] = pygame.key.key_code(((box.text).replace(" ", "")).lower())
+                all_keys.add(new_ship1_keys[labels[cnt % 5]][1])
+            else:
+                new_ship2_keys[labels[cnt % 5]][1] = pygame.key.key_code(((box.text).replace(" ", "")).lower())
+                all_keys.add(new_ship2_keys[labels[cnt % 5]][1])
+            cnt += 1
+
+        if len(all_keys) == 10:
+            if new_ship1_keys != Scene.settings.ship1_keys:
+                Scene.settings.change_key("Ship1", list(new_ship1_keys.values()))
+            if new_ship2_keys != Scene.settings.ship2_keys:
+                Scene.settings.change_key("Ship2", list(new_ship1_keys.values()))
+        else:
+            print("不允许重复按键！")
+
+        UIF.update_key_board(self, self.set_panel.loaded['boxes'])
+
+        self.set_close_is_clicked()
+
 
     def close_is_clicked(self):
         self.loaded['panel'].pop()

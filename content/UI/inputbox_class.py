@@ -71,6 +71,8 @@ class InputBox:
                 else:
                     if event.key == pygame.K_ESCAPE:
                         self.switch()
+                    elif event.key == pygame.K_LCTRL:
+                        pass
                     else:
                         self.text = " " + event.unicode.upper()
                         self.switch()

@@ -317,11 +317,11 @@ class UIFunction:
         i = 0
         for key, value in scene.settings.ship1_keys.items():
             label = Label(0, 0, 20, key, SceneFont.set_label_font)
-            label.r_xy = 0.15, 0.15 + 0.15 * i
+            label.r_xy = 0.18, 0.15 + 0.15 * i
             labels.append(label)
             box = InputBox(pygame.Rect(0, 0, 40, 35), is_set=True)
-            box.r_xy = 0.25, 0.15 + 0.15 * i
-            box.text = " " + pygame.key.name(value).upper()
+            box.r_xy = 0.28, 0.15 + 0.15 * i
+            box.text = " " + pygame.key.name(value[1]).upper()
             set_boxes.append(box)
             i += 1
 
@@ -332,10 +332,21 @@ class UIFunction:
             labels.append(label)
             box = InputBox(pygame.Rect(0, 0, 40, 35), is_set=True)
             box.r_xy = 0.75, 0.15 + 0.15 * i
-            box.text = " " + pygame.key.name(value).upper()
+            box.text = " " + pygame.key.name(value[1]).upper()
             set_boxes.append(box)
             i += 1
 
         set_scroll_panel = ScrollablePanel(scene.settings, setting_scroll_rect, ' ', 25,
                                            [set_key_confirm_button, set_full_screen_button], set_boxes, labels, text_pos=0)
         return set_scroll_panel
+
+    @staticmethod
+    def update_key_board(scene, boxes: list):
+        i = 0
+        for key, value in scene.settings.ship1_keys.items():
+            boxes[i].text = " " + pygame.key.name(value[1]).upper()
+            i += 1
+
+        for key, value in scene.settings.ship2_keys.items():
+            boxes[i].text = " " + pygame.key.name(value[1]).upper()
+            i += 1
