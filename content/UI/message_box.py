@@ -28,20 +28,21 @@ class MessageBox:
             path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '/'
 
         self.txt_color = SceneFont.white_font_msgbox['tc']  # 字体颜色
-        self.font = SceneFont.white_font_msgbox['font']  # 字体
+        self.font_txt = SceneFont.white_font_msgbox['font']  # 正文字体
+        self.font_title = SceneFont.white_font_msgbox_title['font']  # 标题字体
         self.has_ctrlrs = has_ctrlrs
         self.msg_align = msg_align
         if title is not None:
             self.title = title  # 标题
             print("self.title", title)
-            self.title_rect = pygame.freetype.Font.get_rect(self.font, self.title)
+            self.title_rect = pygame.freetype.Font.get_rect(self.font_txt, self.title)
 
             self.title_w = self.title_rect.width  # 获取title的宽高
             self.title_h = self.title_rect.height
 
         if msg is not None:
             self.msg = msg  # 提示消息
-            self.msg_rect = pygame.freetype.Font.get_rect(self.font, self.msg)
+            self.msg_rect = pygame.freetype.Font.get_rect(self.font_txt, self.msg)
 
             self.msg_w = self.msg_rect.width
             self.msg_h = self.msg_rect.height  # 获得提示内容文字的宽和高, 请不要使用msg_rect亦或是title_rect
@@ -84,22 +85,22 @@ class MessageBox:
         if self.title is not None:
             # 因为是在新的surface上画，所以并不需要对left和top添加box的坐标，此时的坐标就是相对box来的
             # 一般来说title并不会很长所以不考虑换行了
-            self.font.render_to(self.box_surface, ((self.box_w - self.title_w) / 2, 10), self.title, self.txt_color)
+            self.font_title.render_to(self.box_surface, ((self.box_w - self.title_w) / 2, 10), self.title, self.txt_color)
         if self.msg is not None:
             if self.msg_align == 1:  # 如果非居中，则按照relative_xy来画
                 msg_left = self.txt_xy[0] * self.box_w
                 msg_top = max(10 + self.title_h + 25, self.txt_xy[1] * self.box_h)
-                single_word_rect = pygame.freetype.Font.get_rect(self.font, self.msg[0])
+                single_word_rect = pygame.freetype.Font.get_rect(self.font_txt, self.msg[0])
                 single_word_height = single_word_rect.height  # 获取单个字的高
                 line_spaces = single_word_height + 8  # 行距
                 lines = self.word_wrap()
                 for line in lines:
-                    self.font.render_to(self.box_surface, (msg_left, msg_top), line, self.txt_color)
+                    self.font_txt.render_to(self.box_surface, (msg_left, msg_top), line, self.txt_color)
                     msg_top += line_spaces
             if self.msg_align == 0:  # 如果是居中的
                 msg_left = (self.box_w-self.msg_w)/2
                 msg_top = max(10 + self.title_h + 25, self.txt_xy[1] * self.box_h)
-                self.font.render_to(self.box_surface, (msg_left, msg_top), self.msg, self.txt_color)
+                self.font_txt.render_to(self.box_surface, (msg_left, msg_top), self.msg, self.txt_color)
 
             for objs in self.loaded.values():
                 for obj in objs:
@@ -120,7 +121,7 @@ class MessageBox:
             return box_rect.collidepoint(event.pos)
     def word_wrap(self):
         """ 将 msg 先分成若干行，便于绘制 """
-        single_word_rect = pygame.freetype.Font.get_rect(self.font, self.msg[0])
+        single_word_rect = pygame.freetype.Font.get_rect(self.font_txt, self.msg[0])
         single_word_width = single_word_rect.width  # 获取单个字的宽高
         msg_left = self.txt_xy[0] * self.box_w
         max_words = int(self.box_w-msg_left - 20) // single_word_width  # 一行最多的字数
