@@ -6,7 +6,6 @@ from content.UI.label_class import Label
 from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.register_scene_class import RegScene
-from content.scene.menu_scene import MenuScene
 from content.online.player_info import PlayerInfo
 
 
@@ -36,7 +35,7 @@ class LogInScene(Scene):
 
         self.loaded = {'img': None, 'label': [id_label, password_label], 'box': boxL,
                        'button': [self.back, register_button, login_button],
-                       'panel': []}
+                       'panel': [], 'msgbox': []}
 
     def show(self):
         self.screen.fill(self.bg)

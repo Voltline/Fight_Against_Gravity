@@ -17,7 +17,7 @@ class Scene:
     path = None
 
     def __init__(self):
-        self.loaded = {'img': None, 'label': [], 'box': [], 'button': [], 'panel': []}
+        self.loaded = {'img': None, 'label': [], 'box': [], 'button': [], 'panel': [], 'msgbox': []}
         """全局组件，返回按钮、设置按钮、关闭按钮"""
         self.width = Scene.screen.get_rect().width
         self.height = Scene.screen.get_rect().height
@@ -47,7 +47,7 @@ class Scene:
         self.box_is_able = False
 
     def deal_event(self, e) -> bool:
-        """将对应页面加载了的组件全部进行状态更新，会post新的event"""
+        """将对应页面加载了的组件全部进行状态更新"""
         if self.loaded['panel'] is not None:
             for pn in self.loaded['panel'][::-1]:  # 越新的panel，响应的优先级越高
                 if pn.update(e):
@@ -72,6 +72,10 @@ class Scene:
                     self.loaded['box'][self.switcher].active = True
             for bx in self.loaded['box']:
                 bx.deal_event(e)
+        if self.loaded['msgbox'] is not None:
+            for mb in self.loaded['msgbox']:
+                if mb.update(e):
+                    return True
         return False
 
     def deal_events(self):
@@ -98,6 +102,9 @@ class Scene:
         if self.loaded['panel'] is not None:
             for pn in self.loaded['panel']:
                 pn.render(self.screen)
+        if self.loaded['msgbox'] is not None:
+            for mb in self.loaded['msgbox']:
+                mb.render(self.screen)
 
     def back_is_clicked(self):
         ScenePlayer.pop()

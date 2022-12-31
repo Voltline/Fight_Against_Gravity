@@ -115,7 +115,7 @@ class RoomScene(Scene):
         self.panel = [user_panel, room_panel, self.user_confirm_quit_panel, self.owner_quit_warning_panel,
                       self.select_map_panel, self.change_room_name_panel]
         self.update_user()
-        self.loaded = {'label': self.labels, 'box': [], 'button': self.buttons, 'panel': self.panel}
+        self.loaded = {'label': self.labels, 'box': [], 'button': self.buttons, 'panel': self.panel, 'msgbox': []}
 
     def show(self):
         self.screen.fill((10, 10, 10))

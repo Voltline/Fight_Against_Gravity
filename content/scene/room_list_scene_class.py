@@ -35,7 +35,7 @@ class RoomListScene(Scene):
         self.join_fail_panel = UIF.new_join_fail_panel(self)
         self.loaded = {'img': None, 'label': [self.search_label], 'box': [self.search_box],
                        'button': [self.back, self.refresh_button, self.create_room_button],
-                       'panel': [self.all_room_list_panel, self.join_fail_panel]}
+                       'panel': [self.all_room_list_panel, self.join_fail_panel], 'msgbox': []}
         self.refresh_button_clicked()
 
     def refresh_button_clicked(self):

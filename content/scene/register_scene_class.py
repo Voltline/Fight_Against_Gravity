@@ -27,10 +27,10 @@ class RegScene(Scene):
                                        [self.close_button])
         """显示没输入验证码的panel"""
         self.close_button.r_xy = 0.88, 0.1
-        self.no_check_box = MessageBox((0.5, 0.5), (0.25, 0.25), "错误", "ababababababababababababbababa\n未输入验证码")  # 12/28,为测试msgbox添加
+        self.no_check_box = MessageBox((0.33, 0.4), (0.2, 0.15), "错误", "未输入验证码")  # 12/28,为测试msgbox添加
         self.no_check_panel = Panel(self.reminder_panel_rect_small, '验证码为空', 22,
                                     [self.close_button])
-        self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': []}
+        self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': [], 'msgbox': []}
 
     def show(self):
         self.width = self.screen.get_rect().width
@@ -51,7 +51,7 @@ class RegScene(Scene):
 
     def confirm_reg_clicked(self):
         if self.check_code == '':
-            self.loaded['panel'] = [self.no_check_box]  # 12.28，为测试msgbox将此行右边的no_check_panel改了。
+            self.loaded['msgbox'] = [self.no_check_box]  # 12.28，为测试msgbox将此行右边的no_check_panel改了。
             self.ban_inputbox()
         elif self.check_code.lower() != self.loaded['box'][3].text.lower():
             self.loaded['panel'] = [self.wrong_check_panel]

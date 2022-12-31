@@ -26,7 +26,7 @@ class StartScene(Scene):
         """集合组件，loaded"""
         self.loaded = {'img': start_title, 'label': [], 'box': None,
                        'button': [login_button, online_game_button, local_button, self.set_button, exit_button],
-                       'panel': []}
+                       'panel': [], 'msgbox': []}
 
     def online_is_clicked(self):
         if PlayerInfo.player_name == '':

@@ -9,7 +9,6 @@ import os
 class ScrollBar:
     def __init__(self, rect: list, settings):
         self.left, self.top, self.height = rect
-        print("bar height", self.height)
         self.width = 18
         self.is_dragging = False
         self.bar_thumb = [pygame.image.load(settings.thumb),
