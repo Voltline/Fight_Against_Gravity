@@ -9,6 +9,7 @@ class SceneFont:
     log_font = {}
     white_font = {}
     white_font_msgbox = {}
+    white_font_msgbox_title = {}
     menu_font = {}
     start_font = {}
     map_list_font = {}
@@ -50,7 +51,15 @@ class SceneFont:
             'bc': None,
             'align': 0,
             'valign': 0
-        }  # 白字用于黑底
+        }  # msgbox正文字体
+        SceneFont.white_font_msgbox_title = {
+            'font': pygame.freetype.Font(scene_settings.font_path_normal, 25),
+            'tc': (169, 183, 198),
+            'bc': None,
+            'align': 0,
+            'valign': 0
+        }  # msgbox正文字体
+
         SceneFont.menu_font = {
             'font': pygame.font.Font(scene_settings.font_path_normal, 58),
             'tc': (36, 41, 47),
