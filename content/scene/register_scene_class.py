@@ -27,7 +27,7 @@ class RegScene(Scene):
                                        [self.close_button])
         """显示没输入验证码的panel"""
         self.close_button.r_xy = 0.88, 0.1
-        self.no_check_box = MessageBox((0.5, 0.5), (0.25, 0.25), "错误", "未输入验证码")  # 12/28,为测试msgbox添加
+        self.no_check_box = MessageBox((0.5, 0.5), (0.25, 0.25), "错误", "ababababababababababababbababa\n未输入验证码")  # 12/28,为测试msgbox添加
         self.no_check_panel = Panel(self.reminder_panel_rect_small, '验证码为空', 22,
                                     [self.close_button])
         self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': []}

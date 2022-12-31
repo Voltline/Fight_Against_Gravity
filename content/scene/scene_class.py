@@ -31,6 +31,8 @@ class Scene:
                                  self.path + "assets\\Img\\start_unpressed.png",
                                  0, '设置', SceneFont.start_font)
         self.set_button.add_img(self.path + "assets\\Img\\start_press.png")
+
+        self.close_button = UIF.new_close_button(self)
         self.switcher = 0
         self.box_is_able = True
         """用于判断按下回车键时是否相应，如果是登录界面，敲下回车应该等同于登录，如果注册界面，敲下回车等同于进行注册"""

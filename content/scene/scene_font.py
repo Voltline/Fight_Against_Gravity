@@ -1,12 +1,14 @@
 import os
 
 import pygame
+import pygame.freetype
 
 
 class SceneFont:
 
     log_font = {}
     white_font = {}
+    white_font_msgbox = {}
     menu_font = {}
     start_font = {}
     map_list_font = {}
@@ -43,7 +45,7 @@ class SceneFont:
             'valign': 0
         }  # 白字用于黑底
         SceneFont.white_font_msgbox = {
-            'font': pygame.font.Font(scene_settings.font_path_normal, 19),
+            'font': pygame.freetype.Font(scene_settings.font_path_normal, 19),
             'tc': (169, 183, 198),
             'bc': None,
             'align': 0,

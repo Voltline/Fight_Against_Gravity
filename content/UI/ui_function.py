@@ -277,6 +277,17 @@ class UIFunction:
         return pause_panel
 
     @staticmethod
+    def new_close_button(scene) -> Button:
+        width = scene.screen.get_rect().width
+        height = scene.screen.get_rect().height
+        close_rect = pygame.Rect(0, 0, 20, 20)
+        close_button = Button('close', scene.set_close_is_clicked, close_rect,
+                              scene.path + 'assets\\Img\\close_unclicked.png', 0)
+        close_button.add_img(scene.path + 'assets\\Img\\close_clicked.png')
+        close_button.r_xy = 0.95, 0.03
+        return close_button
+
+    @staticmethod
     def new_setting_all_panel(scene) -> Panel:
         width = scene.screen.get_rect().width
         height = scene.screen.get_rect().height
