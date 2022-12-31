@@ -8,6 +8,7 @@ from content.scene.scene_font import SceneFont
 from content.UI.panel_class import Panel
 from content.UI.scrollable_panel_class import ScrollablePanel
 from content.UI.ui_function import UIFunction as UIF
+from content.UI.message_box import MessageBox
 
 
 class Scene:
@@ -140,7 +141,8 @@ class Scene:
             if new_ship2_keys != Scene.settings.ship2_keys:
                 Scene.settings.change_key("Ship2", list(new_ship1_keys.values()))
         else:
-            print("不允许重复按键！")
+            show_duplicate_warning_msg_box = MessageBox((0.35, 0.35), (0.5, 0.5), "警告", "不要设置重复的按键！")
+            self.loaded['msgbox'] = [show_duplicate_warning_msg_box]
 
         UIF.update_key_board(self, self.set_panel.loaded['boxes'])
 
@@ -157,6 +159,9 @@ class Scene:
 
         if list(Scene.settings.ship2_keys.values()) != ship2_key:
             Scene.settings.change_key("Ship2", ship2_key)
+
+        show_default_info_msg_box = MessageBox((0.37, 0.4), (0.5, 0.5), "提示", "键位已经恢复至默认布局！")
+        self.loaded['msgbox'] = [show_default_info_msg_box]
 
         UIF.update_key_board(self, self.set_panel.loaded['boxes'])
 
@@ -180,11 +185,29 @@ class Scene:
     def show(self):
         pass
 
-    @staticmethod
-    def set_full_screen():
+    def set_full_screen(self):
         Scene.settings.change_full_screen()
+        confirm_full_screen_quit_btn = Button('重启', self.confirm_full_screen_quit, pygame.Rect(0, 0, 120, 40),
+                                              Scene.settings.btbg_light, 0, '立即重启', SceneFont.log_font)
+        confirm_full_screen_quit_btn.add_img(Scene.settings.btbg_light_pressed)
+        cancel_full_screen_quit_btn = Button('取消', self.confirm_full_screen_quit, pygame.Rect(0, 0, 120, 40),
+                                             Scene.settings.btbg_light, 0, '稍后重启', SceneFont.log_font)
+        cancel_full_screen_quit_btn.add_img(Scene.settings.btbg_light_pressed)
+        confirm_full_screen_quit_btn.r_xy = 0.08, 0.7
+        cancel_full_screen_quit_btn.r_xy = 0.63, 0.7
+        btns = [confirm_full_screen_quit_btn, cancel_full_screen_quit_btn]
+        set_full_screen_ask_yesno_msg_box = MessageBox((0.35, 0.4), (0.5, 0.4),
+                                                       "请确认", "切换至全屏需要重启游戏，是否现在重启？",
+                                                       ctrlrs=btns, has_ctrlrs=True)
+        self.loaded['msgbox'] = [set_full_screen_ask_yesno_msg_box]
+
+    def confirm_full_screen_quit(self):
+        self.loaded['msgbox'].pop()
         pygame.quit()
         sys.exit()
+
+    def cancel_full_screen_quit(self):
+        self.loaded['msgbox'].pop()
 
     @staticmethod
     def init(settings, screen, client):
