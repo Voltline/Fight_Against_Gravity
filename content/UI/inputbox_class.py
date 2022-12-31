@@ -69,12 +69,10 @@ class InputBox:
                     else:
                         self.text += event.unicode
                 else:
-                    if event.key == pygame.K_ESCAPE:
-                        self.switch()
-                    elif event.key == pygame.K_LCTRL:
-                        pass
-                    else:
+                    if pygame.K_a <= event.key <= pygame.K_z or event.key in range(48, 58):
                         self.text = " " + event.unicode.upper()
+                        self.switch()
+                    else:
                         self.switch()
 
     def render(self, screen: pygame.surface.Surface):
