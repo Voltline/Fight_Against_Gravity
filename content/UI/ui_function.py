@@ -312,12 +312,20 @@ class UIFunction:
         set_full_screen_button = Button('全屏', scene.set_full_screen, set_full_screen_rect,
                                         scene.settings.btbg_light, 0, is_full_screen, SceneFont.log_font)
         set_full_screen_button.add_img(scene.settings.btbg_light_pressed)
+
+        set_default_rect = pygame.Rect(0.2083 * width, 0.25 * height, 150, 50)
+        set_default_button = Button('恢复默认', scene.set_default, set_default_rect,
+                                    scene.settings.btbg_light, 0, "恢复默认键位", SceneFont.log_font)
+        set_default_button.add_img(scene.settings.btbg_light_pressed)
+
         set_key_confirm_rect = pygame.Rect(0.375 * width, 0.25 * height, 150, 50)
         set_key_confirm_button = Button('确认修改', scene.set_key_clicked, set_key_confirm_rect,
                                         scene.settings.btbg_light, 0, "确认修改", SceneFont.log_font)
         set_key_confirm_button.add_img(scene.settings.btbg_light_pressed)
-        set_key_confirm_button.r_xy = 0.225, 0.9
-        set_full_screen_button.r_xy = 0.625, 0.9
+
+        set_key_confirm_button.r_xy = 0.125, 0.9
+        set_full_screen_button.r_xy = 0.725, 0.9
+        set_default_button.r_xy = 0.425, 0.9
 
         labels = [Label(0, 0, 25, "飞船1/在线游戏", SceneFont.set_title_font),
                   Label(0, 0, 25, "飞船2", SceneFont.set_title_font)]
@@ -348,7 +356,8 @@ class UIFunction:
             i += 1
 
         set_scroll_panel = ScrollablePanel(scene.settings, setting_scroll_rect, ' ', 25,
-                                           [set_key_confirm_button, set_full_screen_button], set_boxes, labels, text_pos=0)
+                                           [set_key_confirm_button, set_default_button, set_full_screen_button], set_boxes, labels,
+                                           text_pos=0)
         return set_scroll_panel
 
     @staticmethod

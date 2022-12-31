@@ -26,7 +26,7 @@ class Scene:
         self.reminder_panel_rect = pygame.Rect(200, 300, 800, 200)
         self.reminder_panel_rect_small = pygame.Rect(450, 300, 300, 100)
         self.menu_like_panel_rect = pygame.Rect(300, 200, 600, 400)
-        set_rect = pygame.Rect(0.4*self.width, 0.6*self.height, 290, 80)
+        set_rect = pygame.Rect(0.4 * self.width, 0.6 * self.height, 290, 80)
         self.set_button = Button('setting', self.set_is_clicked, set_rect,
                                  self.path + "assets\\Img\\start_unpressed.png",
                                  0, '设置', SceneFont.start_font)
@@ -118,7 +118,6 @@ class Scene:
         all_keys = set()
 
         cnt = 0
-
         for box in new_key_set:
             if cnt < 5:
                 new_ship1_keys[labels[cnt % 5]][1] = pygame.key.key_code(((box.text).replace(" ", "")).lower())
@@ -140,6 +139,21 @@ class Scene:
 
         self.set_close_is_clicked()
 
+    def set_default(self):
+        ship1_key = [["k_go_ahead", 119], ["k_go_back", 115], ["k_turn_left", 97],
+                     ["k_turn_right", 100], ["k_fire", 101]]
+        ship2_key = [["k_go_ahead", 105], ["k_go_back", 107], ["k_turn_left", 106],
+                     ["k_turn_right", 108], ["k_fire", 117]]
+
+        if list(Scene.settings.ship1_keys.values()) != ship1_key:
+            Scene.settings.change_key("Ship1", ship1_key)
+
+        if list(Scene.settings.ship2_keys.values()) != ship2_key:
+            Scene.settings.change_key("Ship2", ship2_key)
+
+        UIF.update_key_board(self, self.set_panel.loaded['boxes'])
+
+        self.set_close_is_clicked()
 
     def close_is_clicked(self):
         self.loaded['panel'].pop()
