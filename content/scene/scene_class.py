@@ -38,8 +38,9 @@ class Scene:
         self.box_is_able = True
         """用于判断按下回车键时是否相应，如果是登录界面，敲下回车应该等同于登录，如果注册界面，敲下回车等同于进行注册"""
         self.id = 0  # 0对应未登录，1对应注册
+        # msgbox优先级
+        self.has_msgbox = False
         # 设置界面
-
         self.set_out_panel = UIF.new_setting_all_panel(self)
         self.set_panel = UIF.new_setting_scrollpanel(self)
 
@@ -49,15 +50,15 @@ class Scene:
 
     def deal_event(self, e) -> bool:
         """将对应页面加载了的组件全部进行状态更新"""
-        if self.loaded['panel'] is not None:
+        if self.loaded['panel'] is not None and not self.has_msgbox:
             for pn in self.loaded['panel'][::-1]:  # 越新的panel，响应的优先级越高
                 if pn.update(e):
                     return True
-        if self.loaded['button'] is not None:
+        if self.loaded['button'] is not None and not self.has_msgbox:
             for bt in self.loaded['button']:
                 if bt.update(e):
                     return True
-        if self.loaded['box'] is not None and self.box_is_able:
+        if self.loaded['box'] is not None and self.box_is_able and not self.has_msgbox:
             if e.type == pygame.MOUSEBUTTONDOWN:
                 for i in range(len(self.loaded['box'])):
                     if self.loaded['box'][i].check_click(e):  # 若按下鼠标且位置在文本框
@@ -200,14 +201,17 @@ class Scene:
                                                        "请确认", "切换至全屏需要重启游戏，是否现在重启？",
                                                        ctrlrs=btns, has_ctrlrs=True)
         self.loaded['msgbox'] = [set_full_screen_ask_yesno_msg_box]
+        self.has_msgbox = True
 
     def confirm_full_screen_quit(self):
         self.loaded['msgbox'].pop()
+        self.has_msgbox = False
         pygame.quit()
         sys.exit()
 
     def cancel_full_screen_quit(self):
         self.loaded['msgbox'].pop()
+        self.has_msgbox = False
 
     @staticmethod
     def init(settings, screen, client):

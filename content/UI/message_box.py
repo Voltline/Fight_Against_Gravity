@@ -108,10 +108,16 @@ class MessageBox:
 
         screen.blit(self.box_surface, (box_left, box_top, self.box_w, self.box_h))
 
-    def update(self, event):
-        if self.check_mouse_click(event):
+    def update(self, event, pos_offset=(0, 0), pos_offset0=(0, 0)):
+        if self.check_mouse_click(event) and not self.has_ctrlrs:
+            """如果没有按钮，则点击框就取消框"""
             ScenePlayer.STACK[-1].loaded['msgbox'].pop()
             return True
+        elif self.has_ctrlrs:
+            if self.check_mouse_click(event):
+                for bt in self.loaded['ctrlrs'][::-1]:
+                    if bt.update(event, pos_offset):
+                        return True
         return False
 
     def check_mouse_click(self, event):
