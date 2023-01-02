@@ -100,7 +100,7 @@ if __name__ == "__main__":
         with open(path + "settings/settings.json", 'r') as f:
             information = json.load(f)
 
-    ip = information["Reg_IP"]
+    ip = ""
     port = information["Reg_Port"]
     password = information["AES_Key"]
     try:
