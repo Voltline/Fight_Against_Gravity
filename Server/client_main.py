@@ -11,18 +11,19 @@ OptType = OptType.OptType
 
 class ClientMain:
     def __init__(self, path, _debug_=False):
+        self.path = path
         self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
                               folder_name="client_main", logpath=path)
         self.absolute_setting_path = path + "settings/settings.json"
-        client_models = Flogger.FILE
-        client_level = Flogger.L_INFO
+        self.client_models = Flogger.FILE
+        self.client_level = Flogger.L_INFO
         if _debug_:
             self.absolute_setting_path = path + "settings/settings_local.json"
         if "--sakura" in sys.argv:
             self.absolute_setting_path = path + "settings/settings_sakura.json"
         if "--logger" in sys.argv:
-            client_models = Flogger.FILE_AND_CONSOLE
-            client_level = Flogger.L_DEBUG
+            self.client_models = Flogger.FILE_AND_CONSOLE
+            self.client_level = Flogger.L_DEBUG
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         self.ip = settings["Client"]["Game_Online_IP"]
@@ -35,15 +36,26 @@ class ClientMain:
         self.reg_port = settings["Client"]["Reg_Port"]
         self.aes_key = settings["AES_Key"]
         self.msg_len = settings["Client"]["msg_len"]
+        self.client = None
+        self.user = None
+        self.roomid = None
+        self.is_start = False
+        # self.start_client()
+
+    def get_start(self):
+        return self.is_start
+
+    def start_client(self):
+        self.is_start = True
         try:
-            self.client = safeclient.SocketClient(self.ip, self.port, heart_beat=self.heart_beat, models=client_models,
-                                                  logpath=path, level=client_level, msg_len=self.msg_len)
+            self.client = safeclient.SocketClient(self.ip, self.port, heart_beat=self.heart_beat,
+                                                  models=self.client_models,
+                                                  logpath=self.path, level=self.client_level, msg_len=self.msg_len)
         except Exception as err:
+            self.is_start = False
             self.logger.error("客户端启动失败" + str(err))
             # exit(-1)
             raise Exception("无法连接到服务器")
-        self.user = None
-        self.roomid = None
 
     def register_get_checkcode(self, username, email):
         identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
@@ -279,10 +291,12 @@ class ClientMain:
         self.client.send(msg)
         recv = self.client.receive()
         lenth = recv["length"]
+        print(lenth)
         reslist = []
         for i in range(lenth):
             recv = self.client.receive()
             reslist.append(recv["roomlist"])
+            print(recv)
         return reslist
 
     def ready(self):
@@ -328,13 +342,15 @@ class ClientMain:
         return recv["status"] == "ACK"
 
     def start(self):
+        self.start_client()
         self.user = input("input the user name")
-        # self.user = "test__1"
         password = input("input the pass word")
-        # password = "123456"
+        # self.user = "sxm250"
+        # password = "123123"
         if not self.login(self.user, password):
             self.client.close()
             exit(-1)
+        # print(self.creatroom("12345678901234567890", "地月系统"))
         # for i in range(1000):
         #     st = time.time()
         #     self.deleteroom()

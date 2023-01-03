@@ -1,4 +1,5 @@
 import sys
+import time
 
 import pygame
 
@@ -374,6 +375,7 @@ class ServerMain:
             sendMsg["id"] = i
             sendMsg["roomlist"] = reslist[i]
             self.server.send(messageAdr, sendMsg)
+            time.sleep(0.1)
 
     def clear(self):
         """
