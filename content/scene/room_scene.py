@@ -131,8 +131,8 @@ class RoomScene(Scene):
         self.user_confirm_quit_panel.is_able = False
         self.owner_quit_warning_panel.is_show = False
         self.owner_quit_warning_panel.is_able = False
-        # self.wating_start_panel.is_show = False
-        # self.wating_start_panel.is_able = False
+        self.wating_start_panel.is_show = False
+        self.wating_start_panel.is_able = False
         self.select_map_panel = UIF.new_select_map_panel(self)
         self.select_map_panel.is_able = self.select_map_panel.is_show = False
         self.change_room_name_panel = UIF.new_change_room_name_panel(self)
