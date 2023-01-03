@@ -89,7 +89,7 @@ class ClientGameScene(Scene):
             self.return_room_countdown_time -= self.game.delta_t
             if self.return_room_countdown_time <= 0:
                 self.return_room_button_clicked()
-            self.return_room_button.set_text('返回房间'+str(int(self.return_room_countdown_time)))
+            self.return_room_button.set_text('返回房间('+str(int(self.return_room_countdown_time))+')')
 
     def update(self):
         self.deal_events()
