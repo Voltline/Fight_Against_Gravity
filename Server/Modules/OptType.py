@@ -227,6 +227,10 @@ class OptType:
     # msg_args=[room_id]
     ServerStartGameTime = 30
 
+    # 客户端接收，在线游戏结束与获胜者
+    # msg_args=[win_player]
+    GameWin = 31
+
 
 if __name__ == "__main__":
     print(OptType.login)

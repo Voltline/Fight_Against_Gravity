@@ -21,6 +21,7 @@ class ClientGame(OnlineGame):
         super().__init__(settings, screen, net, room_id, map_name, player_names)
         self.player_name = player_name
         self.player_ship = None  # 玩家的飞船
+        self.win_player = None  # 胜利玩家
         self.camera = None
         self.traces = []
         self.snapshots = []  # 用于检查预测正确性的快照
@@ -206,6 +207,8 @@ class ClientGame(OnlineGame):
                 new_bullets_msg, dead_bullets_msg = args
                 self.add_bullets(new_bullets_msg, new_bullets_msg_tick)
                 self.del_bullets(dead_bullets_msg)
+            elif opt == OptType.GameWin:
+                self.win_player = args[0]
 
         if all_ships_msg:
             self.ping_ms = (self.now_tick-all_ships_msg_tick)*self.physics_dt*1000
@@ -234,8 +237,8 @@ class ClientGame(OnlineGame):
         在基类的check_events之后要发送游戏是否结束等消息
         在基类的物理循环之后要添加尾迹
         """
-        if not self.is_run:
-            self.send_stop_game_msg(self.room_id, self.now_time)
+        # if not self.is_run:
+        #     self.send_stop_game_msg(self.room_id, self.now_time)
         super().physic_loop()
         gf.add_traces(self.settings, self.gm, self.traces, self.now_time)
 

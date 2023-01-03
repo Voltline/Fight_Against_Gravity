@@ -369,6 +369,62 @@ class UIFunction:
         return set_scroll_panel
 
     @staticmethod
+    def new_normal_button(scene, text: str, clicked_func, rect=None) -> Button:
+        """普通文字按钮"""
+        if rect is None:
+            rect = Rect(0, 0, 0.25 * scene.width, 0.08125 * scene.height)
+        button = Button(text, clicked_func, rect, scene.settings.btbg_light, 0, text, SceneFont.log_font)
+        button.add_img(scene.settings.btbg_light_pressed)
+        button.r_xy = [0.25, 0]
+        return button
+
+    @staticmethod
+    def new_normal_label(scene, text: str, rect=None) -> Label:
+        """普通label"""
+        if rect is None:
+            rect = Rect(0, 0, 0.25 * scene.width, 0.08125 * scene.height)
+        label = Label(0, 0, rect.width, text, SceneFont.map_list_font)
+        label.r_xy = [0.25, 0]
+        return label
+
+    @staticmethod
+    def new_local_game_win_panel(scene, win_player: str) -> Panel:
+        """制作本地游戏结束后的胜利panel"""
+        win_msg_label0 = UIFunction.new_normal_label(scene, '对局结束！胜者是：')
+        win_msg_label0.r_xy[1] = 0.1
+        win_msg_label1 = UIFunction.new_normal_label(scene, win_player)
+        win_msg_label1.r_xy[1] = 0.2
+        continue_button = UIFunction.new_normal_button(scene, '继续', scene.win_panel_continue_button_clicked)
+        continue_button.r_xy[1] = 0.4
+        restart_button = UIFunction.new_normal_button(scene, '重新开始', scene.win_panel_restart_button_clicked)
+        restart_button.r_xy[1] = 0.6
+        quit_button = UIFunction.new_normal_button(scene, '退出对局', scene.quit_button_clicked)
+        quit_button.r_xy[1] = 0.8
+        win_panel_rect = Rect(0.25 * scene.width, 0.22 * scene.height, 0.5 * scene.width, 0.625 * scene.height)
+        win_panel_rect.center = scene.screen.get_rect().center
+        win_panel = Panel(win_panel_rect, '', 10,
+                          ctrlrs=[continue_button, restart_button, quit_button],
+                          others=[win_msg_label0, win_msg_label1])
+        return win_panel
+
+    @staticmethod
+    def new_client_game_win_panel(scene, win_player: str) -> (Panel, Button, Label):
+        """制作在线游戏结束后的胜利panel"""
+        win_msg_label0 = UIFunction.new_normal_label(scene, '对局结束！胜者是：')
+        win_msg_label0.r_xy[1] = 0.1
+        win_msg_label1 = UIFunction.new_normal_label(scene, win_player)
+        win_msg_label1.r_xy[1] = 0.4
+        return_room_button = UIFunction.new_normal_button(scene, '返回房间(5)', scene.return_room_button_clicked)
+        return_room_button.r_xy[1] = 0.7
+        win_panel_rect = Rect(0.25 * scene.width, 0.22 * scene.height, 0.5 * scene.width, 0.375 * scene.height)
+        win_panel_rect.center = scene.screen.get_rect().center
+        win_panel = Panel(win_panel_rect, '', 10,
+                          ctrlrs=[return_room_button],
+                          others=[win_msg_label0, win_msg_label1])
+        return win_panel, return_room_button, win_msg_label1
+
+
+    @staticmethod
     def update_key_board(scene, boxes: list):
         i = 0
         for key, value in scene.settings.ship1_keys.items():
