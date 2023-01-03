@@ -17,6 +17,10 @@ class RoomScene(Scene):
         super().__init__()
         self.confirm_quit_bool = False
         self.last_update_time = 0
+        self.last_update_loading_time = 0
+        self.last_update_loading_message_time = 0
+        self.last_update_loading_id = 0
+        self.last_update_loading_message_id = 0
         self.roomname = "默认房间名"
         self.roommap = "地月系统"
         self.userlist = []
@@ -124,10 +128,29 @@ class RoomScene(Scene):
             pygame.Rect(0.375 * self.width, 0.375 * self.height, 0.333 * self.width, 0.225 * self.height),
             "有玩家未退出，无法退出房间", 25,
             ctrlrs=[r_confirm_button_], text_pos=0.5)
-        r_wating_start_lable = Label(1 * self.width, 0.5 * self.height, 200, "游戏加载中 loading...", SceneFont.wating_font)
-        r_wating_start_lable.r_xy = 0.4, 0.45
+        self.loading_message = [
+            "游戏加载中 loading...   |",
+            "游戏加载中 loading...   /",
+            "游戏加载中 loading...   -",
+            "游戏加载中 loading...   \\",
+        ]
+        self.r_wating_start_lable = Label(1 * self.width, 0.5 * self.height, 200,
+                                          self.loading_message[self.last_update_loading_id], SceneFont.wating_font)
+        self.r_wating_start_lable.r_xy = 0.4, 0.25
+        self.wating_message = [
+            "游戏操作按键可以在设置里进行修改",
+            "想要全屏畅快战斗？去设置看看吧",
+            "悄悄告诉你，这个游戏在github开源了",
+            "想要改变运动轨迹？想想高中学的卫星变轨",
+            "发射子弹虽然是不限量的，但很可能击中自己"
+        ]
+        self.r_wating_start_message_lable = Label(1 * self.width, 0.5 * self.height, 200,
+                                                  self.wating_message[self.last_update_loading_id],
+                                                  SceneFont.wating_message_font)
+        self.r_wating_start_message_lable.r_xy = 0.4, 0.65
         self.wating_start_panel = Panel(pygame.Rect(0 * self.width, 0 * self.height, 1 * self.width, 1 * self.height),
-                                        "", 30, others=[r_wating_start_lable], text_pos=0.5, border_radius=0)
+                                        "", 30, others=[self.r_wating_start_lable, self.r_wating_start_message_lable],
+                                        text_pos=0.5, border_radius=0)
         self.user_confirm_quit_panel.color = (13, 13, 13)
         self.owner_quit_warning_panel.color = (13, 13, 13)
         self.user_confirm_quit_panel.is_show = False
@@ -188,7 +211,8 @@ class RoomScene(Scene):
         if not res:
             self.not_allready_lable.is_show = True
         else:
-            self.wating_start_panel.is_show = True
+            # self.wating_start_panel.is_show = True
+            pass
 
     def change_map_clicked(self):
         """点击房间中的切换地图按钮"""
@@ -219,9 +243,21 @@ class RoomScene(Scene):
 
     def update_user(self):
         if time.time() - self.last_update_time > 1:
-            print("update at", time.time())
+            # print("update at", time.time())
             self.last_update_time = time.time()
             self.client.getroom()
+
+    def update_loading(self):
+        stm = time.time()
+        if stm - self.last_update_loading_time > 0.3:
+            self.last_update_loading_time = stm
+            self.last_update_loading_id += 1
+            self.r_wating_start_lable.set_text(self.loading_message[self.last_update_loading_id % len(self.loading_message)])
+        if stm - self.last_update_loading_message_time > 5:
+            self.last_update_loading_message_time = stm
+            import random
+            self.last_update_loading_message_id += random.randint(1,10)
+            self.r_wating_start_message_lable.set_text(self.wating_message[self.last_update_loading_message_id % len(self.wating_message)])
 
     def deal_msgs(self):
         """非阻塞接收并处理消息"""
@@ -292,7 +328,7 @@ class RoomScene(Scene):
         self.update_user()
         self.deal_msgs()
         self.deal_events()
-
+        self.update_loading()
     def confirm_quit_is_clicked(self):
         if self.is_owner:
             res = self.client.deleteroom()
