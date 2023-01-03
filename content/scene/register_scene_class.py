@@ -51,6 +51,7 @@ class RegScene(Scene):
         if username != '' and email != '':
             # 如果用户名和邮箱都不为空
             self.check_code = self.client.register_get_checkcode(username, email)
+            # 如果此处邮箱不合法或者用户名重复，就弹出一个msgbox
         elif username == '':
             self.loaded['msgbox'] = [self.no_id_box]
             self.has_msgbox = True

@@ -10,10 +10,10 @@ import os
 
 class MessageBox:
 
-    def __init__(self, box_xy, relative_xy, title='', msg='', warning_img='', ctrlrs=[], has_ctrlrs=False, msg_align=0):
+    def __init__(self, relative_xy, title='', msg='', warning_img='', ctrlrs=[], has_ctrlrs=False, msg_align=0):
         """
-        box_xy: 弹窗的起始left、top的比例
-        relative_xy: msg在弹窗的相对left、top的比例
+        msg_box会根据屏幕自适应来自动居中
+        relative_xy: msg (消息内容) 在 box(弹窗内部) 的相对left、top的比例
         title: 弹窗的标题
         msg: 弹窗的内容
         warning_img: 弹窗可能会有的错误提示图片路径
@@ -51,7 +51,6 @@ class MessageBox:
             self.warn_img = pygame.image.load(warning_img)
             self.warn_img = pygame.transform.smoothscale(self.warn_img, (50, 50))
 
-        self.box_xy = box_xy
         self.txt_xy = relative_xy
         self.loaded = {'ctrlrs': ctrlrs}
 
@@ -75,8 +74,8 @@ class MessageBox:
 
     def render(self, screen):
         sc_w, sc_h = screen.get_size()  # 获取屏幕宽高
-        box_left = self.box_xy[0] * sc_w  # 提示框的left, 此时是相对于外层
-        box_top = self.box_xy[1] * sc_h  # 提示框的top
+        box_left = 0.5 * (sc_w - self.box_w) # 提示框的left, 此时是相对于外层
+        box_top = 0.5 * (sc_h - self.box_h)  # 提示框的top
         self.box_left = box_left
         self.box_top = box_top
         pygame.draw.rect(self.box_surface, self.color,
