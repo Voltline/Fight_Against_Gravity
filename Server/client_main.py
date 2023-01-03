@@ -255,11 +255,11 @@ class ClientMain:
             "roomid": self.roomid
         }
         self.client.send(msg)
-        recv = self.client.receive()
-        if recv["status"] == "NAK":
-            return False
-        res = recv["room"]
-        return res
+        # recv = self.client.receive()
+        # if recv["status"] == "NAK":
+        #     return False
+        # res = recv["room"]
+        # return res
 
     def getroomlist(self):
         """
