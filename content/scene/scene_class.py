@@ -42,6 +42,7 @@ class Scene:
         self.has_msgbox = False
         # 设置界面
         self.set_panel = UIF.new_setting_all_panel(self)
+        self.set_panel.is_show = self.set_panel.is_able = False
 
     def ban_inputbox(self):
         """禁用输入框"""
@@ -113,11 +114,10 @@ class Scene:
     def set_is_clicked(self):
         if self.set_panel not in self.loaded['panel']:
             self.loaded['panel'].append(self.set_panel)
-        else:
-            self.set_panel.is_show = self.set_panel.is_able = True
+        self.set_panel.is_show = self.set_panel.is_able = True
 
     def set_key_clicked(self):
-        new_key_set = (self.set_panel.loaded['ctrlrs'][1]).loaded['boxes']
+        new_key_set = (self.set_panel.loaded['ctrlrs'][-1]).loaded['boxes']
         new_ship1_keys = Scene.settings.ship1_keys.copy()
         for key in new_ship1_keys:
             new_ship1_keys[key] = Scene.settings.ship1_keys[key].copy()
@@ -149,7 +149,7 @@ class Scene:
             show_duplicate_warning_msg_box = MessageBox((0.35, 0.35), (0.5, 0.5), "警告", "不要设置重复的按键！")
             self.loaded['msgbox'] = [show_duplicate_warning_msg_box]
 
-        UIF.update_key_board(self, (self.set_panel.loaded['ctrlrs'][1]).loaded['boxes'])
+        UIF.update_key_board(self, (self.set_panel.loaded['ctrlrs'][-1]).loaded['boxes'])
 
         self.set_close_is_clicked()
 
@@ -168,7 +168,7 @@ class Scene:
         show_default_info_msg_box = MessageBox((0.37, 0.4), (0.5, 0.5), "提示", "键位已经恢复至默认布局！")
         self.loaded['msgbox'] = [show_default_info_msg_box]
 
-        UIF.update_key_board(self, (self.set_panel.loaded['ctrlrs'][1]).loaded['boxes'])
+        UIF.update_key_board(self, (self.set_panel.loaded['ctrlrs'][-1]).loaded['boxes'])
 
         self.set_close_is_clicked()
 
