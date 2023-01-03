@@ -194,7 +194,7 @@ class UIFunction:
         map_label.r_xy = 0.41 * (screen_width - 10) / width, 0
         player_num_label = Label(0, 0, 100, str(player_num) + '/' + str(max_num))
         player_num_label.r_xy = 0.61 * (screen_width - 10) / width, 0
-        if is_play == 'YES':
+        if is_play:
             is_play = '游戏中'
         else:
             is_play = '房间中'
