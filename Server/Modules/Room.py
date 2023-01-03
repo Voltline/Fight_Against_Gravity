@@ -22,7 +22,6 @@ class Room:
         self.userlist: [User] = [owner]
         self.roommap = roommap
         self.message_queue = queue.Queue()
-        self.started = False
         self.server_ = server
         self.game_settings = game_settings
         self.game: server_game.ServerGame = None
@@ -56,7 +55,6 @@ class Room:
                 self.game.send_start_game_time(self.game.start_time)
 
     def start(self):
-        self.started = True
         user_name_list = []
         addr_list = {}
         for user in self.userlist:
@@ -76,12 +74,18 @@ class Room:
         thread.start()
 
     def stop(self):
-        if self.started:
+        if self.get_started():
             self.game.is_run = False
-            self.started = False
 
     def get_started(self):
-        return self.started
+        if self.game is not None:
+            started = self.game.is_run
+            if not started:
+                for user in self.userlist:
+                    user.dready()
+            return started
+        else:
+            return False
 
     def get_roomname(self):
         return self.roomname
@@ -147,7 +151,7 @@ class Room:
             "roomname": self.roomname,
             "owner": self.owner.get_name(),
             "roommap": self.roommap,
-            "is_run": self.started,
+            "is_run": self.get_started(),
             "userlist": userlist
         }
         return res

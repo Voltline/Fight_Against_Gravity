@@ -291,7 +291,6 @@ class ClientMain:
         self.client.send(msg)
         recv = self.client.receive()
         lenth = recv["length"]
-        print(lenth)
         reslist = []
         for i in range(lenth):
             recv = self.client.receive()
