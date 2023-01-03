@@ -76,7 +76,7 @@ class Scene:
                 bx.deal_event(e)
         if self.loaded['msgbox'] is not None:
             for mb in self.loaded['msgbox']:
-                if mb.update(e):
+                if mb.update(e, self):  # 此处将scene传入update，方便让msgbox来控制has_msgbox
                     return True
         return False
 
@@ -205,13 +205,11 @@ class Scene:
 
     def confirm_full_screen_quit(self):
         self.loaded['msgbox'].pop()
-        self.has_msgbox = False
         pygame.quit()
         sys.exit()
 
     def cancel_full_screen_quit(self):
         self.loaded['msgbox'].pop()
-        self.has_msgbox = False
 
     @staticmethod
     def init(settings, screen, client):
