@@ -12,6 +12,7 @@ from content.scene.room_list_scene_class import RoomListScene
 from content.UI.ui_function import UIFunction
 from content.online.player_info import PlayerInfo
 
+
 class StartScene(Scene):
     def __init__(self):
         """准备开始界面的组件"""
@@ -29,12 +30,16 @@ class StartScene(Scene):
                        'panel': [], 'msgbox': []}
 
     def online_is_clicked(self):
+        if not self.client.get_start():
+            self.client.start_client()
         if PlayerInfo.player_name == '':
             ScenePlayer.push(LogInScene())
         else:
             ScenePlayer.push(RoomListScene())
 
     def login_is_clicked(self):
+        if not self.client.get_start():
+            self.client.start_client()
         if PlayerInfo.player_name == '':
             ScenePlayer.push(LogInScene())
         else:
