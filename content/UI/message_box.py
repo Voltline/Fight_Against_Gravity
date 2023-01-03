@@ -10,7 +10,7 @@ import os
 
 class MessageBox:
 
-    def __init__(self, box_xy, relative_xy, title='', msg='', warning_img='', ctrlrs=[], has_ctrlrs=False, msg_align = 0):
+    def __init__(self, box_xy, relative_xy, title='', msg='', warning_img='', ctrlrs=[], has_ctrlrs=False, msg_align=0):
         """
         box_xy: 弹窗的起始left、top的比例
         relative_xy: msg在弹窗的相对left、top的比例
@@ -59,7 +59,7 @@ class MessageBox:
         self.box_top = 0  # left和top会在render函数中被重置为相对于screen的绝对坐标值
         self.box_w = 400  # 提示框的宽度
         self.box_h = max(self.msg_h, 40) + 160  # 提示框的高度
-        print(self.box_w, self.box_h)
+        # print(self.box_w, self.box_h)
         # 计算组件相对位置
         for objs in self.loaded.values():
             for obj in objs:
@@ -85,7 +85,8 @@ class MessageBox:
         if self.title is not None:
             # 因为是在新的surface上画，所以并不需要对left和top添加box的坐标，此时的坐标就是相对box来的
             # 一般来说title并不会很长所以不考虑换行了
-            self.font_title.render_to(self.box_surface, ((self.box_w - self.title_w) / 2, 10), self.title, self.txt_color)
+            self.font_title.render_to(self.box_surface, ((self.box_w - self.title_w) / 2, 10), self.title,
+                                      self.txt_color)
         if self.msg is not None:
             if self.msg_align == 1:  # 如果非居中，则按照relative_xy来画
                 msg_left = self.txt_xy[0] * self.box_w
@@ -98,39 +99,59 @@ class MessageBox:
                     self.font_txt.render_to(self.box_surface, (msg_left, msg_top), line, self.txt_color)
                     msg_top += line_spaces
             if self.msg_align == 0:  # 如果是居中的
-                msg_left = (self.box_w-self.msg_w)/2
+                msg_left = (self.box_w - self.msg_w) / 2
                 msg_top = max(10 + self.title_h + 25, self.txt_xy[1] * self.box_h)
                 self.font_txt.render_to(self.box_surface, (msg_left, msg_top), self.msg, self.txt_color)
-
+        if self.has_ctrlrs:
             for objs in self.loaded.values():
                 for obj in objs:
                     obj.render(self.box_surface)
+                    # print(obj.name, obj.rect)
 
         screen.blit(self.box_surface, (box_left, box_top, self.box_w, self.box_h))
 
-    def update(self, event, pos_offset=(0, 0), pos_offset0=(0, 0)):
+    def update(self, event, scene):
+        """
+        重启 <rect(32, 140, 120, 40)>
+        取消 <rect(252, 140, 120, 40)>
+        """
         if self.check_mouse_click(event) and not self.has_ctrlrs:
             """如果没有按钮，则点击框就取消框"""
             ScenePlayer.STACK[-1].loaded['msgbox'].pop()
+            scene.has_msgbox = False
             return True
         elif self.has_ctrlrs:
             if self.check_mouse_click(event):
                 for bt in self.loaded['ctrlrs'][::-1]:
-                    if bt.update(event, pos_offset):
+                    bt_rect = pygame.Rect(self.box_left + bt.rect.left,
+                                          self.box_top + bt.rect.top, bt.rect.width, bt.rect.height)
+                    if bt_rect.collidepoint(event.pos):
+                        bt.clicked_func()
+                        scene.has_msgbox = False
                         return True
+            if event.type == pygame.MOUSEMOTION:
+                for bt in self.loaded['ctrlrs'][::-1]:
+                    bt_rect = pygame.Rect(self.box_left + bt.rect.left,
+                                          self.box_top + bt.rect.top, bt.rect.width, bt.rect.height)
+                    if len(bt.imgList) > 1:
+                        if bt_rect.collidepoint(event.pos):
+                            bt.status = 1
+                        else:
+                            bt.status = 0
+
         return False
 
     def check_mouse_click(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             box_rect = pygame.Rect(self.box_left, self.box_top, self.box_w, self.box_h)
-            print('boxrect', box_rect)
             return box_rect.collidepoint(event.pos)
+
     def word_wrap(self):
         """ 将 msg 先分成若干行，便于绘制 """
         single_word_rect = pygame.freetype.Font.get_rect(self.font_txt, self.msg[0])
         single_word_width = single_word_rect.width  # 获取单个字的宽高
         msg_left = self.txt_xy[0] * self.box_w
-        max_words = int(self.box_w-msg_left - 20) // single_word_width  # 一行最多的字数
+        max_words = int(self.box_w - msg_left - 20) // single_word_width  # 一行最多的字数
         total_lines = len(self.msg) // max_words + 1
         lines = []  # 将不同的行放进去
         start = 0

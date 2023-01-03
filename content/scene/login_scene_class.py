@@ -51,10 +51,12 @@ class LogInScene(Scene):
     def login_is_clicked(self):
         userid = self.loaded['box'][0].text
         userpw = self.loaded['box'][1].text
-        answer = self.client.login(userid, userpw)
-        if answer:
-            print("登录成功")
-            PlayerInfo.player_name = userid
-            ScenePlayer.pop()
-        else:
-            print("failed")
+        if userid != '' and userpw != '':
+            # 输入用户名和密码的时候才登录
+            answer = self.client.login(userid, userpw)
+            if answer:
+                print("登录成功")
+                PlayerInfo.player_name = userid
+                ScenePlayer.pop()
+            else:
+                print("failed")
