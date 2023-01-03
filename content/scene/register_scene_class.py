@@ -27,9 +27,11 @@ class RegScene(Scene):
                                        [self.close_button])
         """显示没输入验证码的panel"""
         self.close_button.r_xy = 0.88, 0.1
-        self.no_check_box = MessageBox((0.33, 0.4), (0.2, 0.15), "错误", "未输入验证码")  # 12/28,为测试msgbox添加
+        self.no_check_box = MessageBox((0.33, 0.3), (0.2, 0.15), "错误", "未输入验证码")  # 12/28,为测试msgbox添加
         self.no_check_panel = Panel(self.reminder_panel_rect_small, '验证码为空', 22,
                                     [self.close_button])
+        """显示没输入用户名的提示框"""
+        self.no_id_box = MessageBox((0.33, 0.3), (0.2, 0.15), "错误", "未输入用户名")
         self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': [], 'msgbox': []}
 
     def show(self):
@@ -44,16 +46,29 @@ class RegScene(Scene):
 
     def send_checkcode_clicked(self):
         username = self.loaded['box'][1].text
-        print(username)  # 测试用
+        # print(username)  # 测试用
         email = self.loaded['box'][0].text
-        self.check_code = self.client.register_get_checkcode(username, email)
-        print(self.check_code)
+        if username != '' and email != '':
+            # 如果用户名和邮箱都不为空
+            self.check_code = self.client.register_get_checkcode(username, email)
+        elif username == '':
+            self.loaded['msgbox'] = [self.no_id_box]
+            self.has_msgbox = True
+        # print(self.check_code)
 
     def confirm_reg_clicked(self):
-        if self.check_code == '':
+        if self.loaded['box'][1].text == '':
+            # 未输入用户名
+            self.loaded['msgbox'] = [self.no_id_box]
+            self.ban_inputbox()
+            self.has_msgbox = True
+        elif self.check_code == '':
+            # 未输入验证码
             self.loaded['msgbox'] = [self.no_check_box]  # 12.28，为测试msgbox将此行右边的no_check_panel改了。
             self.ban_inputbox()
+            self.has_msgbox = True
         elif self.check_code.lower() != self.loaded['box'][3].text.lower():
+            # 验证码错误
             self.loaded['panel'] = [self.wrong_check_panel]
             self.ban_inputbox()
         elif self.check_code.lower() == self.loaded['box'][3].text.lower():
