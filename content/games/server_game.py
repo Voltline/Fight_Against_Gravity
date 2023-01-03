@@ -31,7 +31,7 @@ class ServerGame(OnlineGame):
         #     # print(self.addresses)
         #     pass
         # print('完成校时')
-        time.sleep(1)
+        # time.sleep(1)
 
         super().main()
 
@@ -43,7 +43,7 @@ class ServerGame(OnlineGame):
         self.sended_tick = 20 * self.physics_dt
 
     def get_start_time(self) -> float:
-        start_time = gf.get_time()+4
+        start_time = gf.get_time()+5
         self.send_start_game_time(start_time)
         return start_time
 

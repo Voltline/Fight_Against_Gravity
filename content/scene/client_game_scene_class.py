@@ -46,7 +46,9 @@ class ClientGameScene(Scene):
         if super().deal_event(e):
             return True
         if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-            if self.game.is_pause:
+            if self.set_panel.is_show:
+                self.set_key_clicked()
+            elif self.game.is_pause:
                 self.continue_button_clicked()
             else:
                 self.pause_clicked()
