@@ -106,7 +106,7 @@ if __name__ == "__main__":
             information = json.load(f)
 
     ip = ""
-    port = information["Reg_Port"]
+    port = information["Client"]["Reg_Port"]
     password = information["AES_Key"]
     try:
         server = IdentifyServer(ip, port, debug=_debug_, password=password)
