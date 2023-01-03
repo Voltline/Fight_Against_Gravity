@@ -41,8 +41,7 @@ class Scene:
         # msgbox优先级
         self.has_msgbox = False
         # 设置界面
-        self.set_out_panel = UIF.new_setting_all_panel(self)
-        self.set_panel = UIF.new_setting_scrollpanel(self)
+        self.set_panel = UIF.new_setting_all_panel(self)
 
     def ban_inputbox(self):
         """禁用输入框"""
@@ -112,10 +111,13 @@ class Scene:
         ScenePlayer.pop()
 
     def set_is_clicked(self):
-        self.loaded['panel'] = [self.set_out_panel, self.set_panel]
+        if self.set_panel not in self.loaded['panel']:
+            self.loaded['panel'].append(self.set_panel)
+        else:
+            self.set_panel.is_show = self.set_panel.is_able = True
 
     def set_key_clicked(self):
-        new_key_set = self.set_panel.loaded['boxes']
+        new_key_set = (self.set_panel.loaded['ctrlrs'][1]).loaded['boxes']
         new_ship1_keys = Scene.settings.ship1_keys.copy()
         for key in new_ship1_keys:
             new_ship1_keys[key] = Scene.settings.ship1_keys[key].copy()
@@ -136,6 +138,8 @@ class Scene:
                 all_keys.add(new_ship2_keys[labels[cnt % 5]][1])
             cnt += 1
 
+        print(all_keys)
+
         if len(all_keys) == 10:
             if new_ship1_keys != Scene.settings.ship1_keys:
                 Scene.settings.change_key("Ship1", list(new_ship1_keys.values()))
@@ -145,7 +149,7 @@ class Scene:
             show_duplicate_warning_msg_box = MessageBox((0.35, 0.35), (0.5, 0.5), "警告", "不要设置重复的按键！")
             self.loaded['msgbox'] = [show_duplicate_warning_msg_box]
 
-        UIF.update_key_board(self, self.set_panel.loaded['boxes'])
+        UIF.update_key_board(self, (self.set_panel.loaded['ctrlrs'][1]).loaded['boxes'])
 
         self.set_close_is_clicked()
 
@@ -164,7 +168,7 @@ class Scene:
         show_default_info_msg_box = MessageBox((0.37, 0.4), (0.5, 0.5), "提示", "键位已经恢复至默认布局！")
         self.loaded['msgbox'] = [show_default_info_msg_box]
 
-        UIF.update_key_board(self, self.set_panel.loaded['boxes'])
+        UIF.update_key_board(self, (self.set_panel.loaded['ctrlrs'][1]).loaded['boxes'])
 
         self.set_close_is_clicked()
 
@@ -172,12 +176,7 @@ class Scene:
         self.loaded['panel'].pop()
 
     def set_close_is_clicked(self):
-        self.loaded['panel'].pop()
-        self.loaded['panel'].pop()
-
-    def settings_button_clicked(self):
-        """点击暂停panel中的设置按钮或是开始界面中的设置按钮"""
-        pass
+        self.set_panel.is_show = self.set_panel.is_able = False
 
     def quit_button_clicked(self):
         """点击暂停panel中的退出按钮"""
@@ -191,7 +190,7 @@ class Scene:
         confirm_full_screen_quit_btn = Button('重启', self.confirm_full_screen_quit, pygame.Rect(0, 0, 120, 40),
                                               Scene.settings.btbg_light, 0, '立即重启', SceneFont.log_font)
         confirm_full_screen_quit_btn.add_img(Scene.settings.btbg_light_pressed)
-        cancel_full_screen_quit_btn = Button('取消', self.confirm_full_screen_quit, pygame.Rect(0, 0, 120, 40),
+        cancel_full_screen_quit_btn = Button('取消', self.cancel_full_screen_quit, pygame.Rect(0, 0, 120, 40),
                                              Scene.settings.btbg_light, 0, '稍后重启', SceneFont.log_font)
         cancel_full_screen_quit_btn.add_img(Scene.settings.btbg_light_pressed)
         confirm_full_screen_quit_btn.r_xy = 0.08, 0.7

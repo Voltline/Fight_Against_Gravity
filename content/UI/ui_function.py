@@ -262,7 +262,7 @@ class UIFunction:
                                  scene.settings.btbg_light, 0, '继续游戏', SceneFont.log_font)
         continue_button.add_img(scene.settings.btbg_light_pressed)
         continue_button.r_xy = 0.25, 0.15
-        settings_button = Button('设置', scene.settings_button_clicked, button_rect.copy(),
+        settings_button = Button('设置', scene.set_is_clicked, button_rect.copy(),
                                  scene.settings.btbg_light, 0, '设置', SceneFont.log_font)
         settings_button.add_img(scene.settings.btbg_light_pressed)
         settings_button.r_xy = 0.25, 0.4
@@ -298,7 +298,8 @@ class UIFunction:
         close_button.r_xy = 0.95, 0.03
 
         setting_all_rect = pygame.Rect(0.1667 * width, 0.0625 * height, 0.667 * width, 0.875 * height)
-        setting_all_panel = Panel(setting_all_rect, '设置', 25, [close_button], [], [], 0)
+        setting_scorllpanel = UIFunction.new_setting_scrollpanel(scene)
+        setting_all_panel = Panel(setting_all_rect, '设置', 25, [close_button, setting_scorllpanel], [], [], 0)
         return setting_all_panel
 
     @staticmethod
@@ -358,6 +359,7 @@ class UIFunction:
         set_scroll_panel = ScrollablePanel(scene.settings, setting_scroll_rect, ' ', 25,
                                            [set_key_confirm_button, set_default_button, set_full_screen_button], set_boxes, labels,
                                            text_pos=0)
+        set_scroll_panel.r_xy = 0, 0.07
         return set_scroll_panel
 
     @staticmethod
