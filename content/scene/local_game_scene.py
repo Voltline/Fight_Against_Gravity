@@ -16,7 +16,7 @@ class LocalGameScene(Scene):
         self.pause_panel = UIF.new_pause_panel(self)
         self.pause_panel.is_show = self.pause_panel.is_able = False
         self.loaded = {'img': None, 'label': None, 'box': None,
-                       'button': [], 'panel': [self.pause_panel]}
+                       'button': [], 'panel': [self.pause_panel], 'msgbox': []}
 
         self.game = LocalGame(self.settings, self.screen, map_name)
         self.game.restart()

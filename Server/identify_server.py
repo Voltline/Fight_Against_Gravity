@@ -91,14 +91,20 @@ class IdentifyServer:
 
 
 if __name__ == "__main__":
-    with open(path + "settings/settings.json", 'r') as f:
-        information = json.load(f)
+    _debug_ = "--debug" in sys.argv
+    _local_ = "--local" in sys.argv
+    if _local_:
+        with open(path + "settings/settings_local.json", 'r') as f:
+            information = json.load(f)
+    else:
+        with open(path + "settings/settings.json", 'r') as f:
+            information = json.load(f)
+
     ip = ""
-    port = 25555
+    port = information["Reg_Port"]
     password = information["AES_Key"]
-    debug = False
     try:
-        server = IdentifyServer(ip, port, debug=debug, password=password)
+        server = IdentifyServer(ip, port, debug=_debug_, password=password)
         server.start()
     except Exception as e:
         print(f"[Error] {time.ctime()} : {e}")
