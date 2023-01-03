@@ -42,13 +42,15 @@ class ClientGameScene(Scene):
         self.draw_elements()
         pygame.display.flip()
 
-    def deal_event(self, e):
-        super().deal_event(e)
+    def deal_event(self, e) -> bool:
+        if super().deal_event(e):
+            return True
         if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
             if self.game.is_pause:
                 self.continue_button_clicked()
             else:
                 self.pause_clicked()
+        return False
 
     def deal_events(self):
         """获取并处理所有消息"""
@@ -60,7 +62,8 @@ class ClientGameScene(Scene):
                 pygame.quit()
                 sys.exit()
             else:
-                self.deal_event(event)
+                if self.deal_event(event):
+                    continue
                 if not self.game.is_pause:
                     self.game.deal_event(event)
 

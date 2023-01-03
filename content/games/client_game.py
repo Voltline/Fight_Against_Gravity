@@ -115,7 +115,7 @@ class ClientGame(OnlineGame):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 2:  # 是否按下鼠标中键
                 self.camera.change_mode()
-            elif event.button == 1:  # 按下鼠标左键
+            elif event.button == 1 and not self.is_pause:  # 按下鼠标左键
                 self.player_ship.is_fire = True
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:  # 松开鼠标左键
