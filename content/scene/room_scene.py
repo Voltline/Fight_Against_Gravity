@@ -129,10 +129,10 @@ class RoomScene(Scene):
             "有玩家未退出，无法退出房间", 25,
             ctrlrs=[r_confirm_button_], text_pos=0.5)
         self.loading_message = [
-            "游戏加载中 loading...   |",
-            "游戏加载中 loading...   /",
-            "游戏加载中 loading...   -",
-            "游戏加载中 loading...   \\",
+            "游戏加载中 loading...      |",
+            "游戏加载中 loading...      /",
+            "游戏加载中 loading...      -",
+            "游戏加载中 loading...      \\",
         ]
         self.r_wating_start_lable = Label(1 * self.width, 0.5 * self.height, 200,
                                           self.loading_message[self.last_update_loading_id], SceneFont.wating_font)
@@ -140,9 +140,11 @@ class RoomScene(Scene):
         self.wating_message = [
             "游戏操作按键可以在设置里进行修改",
             "想要全屏畅快战斗？去设置看看吧",
-            "悄悄告诉你，这个游戏在github开源了",
-            "想要改变运动轨迹？想想高中学的卫星变轨",
-            "发射子弹虽然是不限量的，但很可能击中自己"
+            "悄悄告诉你，这个游戏在github开源了 QAQ",
+            "想要改变运动轨迹？想想高中学的卫星变轨 qwq",
+            "发射子弹虽然是不限量的，但很可能击中自己",
+            "飞不到对方的轨道上？那就把子弹发射过去！",
+            "操控飞船，击败对手，取得胜利！QWQ"
         ]
         self.r_wating_start_message_lable = Label(1 * self.width, 0.5 * self.height, 200,
                                                   self.wating_message[self.last_update_loading_id],
