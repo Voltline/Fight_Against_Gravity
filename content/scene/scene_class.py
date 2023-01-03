@@ -176,6 +176,7 @@ class Scene:
         self.loaded['panel'].pop()
 
     def set_close_is_clicked(self):
+        UIF.update_key_board(self, (self.set_panel.loaded['ctrlrs'][-1]).loaded['boxes'])
         self.set_panel.is_show = self.set_panel.is_able = False
 
     def quit_button_clicked(self):
