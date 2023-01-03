@@ -8,6 +8,7 @@ from content.UI.panel_class import Panel
 from content.scene.scene_player_class import ScenePlayer
 from content.UI.ui_function import UIFunction as UIF
 from content.scene.client_game_scene_class import ClientGameScene
+from Server.Modules.OptType import OptType
 
 
 class RoomScene(Scene):
@@ -18,6 +19,7 @@ class RoomScene(Scene):
         self.last_update_time = 0
         self.roomname = "默认房间名"
         self.roommap = "地月系统"
+        self.userlist = []
         self.is_owner = is_owner  # 是否是房主
         self.is_ready = False
         self.is_start = False
@@ -218,64 +220,76 @@ class RoomScene(Scene):
         if time.time() - self.last_update_time > 1:
             print("update at", time.time())
             self.last_update_time = time.time()
-            res = self.client.getroom()
-            if res:
-                self.is_owner = (res["owner"] == self.client.local_get_user())
-                if self.is_owner:
-                    self.ready_button.is_show = self.ready_button.is_able = False
-                    self.start_button.is_show = self.start_button.is_able = True
-                    self.r_change_map_button.is_show = True
-                    self.r_change_map_button.is_able = True
-                    self.r_change_name_button.is_show = True
-                    self.r_change_name_button.is_able = True
+            self.client.getroom()
 
-                else:
-                    self.ready_button.is_show = self.ready_button.is_able = True
-                    self.start_button.is_show = self.start_button.is_able = False
-                    self.r_change_map_button.is_show = False
-                    self.r_change_map_button.is_able = False
-                    self.r_change_name_button.is_show = False
-                    self.r_change_name_button.is_able = False
-                self.roommap = res["roommap"]
-                self.roomname = res["roomname"]
-                self.r_roommap_lable.set_text('地图：' + self.roommap)
-                self.r_roomname_lable.set_text('房间名：' + self.roomname)
-                self.r_roommap_button.change_new_image(self.path + "/assets/texture/thumbnail/" + self.roommap + ".png")
-                owner = res["owner"]
-                userlist = res["userlist"]
-                self.user_ready_lable[0].set_text("房  主")
-                self.user_ready_lable[0].is_show = True
-                self.user_dready_lable[0].is_show = False
-                self.user_name_lable[0].set_text(owner)
-                self.user_name_lable[0].is_show = True
-                now = 1
-                has_dready = False
-                for user, ready in userlist:
-                    if user == owner:
-                        continue
-                    if ready:
-                        self.user_ready_lable[now].is_show = True
-                        self.user_dready_lable[now].is_show = False
+    def deal_msgs(self):
+        """非阻塞接收并处理消息"""
+        for msg in self.client.client.get_message_list():
+            opt = msg['opt']
+            if opt == OptType.getRoom:
+                res = msg['room']
+                if res:
+                    self.is_owner = (res["owner"] == self.client.local_get_user())
+                    if self.is_owner:
+                        self.ready_button.is_show = self.ready_button.is_able = False
+                        self.start_button.is_show = self.start_button.is_able = True
+                        self.r_change_map_button.is_show = True
+                        self.r_change_map_button.is_able = True
+                        self.r_change_name_button.is_show = True
+                        self.r_change_name_button.is_able = True
+
                     else:
-                        has_dready = True
-                        self.user_ready_lable[now].is_show = False
-                        self.user_dready_lable[now].is_show = True
-                    self.user_name_lable[now].set_text(user)
-                    self.user_name_lable[now].is_show = True
-                    now += 1
-                if not has_dready:
-                    self.not_allready_lable.is_show = False
-                for i in range(now, 8):
-                    self.user_ready_lable[i].is_show = False
-                    self.user_name_lable[i].is_show = False
-                    self.user_dready_lable[i].is_show = False
-                if res['is_run'] and not self.is_start:
-                    # 开始游戏
-                    ScenePlayer.push(ClientGameScene(res['roommap'], [u[0] for u in res['userlist']]))
-                self.is_start = res['is_run']
+                        self.ready_button.is_show = self.ready_button.is_able = True
+                        self.start_button.is_show = self.start_button.is_able = False
+                        self.r_change_map_button.is_show = False
+                        self.r_change_map_button.is_able = False
+                        self.r_change_name_button.is_show = False
+                        self.r_change_name_button.is_able = False
+                    self.roommap = res["roommap"]
+                    self.roomname = res["roomname"]
+                    self.r_roommap_lable.set_text('地图：' + self.roommap)
+                    self.r_roomname_lable.set_text('房间名：' + self.roomname)
+                    self.r_roommap_button.change_new_image(
+                        self.path + "/assets/texture/thumbnail/" + self.roommap + ".png")
+                    owner = res["owner"]
+                    self.userlist = res["userlist"]
+                    self.user_ready_lable[0].set_text("房  主")
+                    self.user_ready_lable[0].is_show = True
+                    self.user_dready_lable[0].is_show = False
+                    self.user_name_lable[0].set_text(owner)
+                    self.user_name_lable[0].is_show = True
+                    now = 1
+                    has_dready = False
+                    for user, ready in self.userlist:
+                        if user == owner:
+                            continue
+                        if ready:
+                            self.user_ready_lable[now].is_show = True
+                            self.user_dready_lable[now].is_show = False
+                        else:
+                            has_dready = True
+                            self.user_ready_lable[now].is_show = False
+                            self.user_dready_lable[now].is_show = True
+                        self.user_name_lable[now].set_text(user)
+                        self.user_name_lable[now].is_show = True
+                        now += 1
+                    if not has_dready:
+                        self.not_allready_lable.is_show = False
+                    for i in range(now, 8):
+                        self.user_ready_lable[i].is_show = False
+                        self.user_name_lable[i].is_show = False
+                        self.user_dready_lable[i].is_show = False
+                    if res['is_run'] and not self.is_start:
+                        # 开始游戏
+                        self.wating_start_panel.is_show = self.wating_start_panel.is_able = True
+                    self.is_start = res['is_run']
+            elif opt == OptType.ServerStartGameTime:
+                self.wating_start_panel.is_show = self.wating_start_panel.is_able = False
+                ScenePlayer.push(ClientGameScene(self.roommap, [u[0] for u in self.userlist]))
 
     def update(self):
         self.update_user()
+        self.deal_msgs()
         self.deal_events()
 
     def confirm_quit_is_clicked(self):
