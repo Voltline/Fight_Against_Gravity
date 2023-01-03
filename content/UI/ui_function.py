@@ -194,7 +194,7 @@ class UIFunction:
         map_label.r_xy = 0.41 * (screen_width - 10) / width, 0
         player_num_label = Label(0, 0, 100, str(player_num) + '/' + str(max_num))
         player_num_label.r_xy = 0.61 * (screen_width - 10) / width, 0
-        if is_play == 'YES':
+        if is_play:
             is_play = '游戏中'
         else:
             is_play = '房间中'
@@ -262,7 +262,7 @@ class UIFunction:
                                  scene.settings.btbg_light, 0, '继续游戏', SceneFont.log_font)
         continue_button.add_img(scene.settings.btbg_light_pressed)
         continue_button.r_xy = 0.25, 0.15
-        settings_button = Button('设置', scene.settings_button_clicked, button_rect.copy(),
+        settings_button = Button('设置', scene.set_is_clicked, button_rect.copy(),
                                  scene.settings.btbg_light, 0, '设置', SceneFont.log_font)
         settings_button.add_img(scene.settings.btbg_light_pressed)
         settings_button.r_xy = 0.25, 0.4
@@ -292,27 +292,6 @@ class UIFunction:
         width = scene.screen.get_rect().width
         height = scene.screen.get_rect().height
         close_rect = pygame.Rect(0, 0, 20, 20)
-        close_button = Button('close', scene.set_close_is_clicked, close_rect,
-                              scene.path + 'assets\\Img\\close_unclicked.png', 0)
-        close_button.add_img(scene.path + 'assets\\Img\\close_clicked.png')
-        close_button.r_xy = 0.95, 0.03
-
-        setting_all_rect = pygame.Rect(0.1667 * width, 0.0625 * height, 0.667 * width, 0.875 * height)
-        setting_all_panel = Panel(setting_all_rect, '设置', 25, [close_button], [], [], 0)
-        return setting_all_panel
-
-    @staticmethod
-    def new_setting_scrollpanel(scene) -> ScrollablePanel:
-        width = scene.screen.get_rect().width
-        height = scene.screen.get_rect().height
-        setting_scroll_rect = pygame.Rect(0.1697 * width, 0.1325 * height, 0.66 * width, 0.8 * height)
-
-        is_full_screen = "切换到全屏幕" if scene.settings.full_screen == 0 else "切换到窗口化"
-        set_full_screen_rect = pygame.Rect(0.2083 * width, 0.25 * height, 150, 50)
-        set_full_screen_button = Button('全屏', scene.set_full_screen, set_full_screen_rect,
-                                        scene.settings.btbg_light, 0, is_full_screen, SceneFont.log_font)
-        set_full_screen_button.add_img(scene.settings.btbg_light_pressed)
-
         set_default_rect = pygame.Rect(0.2083 * width, 0.25 * height, 150, 50)
         set_default_button = Button('恢复默认', scene.set_default, set_default_rect,
                                     scene.settings.btbg_light, 0, "恢复默认键位", SceneFont.log_font)
@@ -323,23 +302,52 @@ class UIFunction:
                                         scene.settings.btbg_light, 0, "确认修改", SceneFont.log_font)
         set_key_confirm_button.add_img(scene.settings.btbg_light_pressed)
 
+        set_key_cancel_rect = pygame.Rect(0.375 * width, 0.25 * height, 150, 50)
+        set_key_cancel_button = Button('取消修改', scene.set_close_is_clicked, set_key_cancel_rect,
+                                       scene.settings.btbg_light, 0, "取消修改", SceneFont.log_font)
+        set_key_cancel_button.add_img(scene.settings.btbg_light_pressed)
+
         set_key_confirm_button.r_xy = 0.125, 0.9
-        set_full_screen_button.r_xy = 0.725, 0.9
         set_default_button.r_xy = 0.425, 0.9
+        set_key_cancel_button.r_xy = 0.725, 0.9
+        close_button = Button('close', scene.set_close_is_clicked, close_rect,
+                              scene.path + 'assets\\Img\\close_unclicked.png', 0)
+        close_button.add_img(scene.path + 'assets\\Img\\close_clicked.png')
+        close_button.r_xy = 0.95, 0.03
+
+        setting_all_rect = pygame.Rect(0.1667 * width, 0.0625 * height, 0.667 * width, 0.875 * height)
+        setting_scorllpanel = UIFunction.new_setting_scrollpanel(scene)
+        setting_all_panel = Panel(setting_all_rect, '设置', 25,
+                                  [close_button, set_key_confirm_button, set_default_button, set_key_cancel_button, setting_scorllpanel],
+                                  [], [], 0)
+        return setting_all_panel
+
+    @staticmethod
+    def new_setting_scrollpanel(scene) -> ScrollablePanel:
+        width = scene.screen.get_rect().width
+        height = scene.screen.get_rect().height
+        setting_scroll_rect = pygame.Rect(0.1667 * width, 0.1325 * height, 0.667 * width, 0.7 * height)
+
+        is_full_screen = "切换到全屏幕" if scene.settings.full_screen == 0 else "切换到窗口化"
+        set_full_screen_rect = pygame.Rect(0.2083 * width, 0.25 * height, 150, 50)
+        set_full_screen_button = Button('全屏', scene.set_full_screen, set_full_screen_rect,
+                                        scene.settings.btbg_light, 0, is_full_screen, SceneFont.log_font)
+        set_full_screen_button.add_img(scene.settings.btbg_light_pressed)
+        set_full_screen_button.r_xy = 0.425, 0.98
 
         labels = [Label(0, 0, 25, "飞船1/在线游戏", SceneFont.set_title_font),
                   Label(0, 0, 25, "飞船2", SceneFont.set_title_font)]
-        labels[0].r_xy = 0.15, 0.05
-        labels[1].r_xy = 0.68, 0.05
+        labels[0].r_xy = 0.15, 0.02
+        labels[1].r_xy = 0.68, 0.02
 
         set_boxes = []
         i = 0
         for key, value in scene.settings.ship1_keys.items():
             label = Label(0, 0, 20, key, SceneFont.set_label_font)
-            label.r_xy = 0.18, 0.15 + 0.15 * i
+            label.r_xy = 0.18, 0.15 + 0.18 * i
             labels.append(label)
             box = InputBox(pygame.Rect(0, 0, 40, 35), is_set=True)
-            box.r_xy = 0.28, 0.15 + 0.15 * i
+            box.r_xy = 0.28, 0.15 + 0.18 * i
             box.text = " " + pygame.key.name(value[1]).upper()
             set_boxes.append(box)
             i += 1
@@ -347,17 +355,17 @@ class UIFunction:
         i = 0
         for key, value in scene.settings.ship2_keys.items():
             label = Label(0, 0, 20, key, SceneFont.set_label_font)
-            label.r_xy = 0.65, 0.15 + 0.15 * i
+            label.r_xy = 0.65, 0.15 + 0.18 * i
             labels.append(label)
             box = InputBox(pygame.Rect(0, 0, 40, 35), is_set=True)
-            box.r_xy = 0.75, 0.15 + 0.15 * i
+            box.r_xy = 0.75, 0.15 + 0.18 * i
             box.text = " " + pygame.key.name(value[1]).upper()
             set_boxes.append(box)
             i += 1
 
         set_scroll_panel = ScrollablePanel(scene.settings, setting_scroll_rect, ' ', 25,
-                                           [set_key_confirm_button, set_default_button, set_full_screen_button], set_boxes, labels,
-                                           text_pos=0)
+                                           [set_full_screen_button], set_boxes, labels, text_pos=0)
+        set_scroll_panel.r_xy = 0, 0.09
         return set_scroll_panel
 
     @staticmethod
