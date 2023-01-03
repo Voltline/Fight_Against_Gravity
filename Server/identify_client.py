@@ -30,10 +30,9 @@ class IdentifyClient:
         }
         self.__reg_client.send(msg_opt1)
         check_code = self.__reg_client.receive()
-        if check_code != "DUPLICATE":
+        if check_code != "DUPLICATE" or check_code != "ERROR":
             return check_code
         else:
-            print("Username Duplicate Error!")
             return ""
 
     def send_all_information(self, username: str, email: str, password: str) -> bool:
