@@ -18,7 +18,7 @@ class GameManager:
         self.bullets = pygame.sprite.Group()
 
         self.center_v = Vector2(0, 0)  # 质心的速度
-        self.max_dis = 3e3  # 判断子弹消失的距离
+        self.max_dis = 6e3  # 判断子弹消失的距离
 
     def all_move(self, delta_t):
         """所有objs的移动"""

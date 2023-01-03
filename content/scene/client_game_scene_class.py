@@ -11,13 +11,15 @@ from content.online.player_info import PlayerInfo
 
 class ClientGameScene(Scene):
     """客户端在线游戏的场景"""
-    def __init__(self, map_name, player_names):
+    def __init__(self, map_name, player_names, server_start_time=None):
         super().__init__()
         self.pause_panel = UIF.new_pause_panel(self)
         self.pause_panel.is_show = self.pause_panel.is_able = False
+        self.win_panel, self.return_room_button, self.win_panel_label = UIF.new_client_game_win_panel(self, '')
         self.loaded = {'img': None, 'label': None, 'box': None,
-                       'button': [], 'panel': [self.pause_panel], 'msgbox': []}
+                       'button': [], 'panel': [self.pause_panel, self.win_panel], 'msgbox': []}
 
+        self.return_room_countdown_time = 5
         self.game = ClientGame(self.settings, self.client.client, self.client.roomid,
                                map_name, player_names, self.screen, PlayerInfo.player_name)
         self.game.restart()
@@ -36,6 +38,10 @@ class ClientGameScene(Scene):
         self.client.client.get_message_list()
 
         ScenePlayer.pop()
+        ScenePlayer.pop()
+
+    def return_room_button_clicked(self):
+        """点击胜利panel上的返回房间按钮"""
         ScenePlayer.pop()
 
     def show(self):
@@ -68,6 +74,21 @@ class ClientGameScene(Scene):
                     continue
                 if not self.game.is_pause:
                     self.game.deal_event(event)
+
+    def check_win(self):
+        """判断游戏是否胜利"""
+        if self.game.is_run and self.game.win_player is not None:
+            self.game.is_run = False
+            self.win_panel_label.set_text(self.game.win_player)
+            self.win_panel.is_show = self.win_panel.is_able = True
+
+    def return_room_countdown(self):
+        """返回房间5秒倒计时，倒计时结束自动按按钮"""
+        if self.win_panel.is_show:
+            self.return_room_countdown_time -= self.game.delta_t
+            if self.return_room_countdown_time <= 0:
+                self.return_room_button_clicked()
+            self.return_room_button.set_text(str(int(self.return_room_countdown_time)))
 
     def update(self):
         self.deal_events()

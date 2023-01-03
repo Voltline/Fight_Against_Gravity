@@ -71,6 +71,7 @@ class ServerGame(OnlineGame):
         self.check_collisions()
         self.gm.all_move(self.physics_dt)
         self.ships_fire_bullet()
+        self.check_win()
 
     def send_msgs_physic_loop(self):
         """发送消息"""
@@ -149,9 +150,16 @@ class ServerGame(OnlineGame):
             'opt': OptType.CheckClock,
             'time': gf.get_time(),
             'args': [self.room_id, player_name],
-            'kwargs': {}
         }
         self.net.send(self.addresses[player_name], msg)
+
+    def send_game_win_msg(self, win_player):
+        """广播游戏胜利消息"""
+        msg = {
+            'opt': OptType.GameWin,
+            'args': [win_player]
+        }
+        self.send_all(msg)
 
     def check_events(self):
         """服务器不需要处理消息"""
@@ -238,3 +246,15 @@ class ServerGame(OnlineGame):
             name = self.quit_players.get()
             if name in self.addresses:
                 del self.addresses[name]
+
+    def check_win(self):
+        """检查是否游戏胜利(对局结束)并执行对应工作"""
+        l = len(self.gm.ships)
+        if l < 2:
+            if l == 1:
+                win_player = self.gm.ships.sprites()[0].player_name
+            else:
+                win_player = '本局无人生还'
+            self.send_game_win_msg(win_player)
+            self.is_run = False
+

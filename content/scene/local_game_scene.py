@@ -15,19 +15,23 @@ class LocalGameScene(Scene):
         super().__init__()
         self.pause_panel = UIF.new_pause_panel(self)
         self.pause_panel.is_show = self.pause_panel.is_able = False
+        self.win_panel = UIF.new_local_game_win_panel(self, '本局无人生还')
+        self.win_panel.is_show = self.win_panel.is_able = False
         self.loaded = {'img': None, 'label': None, 'box': None,
-                       'button': [], 'panel': [self.pause_panel], 'msgbox': []}
+                       'button': [], 'panel': [self.pause_panel, self.set_panel, self.win_panel], 'msgbox': []}
 
         self.game = LocalGame(self.settings, self.screen, map_name)
         self.game.restart()
 
     def pause_clicked(self):
-        self.pause_panel.is_show = self.pause_panel.is_able = True
-        self.game.is_pause = True
+        if not self.set_panel.is_show and not self.win_panel.is_show:
+            self.pause_panel.is_show = self.pause_panel.is_able = True
+            self.game.is_pause = True
 
     def continue_button_clicked(self):
-        self.pause_panel.is_show = self.pause_panel.is_able = False
-        self.game.is_pause = False
+        if not self.set_panel.is_show:
+            self.pause_panel.is_show = self.pause_panel.is_able = False
+            self.game.is_pause = False
 
     def show(self):
         self.draw_elements()
@@ -57,6 +61,29 @@ class LocalGameScene(Scene):
                 if not self.game.is_pause:
                     self.game.deal_event(event)
 
+    def check_win(self):
+        """判断游戏是否胜利"""
+        if self.game.is_run and len(self.game.gm.ships) < 2:
+            if len(self.game.gm.ships) == 1:  # 有一个人活着
+                self.win_panel.loaded['others'][1].set_text(
+                    self.game.gm.ships.sprites()[0].player_name)
+            else:  # 无人生还
+                self.win_panel.loaded['others'][1].set_text('本局无人生还')
+            self.win_panel.is_show = self.win_panel.is_able = True
+            self.game.is_run = False
+
+    def win_panel_continue_button_clicked(self):
+        """点击了win_panel上的继续按钮"""
+        self.win_panel.is_show = self.win_panel.is_able = False
+
+    def win_panel_restart_button_clicked(self):
+        """点击了win_panel上的重新开始按钮"""
+        self.win_panel.is_show = self.win_panel.is_able = False
+        self.game.is_run = True
+        self.game.restart()
+
     def update(self):
         self.deal_events()
         self.game.main_update()
+        self.check_win()
+
