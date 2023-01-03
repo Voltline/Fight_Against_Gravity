@@ -21,6 +21,7 @@ class SceneFont:
     dready_font = {}
     """红色字体"""
     wating_font = {}
+    wating_message_font = {}
     @staticmethod
     def init(scene_settings):
         """类变量初始化"""
@@ -132,6 +133,13 @@ class SceneFont:
         }
         SceneFont.wating_font = {
             'font': pygame.font.Font(scene_settings.font_path_normal, 60),
+            'tc': (255, 255, 255),
+            'bc': None,
+            'align': 1,
+            'valign': 1
+        }
+        SceneFont.wating_message_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 30),
             'tc': (255, 255, 255),
             'bc': None,
             'align': 1,
