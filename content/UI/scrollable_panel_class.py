@@ -15,7 +15,6 @@ class ScrollablePanel(Panel):
         relative_pos: 组件相对于panel的比例,值为二维列表的字典形式.二维数组第一个值为横向比例，第二个值为纵向比例
         text_pos: 文字在panel中的位置，0靠上，1居中，2靠下
         """
-        # todo: 判断是否点到panel，涉及到一个panel是否active，如果panel被点击了，再让panel里的东西进行响应
         # 在panel里面画一个surface，把panel的surface画到
         # 把东西画到panel上，再把panel画到screen上。
         super().__init__(rect, text, font_size, ctrlrs, boxes, others, text_pos)
@@ -64,3 +63,9 @@ class ScrollablePanel(Panel):
         self.deal_event_key(event)
         return False
 
+    def update_mouse_motion(self, event, pos_offset=(0, 0)):
+        pos_offset = (self.rect[0]+pos_offset[0],
+                      self.rect[1]+pos_offset[1]-self.scrollbar.ratio*(self.surface.get_height()-self.rect.height))
+        for bt in self.loaded['ctrlrs'][::-1]:
+            if hasattr(bt, 'update_mouse_motion'):
+                bt.update_mouse_motion(event, pos_offset)
