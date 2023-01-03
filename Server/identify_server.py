@@ -1,5 +1,6 @@
 import os
 import sys
+
 path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/"
 sys.path.append(path)
 from Server.Modules import safeserver, database_operate, send_email, OptType
@@ -18,12 +19,13 @@ class IdentifyServer:
         :参数: ip: 服务器ip， port: 端口， heart_time: 心跳时间（默认-1），debug: 调试模式
         :返回: 无返回
         """
-        self.all_reg_acc = database_operate.get_all_reg_acc() # 服务器对象内置所有账户的字典
+        self.all_reg_acc = database_operate.get_all_reg_acc()  # 服务器对象内置所有账户的字典
         self.server = safeserver.SocketServer(ip, port, heart_time, debug, password=password,
                                               models=Flogger.FILE,
                                               logpath=path, level=Flogger.L_INFO)
         self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
                               folder_name="identify_server", logpath=path)
+
     def sendCheckCode_opt(self, username: str, email: str, addr: tuple):
         """发送验证码操作
         :参数: username：用户名，email：邮箱，addr：地址元组
@@ -31,8 +33,11 @@ class IdentifyServer:
         """
         email_sent[(username, email)] = True
         id_code = send_email.generate_id_code()
-        send_email.send_email(username, email, id_code)
-        self.server.send(addr, id_code)
+        send_ans = send_email.send_email(username, email, id_code)
+        if send_ans:
+            self.server.send(addr, id_code)
+        else:
+            self.server.send(addr, "ERROR")
 
     def register_opt(self, username: str, email: str, rmessage: dict, addr: tuple):
         """接受并写入数据库操作
@@ -55,7 +60,7 @@ class IdentifyServer:
         """
         username = rmessage["user"]
         password = rmessage["password"]
-        self.all_reg_acc = database_operate.get_all_reg_acc() # 每次调用前完成一次获取操作
+        self.all_reg_acc = database_operate.get_all_reg_acc()  # 每次调用前完成一次获取操作
         if username in self.all_reg_acc:
             if password == self.all_reg_acc[username][0]:
                 database_operate.insert_login_data([username, time.ctime()])
@@ -101,7 +106,7 @@ if __name__ == "__main__":
             information = json.load(f)
 
     ip = ""
-    port = information["Reg_Port"]
+    port = information["Client"]["Reg_Port"]
     password = information["AES_Key"]
     try:
         server = IdentifyServer(ip, port, debug=_debug_, password=password)

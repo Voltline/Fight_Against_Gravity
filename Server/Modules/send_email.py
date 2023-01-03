@@ -23,7 +23,7 @@ def generate_id_code() -> str:
     return char_check
 
 
-def send_email(user_name: str, target_email: str, id_code: str) -> None:
+def send_email(user_name: str, target_email: str, id_code: str) -> bool:
     """发送验证邮件
     :参数：user_name：用户名，target_email：目标邮箱，id_code：验证码
     :返回：无返回
@@ -544,9 +544,14 @@ def send_email(user_name: str, target_email: str, id_code: str) -> None:
     msg['To'] = Header(head)
     msg["Subject"] = Header("验证您的身份")
 
-    server = smtplib.SMTP_SSL(smtp_server)
-    server.connect(smtp_server, port)
-    server.login(my_mail, password)
-    server.sendmail(my_mail, target_email, msg.as_string())
+    try:
+        server = smtplib.SMTP_SSL(smtp_server)
+        server.connect(smtp_server, port)
+        server.login(my_mail, password)
+        server.sendmail(my_mail, target_email, msg.as_string())
 
-    server.quit()
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"[Error]: {e}")
+        return False

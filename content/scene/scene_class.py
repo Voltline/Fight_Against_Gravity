@@ -165,7 +165,7 @@ class Scene:
         if list(Scene.settings.ship2_keys.values()) != ship2_key:
             Scene.settings.change_key("Ship2", ship2_key)
 
-        show_default_info_msg_box = MessageBox((0.37, 0.4), (0.5, 0.5), "提示", "键位已经恢复至默认布局！")
+        show_default_info_msg_box = MessageBox((0.5, 0.5), "提示", "键位已经恢复至默认布局！")
         self.loaded['msgbox'] = [show_default_info_msg_box]
 
         UIF.update_key_board(self, (self.set_panel.loaded['ctrlrs'][-1]).loaded['boxes'])
@@ -197,7 +197,7 @@ class Scene:
         confirm_full_screen_quit_btn.r_xy = 0.08, 0.7
         cancel_full_screen_quit_btn.r_xy = 0.63, 0.7
         btns = [confirm_full_screen_quit_btn, cancel_full_screen_quit_btn]
-        set_full_screen_ask_yesno_msg_box = MessageBox((0.35, 0.4), (0.5, 0.4),
+        set_full_screen_ask_yesno_msg_box = MessageBox((0.5, 0.4),
                                                        "请确认", "切换至全屏需要重启游戏，是否现在重启？",
                                                        ctrlrs=btns, has_ctrlrs=True)
         self.loaded['msgbox'] = [set_full_screen_ask_yesno_msg_box]
