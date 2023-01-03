@@ -69,11 +69,6 @@ class RoomScene(Scene):
         self.start_button.add_img(self.settings.btbg_light_pressed)
         self.ready_button.is_show = self.ready_button.is_able = False
         self.start_button.is_show = self.start_button.is_able = False
-        if self.is_owner:
-            self.start_button.is_show = self.start_button.is_able = True
-        else:
-            self.ready_button.is_show = self.ready_button.is_able = True
-
         self.r_change_map_button = Button("changemap", self.change_map_clicked,
                                           pygame.Rect(0.0833 * self.width, 0.5875 * self.height, 0.1667 * self.width,
                                                       0.0625 * self.height),
@@ -92,6 +87,12 @@ class RoomScene(Scene):
                                            self.settings.btbg_light, 0, "更改房间名", SceneFont.log_font)
         self.r_change_name_button.add_img(self.settings.btbg_light_pressed)
         self.r_change_name_button.r_xy = 0.1, 1 / 10 * 8.55
+        if self.is_owner:
+            self.start_button.is_show = self.start_button.is_able = True
+        else:
+            self.ready_button.is_show = self.ready_button.is_able = True
+            self.r_change_map_button.is_show = self.r_change_map_button.is_able = False
+            self.r_change_name_button.is_show = self.r_change_name_button.is_able = False
         r_confirm_button = Button("changename", self.confirm_quit_is_clicked, pygame.Rect(0, 0, 100, 50),
                                   self.settings.btbg_light, 0, "确认", SceneFont.log_font)
         r_confirm_button.add_img(self.settings.btbg_light_pressed)
