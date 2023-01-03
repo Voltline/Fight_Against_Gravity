@@ -104,7 +104,7 @@ class OptType:
             "roomid": uuid(str),
             "owner": 房主名(str),
             "size": 玩家人数(int),
-            "started": 是否在游戏中(int:0/1),
+            "started": 是否在游戏中(True/False),
             "roommap" : 地图名(str),
             "roomname" : 房间名(str)
         }
