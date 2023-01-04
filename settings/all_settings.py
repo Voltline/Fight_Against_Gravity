@@ -54,7 +54,8 @@ class Settings:
         # Ships
         ships = inf["Ships"]
         self.ship_image_path = self.path + ships["ship_image_path"]  # 飞船图片路径
-        self.ship_explosion_image_path = self.path + ships["ship_explosion_image_path"]
+        self.ship_explosion_image_path = self.path + ships["ship_explosion_image_path"]  # 飞船爆炸的图片路径
+        self.ship_tail_image_path = self.path + ships["ship_tail_image_path"]  #
         self.ship_hp = ships["ship_hp"]  # 飞船初始血量
         self.ship_go_acc = ships["ship_go_acc"]  # 飞船前进/后退的加速度
         self.ship_turn_spd = ships["ship_turn_spd"]  # 飞船转弯的角速度(弧度制)
