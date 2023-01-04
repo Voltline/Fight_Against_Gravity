@@ -37,7 +37,7 @@ class RoomListScene(Scene):
                        'button': [self.back, self.refresh_button, self.create_room_button],
                        'panel': [self.all_room_list_panel, self.join_fail_panel], 'msgbox': []}
         self.refresh_button_clicked()
-
+        self.bgm_id = 1
     def refresh_button_clicked(self):
         """点击刷新按钮"""
         room_list = self.client.getroomlist()

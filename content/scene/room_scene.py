@@ -200,7 +200,7 @@ class RoomScene(Scene):
                       self.select_map_panel, self.change_room_name_panel, self.wating_start_panel]
         self.update_user()
         self.loaded = {'label': self.labels, 'box': [], 'button': self.buttons, 'panel': self.panel, 'msgbox': []}
-
+        self.bgm_id = 1
     def show(self):
         self.screen.fill((10, 10, 10))
         self.draw_elements()
