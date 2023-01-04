@@ -10,6 +10,7 @@ from content.scene.start_scene_class import StartScene
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.scene_font import SceneFont
 import content.game_modules.game_function as gf
+from content.space_objs.ship import Ship
 if hasattr(sys, 'frozen'):
     path = os.path.dirname(sys.executable) + '/'
 else:
@@ -35,6 +36,7 @@ s = client_main.ClientMain(path, _debug_=_debug_)
 if "--nogui" in sys.argv:
     s.start()
 sc = gf.init_pygame_window(settings)
+Ship.init(settings)
 Scene.init(settings, sc, s)
 begin = StartScene()
 ScenePlayer.push(begin)
