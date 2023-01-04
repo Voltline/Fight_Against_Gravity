@@ -29,9 +29,9 @@ class ClientGame(OnlineGame):
         self.ping_ms = 0  # 延迟
 
         # 校时
-        print('开始校时')
+        # print('开始校时')
         self.lag_time = self.get_lag_time(room_id)
-        print('校时成功,lag_time=', self.lag_time)  # TODO: debug
+        # print('校时成功,lag_time=', self.lag_time)
 
         self.last_all_ships_update_tick = 0
         self.last_bullets_update_tick = 0
@@ -48,10 +48,10 @@ class ClientGame(OnlineGame):
         self.last_bullets_update_tick = 0
 
     def get_start_time(self) -> float:
-        print('开始获取服务器游戏开始时间')
+        # print('开始获取服务器游戏开始时间')
         server_start_time = self.get_server_start_game_time(self.room_id)
-        print('服务器游戏开始时间获取成功:', server_start_time)  # TODO: debug
-        print(server_start_time - self.lag_time)
+        # print('服务器游戏开始时间获取成功:', server_start_time)
+        # print(server_start_time - self.lag_time)
         return server_start_time - self.lag_time
 
     def get_lag_time(self, room_id):
@@ -74,7 +74,7 @@ class ClientGame(OnlineGame):
                 'kwargs': {}
             }
             self.net.send(msg)
-            print('已发送校时信息:', cnt)  # TODO: debug
+            # print('已发送校时信息:', cnt)
             msg = None
             while not msg:
                 msg = self.net.receive()
