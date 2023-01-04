@@ -68,10 +68,11 @@ class ServerGame(OnlineGame):
     def physic_update(self):
         """每个物理dt的更新行为"""
         super().physic_update()  # 发消息，收消息，更新时间
+        self.check_win()
         self.check_collisions()
         self.gm.all_move(self.physics_dt)
         self.ships_fire_bullet()
-        self.check_win()
+
 
     def send_msgs_physic_loop(self):
         """发送消息"""

@@ -16,6 +16,7 @@ class ClientGameScene(Scene):
         self.pause_panel = UIF.new_pause_panel(self)
         self.pause_panel.is_show = self.pause_panel.is_able = False
         self.win_panel, self.return_room_button, self.win_panel_label = UIF.new_client_game_win_panel(self, '')
+        self.win_panel.is_show = self.pause_panel.is_able = False
         self.loaded = {'img': None, 'label': None, 'box': None,
                        'button': [], 'panel': [self.pause_panel, self.win_panel], 'msgbox': []}
 
@@ -88,8 +89,10 @@ class ClientGameScene(Scene):
             self.return_room_countdown_time -= self.game.delta_t
             if self.return_room_countdown_time <= 0:
                 self.return_room_button_clicked()
-            self.return_room_button.set_text(str(int(self.return_room_countdown_time)))
+            self.return_room_button.set_text('返回房间('+str(int(self.return_room_countdown_time))+')')
 
     def update(self):
         self.deal_events()
         self.game.main_update()
+        self.check_win()
+        self.return_room_countdown()
