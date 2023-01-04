@@ -193,6 +193,8 @@ class Ship(SpaceObj):
             else:
                 self.fire_heat = 1.1*self.max_heat
         self.fire_heat -= self.d_cool_heat
+        if self.fire_heat < 0:
+            self.fire_heat = 0
         return None
 
     def die(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group, dead_time: float):
@@ -253,8 +255,6 @@ class Ship(SpaceObj):
             return 1
         else:
             return 0
-
-
 
     def update_by_msg(self, msg: list, planets):
         """通过消息更新自身状态"""
