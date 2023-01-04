@@ -100,7 +100,6 @@ class Ship(SpaceObj):
 
     def update_angle(self, delta_t):
         """根据玩家操作更新飞船朝向的角度"""
-        self.angle0 = self.angle
         if self.is_turn_left:
             self.angle -= self.turn_spd * delta_t
         if self.is_turn_right:
@@ -115,17 +114,15 @@ class Ship(SpaceObj):
 
     def update_image(self):
         """根据飞船目前angle，旋转image0得到目前实际的image"""
-        if self.angle != self.angle0:  # 这里用!=判断不是因为忘了float要用isclose
-            deg = -degrees(self.angle)
-            deg = ((deg % 360) + 360) % 360
-            i = int(deg/360*self.angles)
-            self.image = self.images[i]
-            center = self.rect.center
-            self.rect = self.rects[i].copy()
-            self.rect.center = center
-            self.mask = self.masks[i]
+        deg = -degrees(self.angle)
+        deg = ((deg % 360) + 360) % 360
+        i = int(deg/360*self.angles)
+        self.image = self.images[i]
+        center = self.rect.center
+        self.rect = self.rects[i].copy()
+        self.rect.center = center
+        self.mask = self.masks[i]
 
-            self.angle0 = self.angle
 
     def update_tail_image(self):
         """更新尾焰图片"""
