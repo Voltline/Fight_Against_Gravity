@@ -16,12 +16,14 @@ class SceneFont:
     nickname_font = {}
     hp_value_font = {}
     red_font = {}
+    big_red_font = {}
     user_name_font = {}
     ready_font = {}
     dready_font = {}
     """红色字体"""
     wating_font = {}
     wating_message_font = {}
+    version_font = {}
     @staticmethod
     def init(scene_settings):
         """类变量初始化"""
@@ -91,6 +93,13 @@ class SceneFont:
         }
         SceneFont.red_font = {
             'font': pygame.font.Font(scene_settings.font_path_normal, 15),
+            'tc': (255, 50, 80),
+            'bc': None,
+            'align': 1,
+            'valign': 1
+        }
+        SceneFont.big_red_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 35),
             'tc': (255, 50, 80),
             'bc': None,
             'align': 1,

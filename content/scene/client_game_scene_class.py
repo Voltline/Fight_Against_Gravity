@@ -16,8 +16,10 @@ class ClientGameScene(Scene):
         self.pause_panel = UIF.new_pause_panel(self)
         self.pause_panel.is_show = self.pause_panel.is_able = False
         self.win_panel, self.return_room_button, self.win_panel_label = UIF.new_client_game_win_panel(self, '')
-        self.win_panel.is_show = self.pause_panel.is_able = False
-        self.loaded = {'img': None, 'label': None, 'box': None,
+        self.win_panel.is_show = self.win_panel.is_able = False
+        self.player_ship_far_label = UIF.new_client_game_scene_far_label(self)
+        self.player_ship_far_label.is_show = False
+        self.loaded = {'img': None, 'label': [self.player_ship_far_label], 'box': None,
                        'button': [], 'panel': [self.pause_panel, self.win_panel], 'msgbox': []}
         self.bgm_id = 2
 
@@ -98,3 +100,4 @@ class ClientGameScene(Scene):
         self.game.main_update()
         self.check_win()
         self.return_room_countdown()
+        self.player_ship_far_label.is_show = self.game.player_ship_is_far

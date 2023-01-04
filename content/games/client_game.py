@@ -22,7 +22,8 @@ class ClientGame(OnlineGame):
                  server_start_time=None):
         super().__init__(settings, screen, net, room_id, map_name, player_names)
         self.player_name = player_name
-        self.player_ship = None  # 玩家的飞船
+        self.player_ship: Ship = None  # 玩家的飞船
+        self.player_ship_is_far = False  # 玩家飞船是否距离
         self.win_player = None  # 胜利玩家
         self.camera = None
         self.traces = []
@@ -236,6 +237,7 @@ class ClientGame(OnlineGame):
         super().physic_update()
         self.check_collisions()
         self.gm.all_move(self.physics_dt)
+        self.player_ship_is_far = (self.player_ship.check_far(self.gm.planets, self.gm.max_dis) > 0)
         self.update_snapshots()
 
     def physic_loop(self):
