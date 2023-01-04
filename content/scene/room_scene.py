@@ -166,7 +166,7 @@ class RoomScene(Scene):
             "在线游戏死亡后会自动进入观战模式哦",
             "锟斤拷锟斤拷锟斤拷",
             "烫烫烫",
-            "现在时间是：" + str(time.strftime("%Y-%m-%d %H:%M",time.gmtime())),
+            # "现在时间是：" + str(time.strftime("%Y-%m-%d %H:%M",time.gmtime())),
             "Exception in thread \"main\" java.lang.NullPointerException",
             "按E送雷电将军",
             "有时候你的对手手感火热，挡也挡不住",
@@ -294,7 +294,7 @@ class RoomScene(Scene):
             self.last_update_loading_id += 1
             self.r_wating_start_lable.set_text(
                 self.loading_message[self.last_update_loading_id % len(self.loading_message)])
-        if stm - self.last_update_loading_message_time > 5:
+        if stm - self.last_update_loading_message_time > 7:
             self.last_update_loading_message_time = stm
             import random
             self.last_update_loading_message_id += random.randint(1, len(self.wating_message))
