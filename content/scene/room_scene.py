@@ -35,11 +35,11 @@ class RoomScene(Scene):
         """房间名"""
         self.r_roommap_lable = Label(0.0833 * self.width, 0.25 * self.height, 800, "房间地图：" + self.roommap,
                                      SceneFont.white_font)
-        self.r_roommap_lable.r_xy = 0.1, 1 / 10 * 1.6
+        self.r_roommap_lable.r_xy = 0.1, 1 / 10 * 1.3
         """房间地图名"""
         self.r_roomnum_lable = Label(0.0833 * self.width, 0.25 * self.height, 800, "房间人数：0/0" + self.roommap,
                                      SceneFont.white_font)
-        self.r_roomnum_lable.r_xy = 0.15, 1 / 10 * 6.3
+        self.r_roomnum_lable.r_xy = 0.1, 1 / 10 * 1.8
         "房间人数"
         self.not_allready_lable = Label(0.475 * self.width, 0.8875 * self.height, 800, "有玩家未准备",
                                         SceneFont.red_font)
