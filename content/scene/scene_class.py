@@ -138,7 +138,7 @@ class Scene:
                 all_keys.add(new_ship2_keys[labels[cnt % 5]][1])
             cnt += 1
 
-        print(all_keys)
+        # print(all_keys)
 
         if len(all_keys) == 10:
             if new_ship1_keys != Scene.settings.ship1_keys:

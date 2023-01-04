@@ -34,7 +34,7 @@ class MessageBox:
         self.msg_align = msg_align
         if title is not None:
             self.title = title  # 标题
-            print("self.title", title)
+            # print("self.title", title)
             self.title_rect = pygame.freetype.Font.get_rect(self.font_txt, self.title)
 
             self.title_w = self.title_rect.width  # 获取title的宽高

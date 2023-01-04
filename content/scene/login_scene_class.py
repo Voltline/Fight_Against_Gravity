@@ -55,8 +55,9 @@ class LogInScene(Scene):
             # 输入用户名和密码的时候才登录
             answer = self.client.login(userid, userpw)
             if answer:
-                print("登录成功")
+                # print("登录成功")
                 PlayerInfo.player_name = userid
                 ScenePlayer.pop()
             else:
-                print("failed")
+                pass
+                # print("failed")

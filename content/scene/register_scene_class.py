@@ -80,13 +80,13 @@ class RegScene(Scene):
                 self.loaded['box'][3].text,
                 self.loaded['box'][2].text)
             if result:
-                print('success')
+                # print('success')
                 ScenePlayer.pop()
             else:
-                print('fail', self.loaded['box'][1].text,
-                      self.loaded['box'][0].text,
-                      self.loaded['box'][2].text)
-
+                # print('fail', self.loaded['box'][1].text,
+                #       self.loaded['box'][0].text,
+                #       self.loaded['box'][2].text)
+                pass
     def close_is_clicked(self):
         self.loaded['panel'] = []
         self.box_is_able = True
