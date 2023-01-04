@@ -54,11 +54,11 @@ class FAGGame:
 
     def main_loop(self):
         """主循环"""
-        printed_time = 0  # TODO:测试用，上次输出调试信息的时间
+        # printed_time = 0
         while self.is_run:
-            if self.now_time - printed_time > 1:  # 每1秒输出一次fps等信息
-                printed_time = self.now_time
-                # self.print_debug()
+            # if self.now_time - printed_time > 1:  # 每1秒输出一次fps等信息
+            #     printed_time = self.now_time
+            #     self.print_debug()
             self.main_update()
 
     def main_update(self):
