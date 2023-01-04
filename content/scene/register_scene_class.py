@@ -33,6 +33,7 @@ class RegScene(Scene):
         """显示没输入用户名的提示框"""
         self.no_id_and_email_box = MessageBox((0.5, 0.5), "警告", "用户名和邮箱不能为空！")
         self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': [], 'msgbox': []}
+        self.bgm_id = 0
 
     def show(self):
         self.width = self.screen.get_rect().width
