@@ -239,6 +239,11 @@ class SocketServer:
             else:
                 # message = message.encode()
                 pass
+            # sended_len = 0
+            # while True:
+            #     sended_len = client.send(message[sended_len:])
+            #     if not sended_len:
+            #         break
             client.sendall(message)
         except Exception as err:
             self.logger.error("[in send]" + str(err) + "发送失败")

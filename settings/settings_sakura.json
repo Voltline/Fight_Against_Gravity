@@ -7,7 +7,7 @@
     "Game_Local_Port": 25555,
     "Game_Online_Port": 33669,
     "heart_beat": 30,
-    "msg_len": 2048
+    "msg_len": 1024
   },
   "Email": {
     "Addr": "fag_identify_norep@yeah.net",

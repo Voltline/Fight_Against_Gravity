@@ -157,7 +157,15 @@ class SocketClient:
         else:
             # message = message.encode()
             pass
-        self.__socket.sendall(message)
+        # sended_len = 0
+        # while True:
+        #     sended_len = self.__socket.send(message[sended_len:])
+        #     if not sended_len:
+        #         break
+        try:
+            self.__socket.sendall(message)
+        except Exception as err:
+            self.logger.error(err)
 
     def receive(self):
         """
