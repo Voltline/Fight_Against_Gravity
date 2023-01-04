@@ -3,6 +3,7 @@ from content.scene.scene_class import Scene
 from content.UI.button_class import Button
 from content.UI.inputbox_class import InputBox
 from content.UI.label_class import Label
+from content.UI.message_box import MessageBox
 from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.register_scene_class import RegScene
@@ -59,5 +60,10 @@ class LogInScene(Scene):
                 PlayerInfo.player_name = userid
                 ScenePlayer.pop()
             else:
-                pass
-                # print("failed")
+                error_msg_box = MessageBox((0.5, 0.5), "警告", "用户名或密码有误！")
+                self.loaded['msgbox'] = [error_msg_box]
+                self.has_msgbox = True
+        else:
+            empty_msg_box = MessageBox((0.5, 0.5), "警告", "用户名和密码不能为空！")
+            self.loaded['msgbox'] = [empty_msg_box]
+            self.has_msgbox = True

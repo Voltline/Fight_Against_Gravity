@@ -144,7 +144,7 @@ class GameManager:
             self.center_v = sum_mv / sum_m
             if len(self.planets) == 1:
                 self.max_dis = max(self.max_dis, 6e-6*G*self.planets.sprites()[0].mass)
-                print(self.max_dis)
+                # print(self.max_dis)
             else:
                 for planet in self.planets:
                     other_m = sum_m - planet.mass
