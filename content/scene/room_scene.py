@@ -289,12 +289,12 @@ class RoomScene(Scene):
 
     def update_loading(self):
         stm = time.time()
-        if stm - self.last_update_loading_time > 0.3:
+        if stm - self.last_update_loading_time > 0.25:
             self.last_update_loading_time = stm
             self.last_update_loading_id += 1
             self.r_wating_start_lable.set_text(
                 self.loading_message[self.last_update_loading_id % len(self.loading_message)])
-        if stm - self.last_update_loading_message_time > 7:
+        if stm - self.last_update_loading_message_time > 3.5:
             self.last_update_loading_message_time = stm
             import random
             self.last_update_loading_message_id += random.randint(1, len(self.wating_message))
