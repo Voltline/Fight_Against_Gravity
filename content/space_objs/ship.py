@@ -122,7 +122,7 @@ class Ship(SpaceObj):
         ship_dir = Vector2(cos(self.angle), sin(self.angle))
         self.tail_rect.center = \
             Vector2(self.rect.center) \
-            - (self.rect0.width / 2 + self.tail_rect0.width / 2) * ship_dir
+            - (self.rect0.width / 2 + self.tail_rect0.width / 2 - 7) * ship_dir
 
     def make_image_rect_mask_i(self, i: int, n: int):
         """制作第i个角度的image,rect,mask"""
