@@ -74,8 +74,8 @@ class ServerGame(OnlineGame):
         self.check_win()
         self.check_collisions()
         self.gm.all_move(self.physics_dt)
+        self.gm.ships_check_far()
         self.ships_fire_bullet()
-
 
     def send_msgs_physic_loop(self):
         """发送消息"""

@@ -39,6 +39,11 @@ class Ship(SpaceObj):
         self.hp = settings.ship_hp  # 生命值
         self.dead_time = 0  # 死亡时间(sec)
 
+        self.fire_heat = 0  # 发射子弹的过热情况
+        self.max_heat = 1  # 过热超过这个值则无法开火
+        self.d_fire_heat = 0.05  # 发射一次过热条增加这些
+        self.d_cool_heat = 0.03  # 每帧过热条减少这些
+
         self.go_acc = settings.ship_go_acc  # 引擎的加速度
         self.turn_spd = settings.ship_turn_spd  # 转向的角速度
 
@@ -60,7 +65,7 @@ class Ship(SpaceObj):
         self.is_fire = False  # 是否在开火
 
         # 被动状态
-        self.is_alive = True  # 是否或者
+        self.is_alive = True  # 是否活着
 
     @staticmethod
     def init(settings):
@@ -176,19 +181,22 @@ class Ship(SpaceObj):
         如果发射了则返回新的子弹，没发射就返回None
         """
         if self.is_fire:
-            ship_dir = Vector2(cos(self.angle), sin(self.angle))
-            new_bullet_loc = self.loc + 0.6 * self.rect0.width * ship_dir
-            new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
-            new_bullet = Bullet(settings, new_bullet_loc, new_bullet_spd)
-            new_bullet.loc0 = self.loc0 + 0.6 * self.rect0.width * ship_dir
-            bullets.add(new_bullet)
-            return new_bullet
-        else:
-            return None
+            if self.fire_heat < self.max_heat:
+                self.fire_heat += self.d_fire_heat
+                ship_dir = Vector2(cos(self.angle), sin(self.angle))
+                new_bullet_loc = self.loc + 0.6 * self.rect0.width * ship_dir
+                new_bullet_spd = self.spd + settings.bullet_spd * ship_dir
+                new_bullet = Bullet(settings, new_bullet_loc, new_bullet_spd)
+                new_bullet.loc0 = self.loc0 + 0.6 * self.rect0.width * ship_dir
+                bullets.add(new_bullet)
+                return new_bullet
+            else:
+                self.fire_heat = 1.1*self.max_heat
+        self.fire_heat -= self.d_cool_heat
+        return None
 
     def die(self, ships: pygame.sprite.Group, dead_ships: pygame.sprite.Group, dead_time: float):
         """死亡时"""
-        # TODO:加入死亡特效
         self.is_alive = False
         self.hp = 0
         self.dead_time = dead_time
@@ -226,6 +234,27 @@ class Ship(SpaceObj):
         self.is_go_ahead, self.is_go_back, \
             self.is_turn_left, self.is_turn_right, \
             self.is_fire = map(bool, msg)
+
+    def check_far(self, planets, max_dis: float) -> int:
+        """
+        检查飞船是否距离战场过远
+        返回0：不过远
+        返回1：过远，需要警告
+        返回2：过远，飞船迷航(摧毁)
+        """
+        min_dis = self.loc.length()
+        for planet in planets:
+            dis = (self.loc-planet.loc).length()
+            if dis < min_dis:
+                min_dis = dis
+        if min_dis > max_dis*4:
+            return 2
+        elif min_dis > max_dis*2:
+            return 1
+        else:
+            return 0
+
+
 
     def update_by_msg(self, msg: list, planets):
         """通过消息更新自身状态"""

@@ -39,7 +39,7 @@ class Camera:
             self.loc.update(self.player_ship.rect.center)
 
     def change_mode(self):
-        if self.player_ship:
+        if self.player_ship is not None:
             self.mode = (self.mode + 1) % self.mode_num
 
     def real_to_screen(self, obj_real_loc: Vector2) -> Tuple[float, float]:

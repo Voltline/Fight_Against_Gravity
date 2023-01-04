@@ -5,8 +5,6 @@ from content.online.obj_msg import ObjMsg
 
 class Bullet(SpaceObj):
     """子弹"""
-    # TODO:添加子弹拖尾特效
-
     COLOR = (0, 0, 0)
     next_id = 0
 
@@ -41,13 +39,13 @@ class Bullet(SpaceObj):
 
     def check_del(self, planets, ships, center_v: Vector2, max_dis: float) -> bool:
         """检查是否需要删除"""
-        min_dis = 0  # 所有距离中最小的
+        min_dis = self.loc.length()  # 所有距离中最小的
         for objs in planets, ships:
             for obj in objs:
                 dis = (self.loc-obj.loc).length()  # 这个距离
                 if (self.spd-obj.spd)*(obj.loc-self.loc) > 0:  # 如果还在向星球/飞船飞则不删除
                     return False
-                if dis < min_dis or min_dis == 0:
+                if dis < min_dis:
                     min_dis = dis
         edm = self.get_e_d_m(planets, center_v)
         if edm > 0 and min_dis > max_dis\

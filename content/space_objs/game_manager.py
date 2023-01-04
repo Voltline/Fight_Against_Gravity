@@ -43,6 +43,12 @@ class GameManager:
                 self.bullets.remove(bullet)
         return del_ids
 
+    def ships_check_far(self):
+        """飞船距离战场过远需要摧毁"""
+        for ship in self.ships:
+            if ship.check_far(self.planets, self.max_dis) > 1:
+                ship.die(self.ships, self.dead_ships, 0)
+
     @staticmethod
     def static_check_bullets_planets_collisions(bullets, planets):
         """使用圆形碰撞检测"""
@@ -157,33 +163,6 @@ class GameManager:
                     dis = - G * other_m * planet.mass / e
                     if dis > self.max_dis:
                         self.max_dis = dis
-
-    # def client_update(self, planets_msg=None, all_ships_msg=None, bullets_msg=None, tick=-1):
-    #     """通过msg更新gm"""
-    #     if planets_msg:  # 更新planets
-    #         i = 0
-    #         for planet in self.planets:
-    #             planet.update_by_msg(planets_msg[i], self.planets)
-    #             i += 1
-    #     if all_ships_msg:  # 更新ships和dead_ships
-    #         ships_msg = all_ships_msg[0]
-    #         dead_players_name = all_ships_msg[1]
-    #         for name in dead_players_name:
-    #             for ship in self.ships:
-    #                 if name == ship.player_name:
-    #                     ship.die(self.ships, self.dead_ships)
-    #                     break
-    #         i = 0
-    #         for ship in self.ships:
-    #             ship.update_by_msg(ships_msg[i], self.planets)
-    #             i += 1
-    #     if bullets_msg:  # 更新bullets
-    #         self.bullets.empty()
-    #         for msg in bullets_msg:
-    #             new_bullet = Bullet(self.settings)
-    #             new_bullet.update_by_msg(msg, self.planets)
-    #             new_bullet.loc0.update(new_bullet.loc)
-    #             self.bullets.add(new_bullet)
 
     @staticmethod
     def group_make_msg(objs: pygame.sprite.Group) -> list:

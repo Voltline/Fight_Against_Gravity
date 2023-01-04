@@ -91,6 +91,7 @@ class LocalGame(FAGGame):
         super().physic_update()
         self.gm.check_collisions(self.now_time)
         self.gm.all_move(self.physics_dt)
+        self.gm.ships_check_far()
         self.gm.ships_fire_bullet()
 
     def physic_loop(self):
