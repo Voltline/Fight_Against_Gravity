@@ -21,7 +21,7 @@
 
 ## Project Brief Introduction
 * The project starts on September 27, 2022
-* The total number of codes is about 7300 lines (as of January 3, 2023)
+* The total number of codes is about 8000 lines (as of January 5, 2023)
 
 ## 游戏简介
 * 以宇宙为背景，两名玩家分别操控自己的飞船在有限地图中遨游
