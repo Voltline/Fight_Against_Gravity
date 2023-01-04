@@ -446,6 +446,6 @@ class UIFunction:
     @staticmethod
     def new_client_game_scene_far_label(scene) -> Label:
         """client_game_scene中的player_ship_far_label"""
-        label = Label(0, 0, 200, '飞船距离战场过远！即将迷航！', SceneFont.red_font)
+        label = Label(0, 0, 200, '飞船距离战场过远！即将迷航！', SceneFont.big_red_font)
         label.rect.center = scene.screen.get_rect().center
         return label
