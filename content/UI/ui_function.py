@@ -423,6 +423,12 @@ class UIFunction:
                           others=[win_msg_label0, win_msg_label1])
         return win_panel, return_room_button, win_msg_label1
 
+    @staticmethod
+    def new_version_label(scene, version: str) -> Label:
+        width = scene.screen.get_rect().width
+        height = scene.screen.get_rect().height
+        version_label = Label(0.82 * width, 0.94 * height, 50, f"当前版本:{version}", SceneFont.set_title_font)
+        return version_label
 
     @staticmethod
     def update_key_board(scene, boxes: list):
