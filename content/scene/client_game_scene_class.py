@@ -22,7 +22,8 @@ class ClientGameScene(Scene):
 
         self.return_room_countdown_time = 5
         self.game = ClientGame(self.settings, self.client.client, self.client.roomid,
-                               map_name, player_names, self.screen, PlayerInfo.player_name)
+                               map_name, player_names, self.screen, PlayerInfo.player_name,
+                               server_start_time)
         self.game.restart()
 
     def pause_clicked(self):

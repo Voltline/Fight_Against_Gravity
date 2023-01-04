@@ -29,7 +29,6 @@ class Ship(SpaceObj):
             self.make_images_rects_masks()
         self.angle = angle
         self.angle0 = 0
-        self.update_image()
         self.player_name = player_name  # 飞船所属玩家的名字
         self.hp = settings.ship_hp  # 生命值
         self.dead_time = 0  # 死亡时间(sec)
@@ -40,6 +39,12 @@ class Ship(SpaceObj):
         if "--nogui" not in sys.argv and not self.is_snapshot:
             self.status_bar = StatusBar(settings, self.player_name)
             self.explosion_images = self.__get_explosion_images__(settings)
+            self.tail_image0 = self.__get_tail_image__(settings)
+            self.tail_rect0 = self.tail_image0.get_rect()
+            self.tail_image = self.tail_image0.copy()
+            self.tail_rect = self.tail_rect0.copy()
+
+        self.update_image()
 
         # 主动状态
         self.is_go_ahead = False  # 是否在前进
@@ -63,6 +68,11 @@ class Ship(SpaceObj):
             L.append(pygame.image.load(
                 settings.make_ship_explosion_image_path(i)).convert_alpha())
         return L
+
+    @staticmethod
+    def __get_tail_image__(settings) -> pygame.Surface:
+        """返回尾焰图片"""
+        return pygame.image.load(settings.ship_tail_image_path).convert_alpha()
 
     def update_acc(self, planets: pygame.sprite.Group):
         """重载，因为飞船加速度和玩家操作有关"""
@@ -102,7 +112,17 @@ class Ship(SpaceObj):
             self.rect = self.rects[i].copy()
             self.rect.center = center
             self.mask = self.masks[i]
+
             self.angle0 = self.angle
+
+    def update_tail_image(self):
+        """更新尾焰图片"""
+        self.tail_image = pygame.transform.rotate(self.tail_image0, -degrees(self.angle))
+        self.tail_rect = self.tail_image.get_rect()
+        ship_dir = Vector2(cos(self.angle), sin(self.angle))
+        self.tail_rect.center = \
+            Vector2(self.rect.center) \
+            - (self.rect0.width / 2 + self.tail_rect0.width / 2) * ship_dir
 
     def make_image_rect_mask_i(self, i: int, n: int):
         """制作第i个角度的image,rect,mask"""
@@ -131,6 +151,9 @@ class Ship(SpaceObj):
             if self.is_alive:  # 还活着就更新并显示status_bar
                 self.status_bar.update_hp(self.hp)
                 camera.display_status_bar(self.status_bar, self.rect.center, self.rect0.width)
+                if self.is_go_ahead:
+                    self.update_tail_image()
+                    camera.blit(self.tail_image, self.tail_rect)
 
     def fire_bullet(self, settings, bullets) -> Bullet:
         """

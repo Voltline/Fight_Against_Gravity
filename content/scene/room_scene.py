@@ -324,13 +324,14 @@ class RoomScene(Scene):
                     self.is_start = res['is_run']
             elif opt == OptType.ServerStartGameTime:
                 self.wating_start_panel.is_show = self.wating_start_panel.is_able = False
-                ScenePlayer.push(ClientGameScene(self.roommap, [u[0] for u in self.userlist]))
+                ScenePlayer.push(ClientGameScene(self.roommap, [u[0] for u in self.userlist], msg['time']))
 
     def update(self):
         self.update_user()
         self.deal_msgs()
         self.deal_events()
         self.update_loading()
+
     def confirm_quit_is_clicked(self):
         if self.is_owner:
             res = self.client.deleteroom()

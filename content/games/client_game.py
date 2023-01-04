@@ -17,7 +17,9 @@ from content.online.player_info import PlayerInfo
 
 class ClientGame(OnlineGame):
     """客户端游戏"""
-    def __init__(self, settings, net: SocketClient, room_id, map_name, player_names, screen, player_name):
+    def __init__(self, settings, net: SocketClient, room_id,
+                 map_name, player_names, screen, player_name,
+                 server_start_time=None):
         super().__init__(settings, screen, net, room_id, map_name, player_names)
         self.player_name = player_name
         self.player_ship = None  # 玩家的飞船
@@ -27,6 +29,7 @@ class ClientGame(OnlineGame):
         self.snapshots = []  # 用于检查预测正确性的快照
         self.snapshots_len = settings.snapshots_len
         self.ping_ms = 0  # 延迟
+        self.server_start_time = server_start_time
 
         # 校时
         # print('开始校时')
@@ -91,6 +94,8 @@ class ClientGame(OnlineGame):
 
     def get_server_start_game_time(self, room_id):
         """等待直到获取服务器开始游戏的时间"""
+        if self.server_start_time is not None:
+            return self.server_start_time
         self.send_get_server_start_time_msg(room_id)
         msg = None
         while not msg:
@@ -100,7 +105,8 @@ class ClientGame(OnlineGame):
                     msg = None
             else:
                 msg = None
-        return msg['time']
+        self.server_start_time = msg['time']
+        return self.server_start_time
 
     def send_get_server_start_time_msg(self, room_id):
         """发送向服务器请求开始游戏时间的消息"""
