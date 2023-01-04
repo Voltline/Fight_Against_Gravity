@@ -35,11 +35,11 @@ class RoomScene(Scene):
         """房间名"""
         self.r_roommap_lable = Label(0.0833 * self.width, 0.25 * self.height, 800, "房间地图：" + self.roommap,
                                      SceneFont.white_font)
-        self.r_roommap_lable.r_xy = 0.1, 1 / 10 * 1.6
+        self.r_roommap_lable.r_xy = 0.1, 1 / 10 * 1.3
         """房间地图名"""
         self.r_roomnum_lable = Label(0.0833 * self.width, 0.25 * self.height, 800, "房间人数：0/0" + self.roommap,
                                      SceneFont.white_font)
-        self.r_roomnum_lable.r_xy = 0.15, 1 / 10 * 6.3
+        self.r_roomnum_lable.r_xy = 0.1, 1 / 10 * 1.8
         "房间人数"
         self.not_allready_lable = Label(0.475 * self.width, 0.8875 * self.height, 800, "有玩家未准备",
                                         SceneFont.red_font)
@@ -166,7 +166,7 @@ class RoomScene(Scene):
             "在线游戏死亡后会自动进入观战模式哦",
             "锟斤拷锟斤拷锟斤拷",
             "烫烫烫",
-            "现在时间是：" + str(time.strftime("%Y-%m-%d %H:%M",time.gmtime())),
+            # "现在时间是：" + str(time.strftime("%Y-%m-%d %H:%M",time.gmtime())),
             "Exception in thread \"main\" java.lang.NullPointerException",
             "按E送雷电将军",
             "有时候你的对手手感火热，挡也挡不住",
@@ -175,7 +175,8 @@ class RoomScene(Scene):
             "刀客塔,您还有许多事要处理,现在还不能休息哦",
             "泠鸢yousa没有腿",
             "说坏话会被hanser大小姐雇人砍了手脚",
-            "心脏要逃走了     ——Lycoris Recoil"
+            "心脏要逃走了     ——Lycoris Recoil",
+            "少女祈祷中"
         ]
         self.r_wating_start_message_lable = Label(1 * self.width, 0.5 * self.height, 200,
                                                   self.wating_message[self.last_update_loading_id],
@@ -293,7 +294,7 @@ class RoomScene(Scene):
             self.last_update_loading_id += 1
             self.r_wating_start_lable.set_text(
                 self.loading_message[self.last_update_loading_id % len(self.loading_message)])
-        if stm - self.last_update_loading_message_time > 5:
+        if stm - self.last_update_loading_message_time > 7:
             self.last_update_loading_message_time = stm
             import random
             self.last_update_loading_message_id += random.randint(1, len(self.wating_message))
