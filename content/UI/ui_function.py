@@ -427,7 +427,7 @@ class UIFunction:
     def new_version_label(scene, version: str) -> Label:
         width = scene.screen.get_rect().width
         height = scene.screen.get_rect().height
-        version_label = Label(0.82 * width, 0.94 * height, 50, f"当前版本:{version}", SceneFont.set_title_font)
+        version_label = Label(0.83 * width, 0.94 * height, 10, f"当前版本:{version}", SceneFont.set_title_font)
         return version_label
 
     @staticmethod
