@@ -136,9 +136,9 @@ class SocketClient:
 
     def beating(self):
         while True:
-            msg = {"opt": 0, "heartbeat": self.heart_beat}
-            self.send(msg)
-            time.sleep(max(0.5, self.heart_beat / 2))
+            send_msg = {"opt": 0, "heartbeat": self.heart_beat}
+            self.send(send_msg)
+            time.sleep(max(0.5, self.heart_beat / 4))
 
     def send(self, message):
         """

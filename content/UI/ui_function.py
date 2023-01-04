@@ -257,21 +257,21 @@ class UIFunction:
     @staticmethod
     def new_pause_panel(scene) -> Panel:
         """用于游戏场景的暂停panel"""
-        button_rect = Rect(0, 0, 0.25 * scene.width, 0.08125 * scene.height)
+        button_rect = Rect(0, 0, 0.20 * scene.width, 0.08125 * scene.height)
         continue_button = Button('继续游戏', scene.continue_button_clicked, button_rect.copy(),
                                  scene.settings.btbg_light, 0, '继续游戏', SceneFont.log_font)
         continue_button.add_img(scene.settings.btbg_light_pressed)
-        continue_button.r_xy = 0.25, 0.15
+        continue_button.r_xy = 0.258, 0.18
         settings_button = Button('设置', scene.set_is_clicked, button_rect.copy(),
                                  scene.settings.btbg_light, 0, '设置', SceneFont.log_font)
         settings_button.add_img(scene.settings.btbg_light_pressed)
-        settings_button.r_xy = 0.25, 0.4
+        settings_button.r_xy = 0.258, 0.45
         quit_button = Button('退出对局', scene.quit_button_clicked, button_rect.copy(),
                              scene.settings.btbg_light, 0, '退出对局', SceneFont.log_font)
         quit_button.add_img(scene.settings.btbg_light_pressed)
-        quit_button.r_xy = 0.25, 0.65
+        quit_button.r_xy = 0.258, 0.72
 
-        pause_panel_rect = Rect(0.25 * scene.width, 0.22 * scene.height, 0.5 * scene.width, 0.625 * scene.height)
+        pause_panel_rect = Rect(0.31 * scene.width, 0.24 * scene.height, 0.4 * scene.width, 0.525 * scene.height)
         pause_panel = Panel(pause_panel_rect, '已暂停', 23,
                             ctrlrs=[continue_button, settings_button, quit_button], text_pos=0)
         return pause_panel
@@ -423,6 +423,14 @@ class UIFunction:
                           others=[win_msg_label0, win_msg_label1])
         return win_panel, return_room_button, win_msg_label1
 
+    @staticmethod
+    def new_version_label(scene, version: str) -> Label:
+        width = scene.screen.get_rect().width
+        height = scene.screen.get_rect().height
+        version_label = Label(0.83 * width, 0.94 * height, 15, f"当前版本:{version}", SceneFont.version_font)
+        version_label.rect.right = 0.853 * width
+        version_label.rect.bottom = 0.99 * height
+        return version_label
 
     @staticmethod
     def update_key_board(scene, boxes: list):

@@ -4,6 +4,7 @@ import pygame
 from content.scene.local_game_scene import LocalGameScene
 from content.scene.scene_class import Scene
 from content.UI.button_class import Button
+from content.UI.label_class import Label
 from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.login_scene_class import LogInScene
@@ -23,9 +24,10 @@ class StartScene(Scene):
         online_game_button = UIFunction.new_online_button(self)
         local_button = UIFunction.new_local_button(self)
         exit_button = UIFunction.new_exit_button(self)
+        version_label = UIFunction.new_version_label(self, Scene.settings.version)
 
         """集合组件，loaded"""
-        self.loaded = {'img': start_title, 'label': [], 'box': None,
+        self.loaded = {'img': start_title, 'label': [version_label], 'box': None,
                        'button': [login_button, online_game_button, local_button, self.set_button, exit_button],
                        'panel': [], 'msgbox': []}
 

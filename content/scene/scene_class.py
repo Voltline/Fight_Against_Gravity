@@ -146,8 +146,9 @@ class Scene:
             if new_ship2_keys != Scene.settings.ship2_keys:
                 Scene.settings.change_key("Ship2", list(new_ship1_keys.values()))
         else:
-            show_duplicate_warning_msg_box = MessageBox((0.35, 0.35), (0.5, 0.5), "警告", "不要设置重复的按键！")
+            show_duplicate_warning_msg_box = MessageBox((0.5, 0.5), "警告", "不要设置重复的按键！")
             self.loaded['msgbox'] = [show_duplicate_warning_msg_box]
+            self.has_msgbox = True
 
         UIF.update_key_board(self, (self.set_panel.loaded['ctrlrs'][-1]).loaded['boxes'])
 
@@ -167,6 +168,7 @@ class Scene:
 
         show_default_info_msg_box = MessageBox((0.5, 0.5), "提示", "键位已经恢复至默认布局！")
         self.loaded['msgbox'] = [show_default_info_msg_box]
+        self.has_msgbox = True
 
         UIF.update_key_board(self, (self.set_panel.loaded['ctrlrs'][-1]).loaded['boxes'])
 

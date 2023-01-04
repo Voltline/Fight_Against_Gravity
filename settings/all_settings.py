@@ -13,6 +13,7 @@ class Settings:
         # TODO：最后要把这里的变量都放进json
         with open(path + "settings/game_settings.json", "r") as f:
             inf = json.load(f)
+        self.version = inf["Version"]
         # 窗口设置
         window = inf["Window"]
         self.screen_width, self.screen_height = window["screen_resolution"]
