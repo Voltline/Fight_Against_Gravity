@@ -175,7 +175,8 @@ class RoomScene(Scene):
             "刀客塔,您还有许多事要处理,现在还不能休息哦",
             "泠鸢yousa没有腿",
             "说坏话会被hanser大小姐雇人砍了手脚",
-            "心脏要逃走了     ——Lycoris Recoil"
+            "心脏要逃走了     ——Lycoris Recoil",
+            "少女祈祷中"
         ]
         self.r_wating_start_message_lable = Label(1 * self.width, 0.5 * self.height, 200,
                                                   self.wating_message[self.last_update_loading_id],
