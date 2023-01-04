@@ -13,20 +13,26 @@ from content.UI.statusbar_class import StatusBar
 
 class Ship(SpaceObj):
     """玩家操控的飞船"""
-    # TODO: 增加尾焰特效；增加玩家抬头信息
+    angles = 1440  # 总共有多少角度
+    images = [None] * angles
+    rects = [None] * angles
+    masks = [None] * angles
+    image0 = None
+    rect0 = None
+
     def __init__(self, settings,
                  loc0: Vector2 = Vector2(0, 0), spd0: Vector2 = Vector2(0, 0),
                  angle: float = 0, player_name='?Unknown Player?', is_snapshot=False):
         super().__init__(settings, 1 * loc0, 1 * spd0)
         self.is_snapshot = is_snapshot
-        self.image0 = self.image
-        self.rect0 = self.image0.get_rect()  # 原始图片的rect
-        self.angles = 1440  # 总共有多少角度
-        if not self.is_snapshot:
-            self.images = [None]*self.angles
-            self.rects = [None]*self.angles
-            self.masks = [None]*self.angles
-            self.make_images_rects_masks()
+        # self.image0 = self.image
+        self.rect0 = self.image.get_rect()  # 原始图片的rect
+        # self.angles = 1440  # 总共有多少角度
+        # if not self.is_snapshot:
+        #     self.images = [None]*self.angles
+        #     self.rects = [None]*self.angles
+        #     self.masks = [None]*self.angles
+        #     self.make_images_rects_masks()
         self.angle = angle
         self.angle0 = 0
         self.player_name = player_name  # 飞船所属玩家的名字
@@ -55,6 +61,12 @@ class Ship(SpaceObj):
 
         # 被动状态
         self.is_alive = True  # 是否或者
+
+    @staticmethod
+    def init(settings):
+        """类变量初始化"""
+        Ship.image0 = pygame.image.load(settings.ship_image_path).convert_alpha()
+        Ship.make_images_rects_masks()
 
     def __get_image__(self, settings):
         """获取飞船图片"""
@@ -124,17 +136,19 @@ class Ship(SpaceObj):
             Vector2(self.rect.center) \
             - (self.rect0.width / 2 + self.tail_rect0.width / 2 - 7) * ship_dir
 
-    def make_image_rect_mask_i(self, i: int, n: int):
+    @ staticmethod
+    def make_image_rect_mask_i(i: int, n: int):
         """制作第i个角度的image,rect,mask"""
-        image = pygame.transform.rotate(self.image0, 360*i/n)
+        image = pygame.transform.rotate(Ship.image0, 360*i/n)
         rect = image.get_rect()
         mask = pygame.mask.from_surface(image)
         return image, rect, mask
 
-    def make_images_rects_masks(self):
-        for i in range(self.angles):
-            self.images[i], self.rects[i], self.masks[i] =\
-                self.make_image_rect_mask_i(i, self.angles)
+    @staticmethod
+    def make_images_rects_masks():
+        for i in range(Ship.angles):
+            Ship.images[i], Ship.rects[i], Ship.masks[i] =\
+                Ship.make_image_rect_mask_i(i, Ship.angles)
 
     def update_explosion_image(self, time):
         """死亡之后的短暂时间里更新爆炸的图片"""
@@ -146,6 +160,8 @@ class Ship(SpaceObj):
 
     def display(self, camera):
         if self.image is not None:
+            if self.is_alive:
+                self.update_image()
             super().display(camera)
         if "--nogui" not in sys.argv and not self.is_snapshot:
             if self.is_alive:  # 还活着就更新并显示status_bar
