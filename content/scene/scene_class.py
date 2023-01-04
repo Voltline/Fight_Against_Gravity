@@ -43,6 +43,8 @@ class Scene:
         # 设置界面
         self.set_panel = UIF.new_setting_all_panel(self)
         self.set_panel.is_show = self.set_panel.is_able = False
+        # 用于判断bgm如何播放, 0对应开始界面，注册登录界面，1对应房间大厅界面
+        self.bgm_id = 0
 
     def ban_inputbox(self):
         """禁用输入框"""
