@@ -48,10 +48,11 @@ class InputBox:
             # 键盘输入响应
             if self.active:
                 key_name = pygame.key.name(event.key)
-                print(key_name, event.key)
+                # print(key_name, event.key)
                 if not self.is_set:
                     if event.key == pygame.K_RETURN:
-                        print('*' + self.text + '*')
+                        # print('*' + self.text + '*')
+                        pass
                     elif event.key == 118 and (event.mod == 4160 or event.mod == 4224):
                         scrap_text = pygame.scrap.get(SCRAP_TEXT)
                         if scrap_text:

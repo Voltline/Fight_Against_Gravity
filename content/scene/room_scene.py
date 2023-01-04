@@ -195,14 +195,14 @@ class RoomScene(Scene):
     def ready_is_clicked(self):
         if self.is_ready:
             res = self.client.dready()
-            print("dready is clicked", res)
+            # print("dready is clicked", res)
             if res:
                 self.ready_button.set_text("准备")
                 self.is_ready = False
 
         else:
             res = self.client.ready()
-            print("ready is clicked", res)
+            # print("ready is clicked", res)
             if res:
                 self.ready_button.set_text("取消准备")
                 self.is_ready = True
@@ -334,7 +334,7 @@ class RoomScene(Scene):
     def confirm_quit_is_clicked(self):
         if self.is_owner:
             res = self.client.deleteroom()
-            print(res)
+            # print(res)
             if res:
                 self.client.deleteroom()
                 ScenePlayer.pop()
@@ -344,7 +344,7 @@ class RoomScene(Scene):
                 self.owner_quit_warning_panel.is_show = True
                 self.owner_quit_warning_panel.is_able = True
         else:
-            print("user left room")
+            # print("user left room")
             self.client.leftroom()
             ScenePlayer.pop()
 

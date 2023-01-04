@@ -13,7 +13,7 @@ class MessageBox:
     def __init__(self, relative_xy, title='', msg='', warning_img='', ctrlrs=[], has_ctrlrs=False, msg_align=0):
         """
         msg_box会根据屏幕自适应来自动居中
-        relative_xy: msg (消息内容) 在 box(弹窗内部) 的相对left、top的比例
+        relative_xy: msg (消息内容) 在 box(弹窗内部)的相对left、top的比例
         title: 弹窗的标题
         msg: 弹窗的内容
         warning_img: 弹窗可能会有的错误提示图片路径
@@ -34,7 +34,7 @@ class MessageBox:
         self.msg_align = msg_align
         if title is not None:
             self.title = title  # 标题
-            print("self.title", title)
+            # print("self.title", title)
             self.title_rect = pygame.freetype.Font.get_rect(self.font_txt, self.title)
 
             self.title_w = self.title_rect.width  # 获取title的宽高
