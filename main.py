@@ -8,7 +8,6 @@ import pygame
 from content.scene.scene_class import Scene
 from content.scene.start_scene_class import StartScene
 from content.scene.scene_player_class import ScenePlayer
-from content.scene.room_scene import RoomScene
 from content.scene.scene_font import SceneFont
 import content.game_modules.game_function as gf
 if hasattr(sys, 'frozen'):
@@ -37,9 +36,6 @@ if "--nogui" in sys.argv:
     s.start()
 sc = gf.init_pygame_window(settings)
 Scene.init(settings, sc, s)
-# roomscene = RoomScene()
-# while True:
-#     roomscene.show()
 begin = StartScene()
 ScenePlayer.push(begin)
 ScenePlayer.show_scene()
