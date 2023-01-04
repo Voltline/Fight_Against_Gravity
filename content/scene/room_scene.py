@@ -9,6 +9,7 @@ from content.scene.scene_player_class import ScenePlayer
 from content.UI.ui_function import UIFunction as UIF
 from content.scene.client_game_scene_class import ClientGameScene
 from Server.Modules.OptType import OptType
+from content.maps.map_obj import Map
 
 
 class RoomScene(Scene):
@@ -36,6 +37,10 @@ class RoomScene(Scene):
                                      SceneFont.white_font)
         self.r_roommap_lable.r_xy = 0.1, 1 / 10 * 1.6
         """房间地图名"""
+        self.r_roomnum_lable = Label(0.0833 * self.width, 0.25 * self.height, 800, "房间人数：0/0" + self.roommap,
+                                     SceneFont.white_font)
+        self.r_roomnum_lable.r_xy = 0.15, 1 / 10 * 6.3
+        "房间人数"
         self.not_allready_lable = Label(0.475 * self.width, 0.8875 * self.height, 800, "有玩家未准备",
                                         SceneFont.red_font)
         self.not_allready_lable.is_show = False
@@ -56,7 +61,7 @@ class RoomScene(Scene):
             self.user_dready_lable[i].r_xy = 0.6, 0.05 + 1 / 10 * i
             self.user_dready_lable[i].is_show = False
         self.labels = [self.not_allready_lable]
-        self.room_lables = [self.r_roomname_lable, self.r_roommap_lable]
+        self.room_lables = [self.r_roomname_lable, self.r_roommap_lable, self.r_roomnum_lable]
         """左侧房间信息"""
         self.user_lables = []
         """右侧玩家名"""
@@ -84,6 +89,7 @@ class RoomScene(Scene):
                                                    0.1667 * self.width),
                                        self.path + "/assets/texture/thumbnail/" + self.roommap + ".png", 0, "",
                                        SceneFont.log_font)
+
         self.r_roommap_button.r_xy = 0.1, 1 / 10 * 2.6
         self.r_change_name_button = Button("changename", self.change_name_clicked,
                                            pygame.Rect(0.0833 * self.width, 0.7125 * self.width, 0.1667 * self.width,
@@ -144,7 +150,15 @@ class RoomScene(Scene):
             "想要改变运动轨迹？想想高中学的卫星变轨 qwq",
             "发射子弹虽然是不限量的，但很可能击中自己",
             "飞不到对方的轨道上？那就把子弹发射过去！",
-            "操控飞船，击败对手，取得胜利！QWQ"
+            "你知道吗？树莓派版的Minecraft是开源的",
+            "操控飞船，击败对手，取得胜利！QWQ",
+            "凝胶：好吃又易燃        ——泰拉瑞亚",
+            # "想度过第一天？挖三填一        ——MC",
+            "自然选择号,前进四        ——《三体》",
+            "在低点与高点加减速是最有效率的哦",
+            "不要距离战场太远，太远会星际迷航哦",
+            "欢迎报考东中国正常大学",
+            "在线游戏点鼠标左键就能发射子弹哦"
         ]
         self.r_wating_start_message_lable = Label(1 * self.width, 0.5 * self.height, 200,
                                                   self.wating_message[self.last_update_loading_id],
@@ -265,9 +279,10 @@ class RoomScene(Scene):
         if stm - self.last_update_loading_message_time > 5:
             self.last_update_loading_message_time = stm
             import random
-            self.last_update_loading_message_id += random.randint(1, 10)
+            self.last_update_loading_message_id += random.randint(1, len(self.wating_message))
+            self.last_update_loading_message_id = self.last_update_loading_message_id % len(self.wating_message)
             self.r_wating_start_message_lable.set_text(
-                self.wating_message[self.last_update_loading_message_id % len(self.wating_message)])
+                self.wating_message[self.last_update_loading_message_id])
 
     def deal_msgs(self):
         """非阻塞接收并处理消息"""
@@ -300,6 +315,8 @@ class RoomScene(Scene):
                         self.path + "/assets/texture/thumbnail/" + self.roommap + ".png")
                     owner = res["owner"]
                     self.userlist = res["userlist"]
+                    self.r_roomnum_lable.set_text(
+                        "房间人数：" + str(len(self.userlist)) + "/" + str(len(Map(self.roommap).ships_info)))
                     self.user_ready_lable[0].set_text("房  主")
                     self.user_ready_lable[0].is_show = True
                     self.user_dready_lable[0].is_show = False
@@ -342,6 +359,7 @@ class RoomScene(Scene):
         self.update_ready_button()
         self.update_loading()
         self.deal_events()
+
     def confirm_quit_is_clicked(self):
         if self.is_owner:
             res = self.client.deleteroom()
