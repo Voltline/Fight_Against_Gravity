@@ -1,3 +1,5 @@
+import random
+
 import pygame
 import time
 from queue import Queue
@@ -43,6 +45,7 @@ class ServerGame(OnlineGame):
         self.sended_tick = 20 * self.physics_dt
 
     def get_start_time(self) -> float:
+        time.sleep(random.randint(10,17))
         start_time = gf.get_time()+5
         self.send_start_game_time(start_time)
         return start_time
