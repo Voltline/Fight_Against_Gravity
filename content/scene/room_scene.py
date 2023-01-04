@@ -331,6 +331,7 @@ class RoomScene(Scene):
                             continue
                         if user == self.client.local_get_user():
                             self.is_ready = ready
+                            self.update_ready_button()
                         if ready:
                             self.user_ready_lable[now].is_show = True
                             self.user_dready_lable[now].is_show = False
@@ -359,7 +360,6 @@ class RoomScene(Scene):
         self.update_user()
         self.deal_msgs()
         self.deal_events()
-        self.update_ready_button()
         self.update_loading()
 
     def confirm_quit_is_clicked(self):
