@@ -17,7 +17,7 @@
 
 ## 项目概况
 * 项目开始于2022年9月27日
-* 总代码数约为7300行（截至2023年1月3日）
+* 总代码数约为8000行（截至2023年1月5日）
 
 ## Project Brief Introduction
 * The project starts on September 27, 2022
