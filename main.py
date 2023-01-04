@@ -37,7 +37,7 @@ if "--nogui" in sys.argv:
     s.start()
 sc = gf.init_pygame_window(settings)
 Scene.init(settings, sc, s)
-print(os.getcwd())
+# print(os.getcwd())
 # roomscene = RoomScene()
 # while True:
 #     roomscene.show()

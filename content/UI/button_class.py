@@ -131,7 +131,7 @@ class Button(Control):
 
     def update_mouse_click(self, event, pos_offset=(0, 0)) -> bool:
         if self.check_click(event, pos_offset):  # 响应点击
-            print(self.name, "clicked")
+            # print(self.name, "clicked")
             self.clicked_func()
             return True
         return False
