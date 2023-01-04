@@ -295,7 +295,7 @@ class ClientMain:
         for i in range(lenth):
             recv = self.client.receive()
             reslist.append(recv["roomlist"])
-            print(recv)
+            # print(recv)
         return reslist
 
     def ready(self):
