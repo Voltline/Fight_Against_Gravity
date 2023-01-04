@@ -5,6 +5,7 @@ from content.scene.local_game_scene import LocalGameScene
 from content.scene.scene_class import Scene
 from content.UI.button_class import Button
 from content.UI.label_class import Label
+from content.UI.message_box import MessageBox
 from content.scene.scene_font import SceneFont
 from content.scene.scene_player_class import ScenePlayer
 from content.scene.login_scene_class import LogInScene
@@ -32,12 +33,18 @@ class StartScene(Scene):
                        'panel': [], 'msgbox': []}
 
     def online_is_clicked(self):
-        if not self.client.get_start():
+        try:
+            if not self.client.get_start():
+                self.client.start_client()
+            if PlayerInfo.player_name == '':
+                ScenePlayer.push(LogInScene())
+            else:
+                ScenePlayer.push(RoomListScene())
+        except:
+            offline_msg_box = MessageBox((0.5, 0.5), "提示", "您可能已经离线，正在尝试重新连接")
+            self.loaded['msgbox'] = [offline_msg_box]
+            self.has_msgbox = True
             self.client.start_client()
-        if PlayerInfo.player_name == '':
-            ScenePlayer.push(LogInScene())
-        else:
-            ScenePlayer.push(RoomListScene())
 
     def login_is_clicked(self):
         if not self.client.get_start():
