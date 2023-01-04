@@ -22,6 +22,7 @@ class LocalGameScene(Scene):
 
         self.game = LocalGame(self.settings, self.screen, map_name)
         self.game.restart()
+        self.bgm_id = 2
 
     def pause_clicked(self):
         if not self.set_panel.is_show and not self.win_panel.is_show:

@@ -19,6 +19,7 @@ class ClientGameScene(Scene):
         self.win_panel.is_show = self.pause_panel.is_able = False
         self.loaded = {'img': None, 'label': None, 'box': None,
                        'button': [], 'panel': [self.pause_panel, self.win_panel], 'msgbox': []}
+        self.bgm_id = 2
 
         self.return_room_countdown_time = 5
         self.game = ClientGame(self.settings, self.client.client, self.client.roomid,
