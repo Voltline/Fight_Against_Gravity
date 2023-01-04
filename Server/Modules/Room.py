@@ -25,6 +25,7 @@ class Room:
         self.server_ = server
         self.game_settings = game_settings
         self.game: server_game.ServerGame = None
+        self.started = False
 
     def release_message(self, message):
         address, msg = message
@@ -55,6 +56,7 @@ class Room:
                 self.game.send_start_game_time(self.game.start_time)
 
     def start(self):
+        self.started = True
         user_name_list = []
         addr_list = {}
         for user in self.userlist:
@@ -80,9 +82,10 @@ class Room:
     def get_started(self):
         if self.game is not None:
             started = self.game.is_run
-            if not started:
+            if not started and self.started:
                 for user in self.userlist:
                     user.dready()
+                self.started = False
             return started
         else:
             return False

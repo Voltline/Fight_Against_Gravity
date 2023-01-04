@@ -207,6 +207,12 @@ class RoomScene(Scene):
                 self.ready_button.set_text("取消准备")
                 self.is_ready = True
 
+    def update_ready_button(self):
+        if self.is_ready:
+            self.ready_button.set_text("取消准备")
+        else:
+            self.ready_button.set_text("准备")
+
     def start_is_clicked(self):
         self.not_allready_lable.is_show = False
         res = self.client.startgame()
@@ -254,12 +260,14 @@ class RoomScene(Scene):
         if stm - self.last_update_loading_time > 0.3:
             self.last_update_loading_time = stm
             self.last_update_loading_id += 1
-            self.r_wating_start_lable.set_text(self.loading_message[self.last_update_loading_id % len(self.loading_message)])
+            self.r_wating_start_lable.set_text(
+                self.loading_message[self.last_update_loading_id % len(self.loading_message)])
         if stm - self.last_update_loading_message_time > 5:
             self.last_update_loading_message_time = stm
             import random
-            self.last_update_loading_message_id += random.randint(1,10)
-            self.r_wating_start_message_lable.set_text(self.wating_message[self.last_update_loading_message_id % len(self.wating_message)])
+            self.last_update_loading_message_id += random.randint(1, 10)
+            self.r_wating_start_message_lable.set_text(
+                self.wating_message[self.last_update_loading_message_id % len(self.wating_message)])
 
     def deal_msgs(self):
         """非阻塞接收并处理消息"""
@@ -302,6 +310,8 @@ class RoomScene(Scene):
                     for user, ready in self.userlist:
                         if user == owner:
                             continue
+                        if user == self.client.local_get_user():
+                            self.is_ready = ready
                         if ready:
                             self.user_ready_lable[now].is_show = True
                             self.user_dready_lable[now].is_show = False
@@ -329,8 +339,9 @@ class RoomScene(Scene):
     def update(self):
         self.update_user()
         self.deal_msgs()
-        self.deal_events()
+        self.update_ready_button()
         self.update_loading()
+        self.deal_events()
     def confirm_quit_is_clicked(self):
         if self.is_owner:
             res = self.client.deleteroom()
