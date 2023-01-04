@@ -61,7 +61,7 @@ class ClientMain:
         identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
         # identify_client = safeclient.SocketClient(self.reg_ip, self.reg_port, password=se)
         check_code = identify_client.get_check_code(username, email)
-        self.logger.info("[register]{}{}Register get check_code{}".format(username, email, check_code))
+        self.logger.info("[register]user:{} email:{}Register get check_code".format(username, email))
         del identify_client
         return check_code
 
