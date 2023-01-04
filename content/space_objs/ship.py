@@ -100,7 +100,6 @@ class Ship(SpaceObj):
 
     def update_angle(self, delta_t):
         """根据玩家操作更新飞船朝向的角度"""
-        self.angle0 = self.angle
         if self.is_turn_left:
             self.angle -= self.turn_spd * delta_t
         if self.is_turn_right:
