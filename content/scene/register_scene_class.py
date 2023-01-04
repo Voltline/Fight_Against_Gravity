@@ -23,8 +23,7 @@ class RegScene(Scene):
         buttons = UI.new_register_buttons(self)
         """显示验证码错误的panel"""
         self.close_button.r_xy = 0.88, 0.1
-        self.wrong_check_panel = Panel(self.reminder_panel_rect_small, '验证码错误', 22,
-                                       [self.close_button])
+        self.wrong_check_box = MessageBox((0.5, 0.5), "警告", "验证码错误！")
         """显示没输入验证码的panel"""
         self.close_button.r_xy = 0.88, 0.1
         self.no_check_box = MessageBox((0.5, 0.5), "警告", "获取验证码不成功，可能是您的邮箱有误！")
@@ -70,8 +69,9 @@ class RegScene(Scene):
             self.has_msgbox = True
         elif self.check_code.lower() != self.loaded['box'][3].text.lower():
             # 验证码错误
-            self.loaded['panel'] = [self.wrong_check_panel]
+            self.loaded['msgbox'] = [self.wrong_check_box]
             # self.ban_inputbox()
+            self.has_msgbox = True
         elif self.check_code.lower() == self.loaded['box'][3].text.lower():
             result = self.client.register_push_password(
                 self.loaded['box'][1].text,
