@@ -24,7 +24,6 @@ class ScenePlayer:
         pygame.mixer.music.set_volume(0.3)
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.play()
-            print("notbussy")
         # for i in range(10):
         #     pygame.time.delay(200)
         #     pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() + 0.03)
