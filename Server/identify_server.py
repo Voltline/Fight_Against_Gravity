@@ -3,6 +3,7 @@ import sys
 
 path = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/"
 sys.path.append(path)
+from threading import Thread
 from Server.Modules import safeserver, database_operate, send_email, OptType
 from Server.Modules.Flogger import Flogger
 import json
@@ -19,6 +20,7 @@ class IdentifyServer:
         :参数: ip: 服务器ip， port: 端口， heart_time: 心跳时间（默认-1），debug: 调试模式
         :返回: 无返回
         """
+        self.accept_thread = None
         self.all_reg_acc = database_operate.get_all_reg_acc()  # 服务器对象内置所有账户的字典
         self.server = safeserver.SocketServer(ip, port, heart_time, debug, password=password,
                                               models=Flogger.FILE,
@@ -70,7 +72,87 @@ class IdentifyServer:
             self.server.send(addr, "ERROR")
         self.server.close(addr)
 
+    def console(self):
+        all_cmd_list = ['ls', 'find', 'check', 'help']
+        help_script = """Identify Server 控制台帮助文档
+* 目前已支持指令：ls   find   check   help
+* 所有指令会根据参数数量按顺序提取，多余的会被丢弃
+基本用法：
+*| ls [no_args]
+    作用: 无参数，列出所有用户信息
+    例如: ls
+*| find [arg]
+    作用: 了解用户名是否已注册
+    例如: ls username
+*| check [arg1] [arg2]
+    作用: 检测用户名与密码是否匹配
+    例如: check username password
+*| help [no_args]
+    作用: 帮助
+    例如: help
+"""
+
+        def console_help():
+            print(help_script)
+
+        def console_ls():
+            self.all_reg_acc = database_operate.get_all_reg_acc()
+            print(f"{'账户':18}{'密码':28}邮箱")
+            for key, value_list in self.all_reg_acc.items():
+                print(f"{key:20}{value_list[0]:30}{value_list[1]}")
+            print("---------------------------------")
+
+        def console_find(cmd_lst: list) -> bool:
+            if len(cmd_lst) >= 2:
+                self.all_reg_acc = database_operate.get_all_reg_acc()
+                if cmd_lst[1] in self.all_reg_acc:
+                    print(f"用户{cmd_list[1]}为已注册用户！")
+                else:
+                    print(f"用户{cmd_list[1]}尚不存在！")
+                return True
+            else:
+                return False
+
+        def console_check(cmd_lst: list) -> bool:
+            if len(cmd_list) >= 3:
+                self.all_reg_acc = database_operate.get_all_reg_acc()
+                usr, pwd = cmd_list[1], cmd_list[2]
+                if usr in self.all_reg_acc and self.all_reg_acc[usr][0] == pwd:
+                    print(f"用户{cmd_list[1]}验证成功！")
+                else:
+                    print(f"用户{cmd_list[1]}验证失败！")
+                return True
+            else:
+                return False
+
+        while True:
+            ans = True
+            cmd = input()
+            if cmd != "":
+                if len(cmd) <= 1000:
+                    cmd_list = cmd.split()
+                    if cmd_list[0] in all_cmd_list:
+                        if cmd_list[0] == 'ls':
+                            console_ls()
+                        elif cmd_list[0] == 'find':
+                            ans = console_find(cmd_list)
+                        elif cmd_list[0] == 'help':
+                            console_help()
+                        elif cmd_list[0] == 'check':
+                            ans = console_check(cmd_list)
+                    else:
+                        ans = False
+                else:
+                    print("指令长度太长！请重新输入！")
+
+            if not ans:
+                print("指令输入有误/操作失败！请重新输入！")
+
     def start(self):
+        self.accept_thread = Thread(target=self.console)
+        self.accept_thread.setDaemon(True)
+        self.accept_thread.setName("Console_thread")
+        self.accept_thread.start()
         while True:
             messages = self.server.get_message()
             for message in messages:
@@ -107,6 +189,7 @@ if __name__ == "__main__":
 
     ip = ""
     port = information["Client"]["Reg_Port"]
+
     password = information["AES_Key"]
     try:
         server = IdentifyServer(ip, port, debug=_debug_, password=password)

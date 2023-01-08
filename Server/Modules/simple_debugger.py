@@ -122,7 +122,7 @@ def debugger(self: ServerMain):
         input("按回车查看第3页")
         print(help_script3)
         input("按回车查看第4页")
-        print(help_script3)
+        print(help_script4)
 
     commands = {'echo': echo, 'ls': rm, 'kick': kick, 'unban': unban}
     pattern = re.compile("(.*?) (.*)")  # 两个部分分别匹配指令与参数
@@ -130,32 +130,33 @@ def debugger(self: ServerMain):
     while True:
         ans = True
         command = input()
-        if len(command) <= 1000:
-            while "  " in command:
-                command = command.replace("  ", " ")
-            list_cmd = re.findall(pattern, command)
-            if list_cmd:
-                list_cmd = list_cmd[0]
-                if list_cmd[0] in commands:
-                    func = commands[list_cmd[0]]
-                    ans = func(list_cmd[1])
-                else:
-                    ans = False
-            else:
-                ban_cmd = re.findall(pattern_ban, command)
-                if ban_cmd is None:
-                    if command.strip(" ") == 'help':
-                        help_debug()
+        if command != "":
+            if len(command) <= 1000:
+                while "  " in command:
+                    command = command.replace("  ", " ")
+                list_cmd = re.findall(pattern, command)
+                if list_cmd:
+                    list_cmd = list_cmd[0]
+                    if list_cmd[0] in commands:
+                        func = commands[list_cmd[0]]
+                        ans = func(list_cmd[1])
                     else:
                         ans = False
                 else:
-                    ban_cmd = ban_cmd[0]
-                    ban(ban_cmd[1:])
-        else:
-            print("指令长度太长！请重新输入！")
+                    ban_cmd = re.findall(pattern_ban, command)
+                    if not ban_cmd:
+                        if command.strip(" ") == 'help':
+                            help_debug()
+                        else:
+                            ans = False
+                    else:
+                        ban_cmd = ban_cmd[0]
+                        ban(ban_cmd[1:])
+            else:
+                print("指令长度太长！请重新输入！")
 
-        if not ans:
-            print("指令输入有误/操作失败！请重新输入！")
+            if not ans:
+                print("指令输入有误/操作失败！请重新输入！")
 
 
 if __name__ == "__main__":
