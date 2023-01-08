@@ -73,9 +73,9 @@ class IdentifyServer:
         self.server.close(addr)
 
     def console(self):
-        all_cmd_list = ['ls', 'find', 'check', 'help']
+        all_cmd_list = ['ls', 'find', 'check', 'help', 'clear']
         help_script = """Identify Server 控制台帮助文档
-* 目前已支持指令：ls   find   check   help
+* 目前已支持指令：ls   find   check   help   clear
 * 所有指令会根据参数数量按顺序提取，多余的会被丢弃
 基本用法：
 *| ls [no_args]
@@ -90,6 +90,9 @@ class IdentifyServer:
 *| help [no_args]
     作用: 帮助
     例如: help
+*| clear [no_args]
+    作用: 清除后台内容
+    例如: clear
 """
 
         def console_help():
@@ -125,21 +128,32 @@ class IdentifyServer:
             else:
                 return False
 
+        def console_clear():
+            if sys.platform == 'linux' or sys.platform == 'darwin':
+                os.system('clear')
+            elif sys.platform == 'win32':
+                os.system('cls')
+            else:
+                print("抱歉，暂时没有适配您的系统！")
+
         while True:
             ans = True
             cmd = input()
             if cmd != "":
                 if len(cmd) <= 1000:
                     cmd_list = cmd.split()
-                    if cmd_list[0] in all_cmd_list:
-                        if cmd_list[0] == 'ls':
+                    cmd_key = cmd_list[0].strip(' ')
+                    if cmd_key in all_cmd_list:
+                        if cmd_key == 'ls':
                             console_ls()
-                        elif cmd_list[0] == 'find':
+                        elif cmd_key == 'find':
                             ans = console_find(cmd_list)
-                        elif cmd_list[0] == 'help':
+                        elif cmd_key == 'help':
                             console_help()
-                        elif cmd_list[0] == 'check':
+                        elif cmd_key == 'check':
                             ans = console_check(cmd_list)
+                        elif cmd_key == 'clear':
+                            console_clear()
                     else:
                         ans = False
                 else:
