@@ -4,6 +4,7 @@ from content.maps.map_obj import Map
 from content.UI.button_class import Button
 from content.UI.inputbox_class import InputBox
 from content.UI.panel_class import Panel
+from content.UI.message_box import MessageBox
 from content.UI.scrollable_panel_class import ScrollablePanel
 from content.UI.label_class import Label
 from content.scene.scene_font import SceneFont
@@ -31,7 +32,7 @@ class UIFunction:
     @staticmethod
     def new_login_button(scene):
         """开始界面的登录按钮"""
-        login_rect = Rect(0.933 * scene.width, 0.025 * scene.height, 60, 40)
+        login_rect = Rect(0.93 * scene.width, 0.025 * scene.height, 70, 40)
         login_button = Button("login", scene.login_is_clicked, login_rect,
                               scene.settings.btbg_light, 0, '登录', SceneFont.log_font)
         login_button.add_img(scene.settings.btbg_light_pressed)
@@ -318,7 +319,8 @@ class UIFunction:
         setting_all_rect = pygame.Rect(0.1667 * width, 0.0625 * height, 0.667 * width, 0.875 * height)
         setting_scorllpanel = UIFunction.new_setting_scrollpanel(scene)
         setting_all_panel = Panel(setting_all_rect, '设置', 25,
-                                  [close_button, set_key_confirm_button, set_default_button, set_key_cancel_button, setting_scorllpanel],
+                                  [close_button, set_key_confirm_button, set_default_button, set_key_cancel_button,
+                                   setting_scorllpanel],
                                   [], [], 0)
         return setting_all_panel
 
@@ -431,6 +433,22 @@ class UIFunction:
         version_label.rect.right = 0.853 * width
         version_label.rect.bottom = 0.99 * height
         return version_label
+
+    @staticmethod
+    def new_logout_askyesno_box(scene) -> MessageBox:
+        logout_confirm_btn = Button('确认注销', scene.logout_confirm_clicked, pygame.Rect(0, 0, 120, 40),
+                                    scene.settings.btbg_light, 0, '确认注销', SceneFont.log_font)
+        logout_confirm_btn.add_img(scene.settings.btbg_light_pressed)
+
+        logout_cancel_btn = Button('取消', scene.logout_cancel_clicked, pygame.Rect(0, 0, 120, 40),
+                                   scene.settings.btbg_light, 0, '取消', SceneFont.log_font)
+        logout_cancel_btn.add_img(scene.settings.btbg_light_pressed)
+        logout_confirm_btn.r_xy = 0.08, 0.7
+        logout_cancel_btn.r_xy = 0.63, 0.7
+        btns = [logout_confirm_btn, logout_cancel_btn]
+        logout_ask_yesno_msg_box = MessageBox((0.5, 0.4), "提示", "您是否确认要注销？",
+                                                       ctrlrs=btns, has_ctrlrs=True)
+        return logout_ask_yesno_msg_box
 
     @staticmethod
     def update_key_board(scene, boxes: list):

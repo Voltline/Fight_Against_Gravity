@@ -52,7 +52,10 @@ class StartScene(Scene):
         if PlayerInfo.player_name == '':
             ScenePlayer.push(LogInScene())
         else:
-            self.loaded['button'][0].set_text('已登录')
+            # self.loaded['button'][0].set_text('已登录')
+            logout_askyesno_box = UIFunction.new_logout_askyesno_box(self)
+            self.loaded['msgbox'] = [logout_askyesno_box]
+            self.has_msgbox = True
 
     def local_is_clicked(self):
         self.loaded['panel'].append(UIFunction.new_select_map_panel(self))
@@ -60,6 +63,14 @@ class StartScene(Scene):
     def exit_is_clicked(self):
         pygame.quit()
         sys.exit()
+
+    def logout_cancel_clicked(self):
+        self.loaded['msgbox'].pop()
+
+    def logout_confirm_clicked(self):
+        # TODO 注销的具体操作还没写
+        self.loaded['msgbox'].pop()
+        pass
 
     def select_map_button_clicked(self, name: str):
         self.loaded['panel'] = []
