@@ -22,3 +22,9 @@ s.start()
 #     raise Exception(err)
 del os.environ['SDL_VIDEODRIVER']
 del os.environ['SDL_AUDIODRIVER']
+
+"""
+记一下启动脚本
+frpc -
+python3.py server.py --nogui
+"""
