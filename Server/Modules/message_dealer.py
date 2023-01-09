@@ -76,18 +76,16 @@ class MessageDealer:
             message = message.encode()
         if type(message) != bytes:
             raise TypeError("加密数据类型错误")
-        # print(message)
         if password:
             message = MessageDealer.encrypt(message, password)
-            # print(message)
-        message = MessageDealer.engzip(message)
+        # message = MessageDealer.engzip(message)
         message = MessageDealer.enbase64(message)
         return message
 
     @staticmethod
     def decode(message: bytes, password=None) -> [str]:
         message = MessageDealer.debase64(message)
-        message = [MessageDealer.degzip(item) for item in message]
+        # message = [MessageDealer.degzip(item) for item in message]
         if password:
             message = [MessageDealer.decrypt(item, password) for item in message]
         else:
