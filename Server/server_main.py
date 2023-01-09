@@ -94,6 +94,7 @@ class ServerMain:
         """
         messageAdr, messageMsg = message
         recv = False
+        # print("start login test")
         try:
             recv = self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)
         except Exception as err:

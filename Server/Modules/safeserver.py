@@ -1,11 +1,10 @@
-import json
-import socket
+from Server.Modules.message_dealer import MessageDealer
+from Server.Modules.Flogger import Flogger
 from threading import Thread
 import queue
-import base64
-import re
-from Crypto.Cipher import AES
-from Server.Modules.Flogger import Flogger
+import socket
+import json
+import time
 
 
 class SocketServer:
@@ -108,39 +107,6 @@ class SocketServer:
             thread_message.setName("message_" + str(address))
             thread_message.start()
 
-    def encrypt(self, message: str) -> bytes:
-        message = message.encode()
-        lenth = len(message) % 16
-        message = message + b'$' * (16 - lenth)
-        e = AES.new(self.password, AES.MODE_ECB).encrypt(message)
-        return e
-
-    def decrypt(self, message: bytes) -> str:
-        d = AES.new(self.password, AES.MODE_ECB).decrypt(message)
-        d = d.strip(b'$')
-        return d.decode()
-
-    @staticmethod
-    def decode(message: str):
-        """
-        mathch all messsage in the msg
-        return list
-        """
-        res = []
-        msg_list = re.findall("-S-([^-]*?)-E-", message)
-        for item in msg_list:
-            message = item[:]
-            message = base64.b64decode(message)
-            res.append(message.decode())
-        return res
-
-    @staticmethod
-    def encode(message: str):
-        message = base64.b64encode(message.encode())
-        # message = message.decode()
-        message = b"-S-" + message + b"-E-"
-        return message
-
     def message_handle(self, client: socket.socket, address):
         """
         消息接收函数 传入socket和address，将接收到的消息存入消息队列
@@ -171,27 +137,16 @@ class SocketServer:
                 close("客户端主动")
                 break
             else:
-                if self.password:
-                    try:
-                        recv = self.decrypt(recv)
-                    except ValueError as err:
-                        self.logger.error("消息解密失败，请检查{}数据是否加密或秘钥是否一致".format(address) + str(err))
-                        continue
-                else:
-                    recv = recv.decode()
-                # 粘连包切片
-                tmpmsg = self.decode(recv)
+                tmpmsg = MessageDealer.decode(recv, self.password)#使用消息处理类解析消息
                 for message in tmpmsg:
                     try:
                         message = json.loads(message)
                         if message["opt"] != 0:
-                            # self.logger.debug("{recv %d lenth msg from%s}:%s" % (len(message), address, message))
-                            # 0是heart beat 不存入消息队列
+                            self.logger.debug("receive msg {} from {}".format(message,address))
                             self.que.put((address, message))
+
                     except Exception as err:
                         self.logger.warning("消息{}不是json格式报文,未解析".format(message) + str(err))
-                        if self.debug:
-                            exit(-1)
                         self.que.put((address, message))
 
     def get_message(self):
@@ -232,18 +187,7 @@ class SocketServer:
             if type(message) == dict:
                 message = json.dumps(message)
             self.logger.debug("{send %d lenth msg to %s}:%s" % (len(message), address, message))
-            message = self.encode(message)
-            if self.password:
-                message = message.decode()
-                message = self.encrypt(message)
-            else:
-                # message = message.encode()
-                pass
-            # sended_len = 0
-            # while True:
-            #     sended_len = client.send(message[sended_len:])
-            #     if not sended_len:
-            #         break
+            message = MessageDealer.encode(message, self.password)
             client.sendall(message)
         except Exception as err:
             self.logger.error("[in send]" + str(err) + "发送失败")

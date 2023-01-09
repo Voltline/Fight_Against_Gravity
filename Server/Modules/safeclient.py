@@ -1,12 +1,10 @@
-﻿import json
-import socket
-import time
+﻿from Server.Modules.message_dealer import MessageDealer
+from Server.Modules.Flogger import Flogger
 from threading import Thread
 import queue
-import base64
-import re
-from Crypto.Cipher import AES
-from Server.Modules.Flogger import Flogger
+import socket
+import json
+import time
 
 
 class SocketClient:
@@ -66,7 +64,7 @@ class SocketClient:
 
         self.message_thread = Thread(target=self.message_handler)
         self.message_thread.setDaemon(True)
-        self.message_thread.setName("message_thread")
+        self.message_thread.setName("client_message_thread")
         self.message_thread.start()
         if heart_beat > 0:
             self.heart_thread = Thread(target=self.beating)
@@ -74,59 +72,17 @@ class SocketClient:
             self.heart_thread.setName("heart_beat_thread")
             self.heart_thread.start()
 
-    def encrypt(self, message: str) -> bytes:
-        message = message.encode()
-        lenth = len(message) % 16
-        message = message + b'$' * (16 - lenth)
-        e = AES.new(self.password, AES.MODE_ECB).encrypt(message)
-        return e
-
-    def decrypt(self, msg: bytes) -> str:
-        d = AES.new(self.password, AES.MODE_ECB).decrypt(msg)
-        d = d.strip(b'$')
-        return d.decode()
-
-    @staticmethod
-    def decode(msg: str):
-        """
-        mathch all messsage in the msg
-        return list
-        """
-        res = []
-        msg_list = re.findall("-S-([^-]*?)-E-", msg)
-        for item in msg_list:
-            msg = item[:]
-            msg = base64.b64decode(msg)
-            res.append(msg.decode())
-        return res
-
-    @staticmethod
-    def encode(message: str):
-        message = base64.b64encode(message.encode())
-        # message = message.decode()
-        message = b"-S-" + message + b"-E-"
-        return message
-
     def message_handler(self):
         try:
             while True:
                 recv_segment = self.__socket.recv(self.msg_len)
-                if self.password:
-                    try:
-                        recv_segment = self.decrypt(recv_segment)
-                    except UnicodeError:
-                        self.logger.error("消息解密失败,请检查与服务端的秘钥是否一致")
-                        continue
-                else:
-                    recv_segment = recv_segment.decode()
-                # 粘连包切片
-                tmpmsg = self.decode(recv_segment)
+                tmpmsg = MessageDealer.decode(recv_segment, self.password)
                 for item in tmpmsg:
                     message = None
                     try:
+                        self.logger.debug("接收到服务端消息" + str(item))
                         message = json.loads(item)
                         if message["opt"] != 0:
-                            # self.logger.debug("receive:" + str(message) + ",length:" + str(len(str(message))))
                             self.que.put(message)
                     except Exception as err:
                         self.logger.warning("消息{}不是json格式报文,未解析".format(message) + str(err))
@@ -145,27 +101,16 @@ class SocketClient:
         data:数据 支持str/json格式
         发送数据
         """
-        if message["opt"] != 0:
+        if type(message) == str or message["opt"] != 0:
             self.logger.debug("sending message" + str(message))
 
         if type(message) == dict:
             message = json.dumps(message)
-        message = self.encode(message)  # base64
-        if self.password:
-            message = message.decode()
-            message = self.encrypt(message)
-        else:
-            # message = message.encode()
-            pass
-        # sended_len = 0
-        # while True:
-        #     sended_len = self.__socket.send(message[sended_len:])
-        #     if not sended_len:
-        #         break
+        message = MessageDealer.encode(message, self.password)
         try:
             self.__socket.sendall(message)
         except Exception as err:
-            self.logger.error(err)
+            self.logger.error(str(err))
 
     def receive(self):
         """
