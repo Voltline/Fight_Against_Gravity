@@ -67,6 +67,8 @@ class ServerMain:
         """
         真的去注册服务器 进行check
         """
+        if "--debug" in sys.argv:
+            return True
         with open(path, 'r') as f:
             information = json.load(f)
         reg_ip = information["Client"]["Reg_IP"]
