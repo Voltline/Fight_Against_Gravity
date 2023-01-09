@@ -1,8 +1,6 @@
 import sys
 import time
-
 import pygame
-
 from Server.Modules import OptType, safeclient, safeserver
 from Server.Modules.Flogger import Flogger
 from Server.Modules.User import User
@@ -100,7 +98,7 @@ class ServerMain:
         try:
             recv = self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)
         except Exception as err:
-            self.logger.error("验证服已被关闭"+ str(err))
+            self.logger.error("验证服已被关闭" + str(err))
         if (messageMsg["user"] not in self.user_list) and recv:
             newUser = User(messageAdr, messageMsg["user"])
             self.user_list[messageMsg["user"]] = newUser
