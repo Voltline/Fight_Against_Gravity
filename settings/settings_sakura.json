@@ -2,7 +2,7 @@
   "Client": {
     "Reg_IP": "124.223.215.89",
     "Reg_Port": 25555,
-    "Game_Local_IP": "127.0.0.1",
+    "Game_Local_IP": "192.168.3.13",
     "Game_Online_IP": "43.249.193.233",
     "Game_Local_Port": 25555,
     "Game_Online_Port": 33669,
