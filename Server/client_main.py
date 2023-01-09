@@ -10,14 +10,14 @@ OptType = OptType.OptType
 
 
 class ClientMain:
-    def __init__(self, path, _debug_=False):
+    def __init__(self, path, _debug_ = False):
         self.path = path
         self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
                               folder_name="client_main", logpath=path)
         self.absolute_setting_path = path + "settings/settings.json"
         self.client_models = Flogger.FILE
         self.client_level = Flogger.L_INFO
-        if _debug_:
+        if "--debug" in sys.argv:
             self.absolute_setting_path = path + "settings/settings_local.json"
         if "--sakura" in sys.argv:
             self.absolute_setting_path = path + "settings/settings_sakura.json"
@@ -40,7 +40,6 @@ class ClientMain:
         self.user = None
         self.roomid = None
         self.is_start = False
-        # self.start_client()
 
     def get_start(self):
         return self.is_start
