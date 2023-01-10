@@ -171,7 +171,6 @@ class SocketServer:
         """
         try:
             client = self.conn_poll[address]
-            self.send(address, "close")
             client.close()
             self.conn_poll.pop(address)
         except Exception as err:
