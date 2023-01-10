@@ -1,7 +1,6 @@
 import socket
 import queue
 import json
-from message_dealer import MessageDealer
 from threading import Thread
 
 

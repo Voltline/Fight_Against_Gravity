@@ -3,6 +3,7 @@ import time
 from Server.Modules import OptType, safeclient
 from Server.Modules.Flogger import Flogger
 from Server.identify_client import IdentifyClient
+from Server.Modules.udpclient import UdpClient
 import sys
 import json
 
@@ -28,12 +29,15 @@ class ClientMain:
             settings = json.load(f)
         self.ip = settings["Client"]["Game_Online_IP"]
         self.port = settings["Client"]["Game_Online_Port"]
+        self.udp_ip = settings["Client"]["Udp_Online_IP"]
+        self.udp_port = settings["Client"]["Udp_Online_Port"]
         self.heart_beat = settings["Client"]["heart_beat"]
         self.reg_ip = settings["Client"]["Reg_IP"]
         self.reg_port = settings["Client"]["Reg_Port"]
         self.aes_key = settings["AES_Key"]
         self.msg_len = settings["Client"]["msg_len"]
         self.client = None
+        self.udp_client = None
         self.user = None
         self.roomid = None
         self.is_start = False
@@ -49,15 +53,14 @@ class ClientMain:
             self.client = safeclient.SocketClient(self.ip, self.port, heart_beat=self.heart_beat,
                                                   models=self.client_models,
                                                   logpath=self.path, level=self.client_level, msg_len=self.msg_len)
+            self.udp_client = UdpClient(self.udp_ip, self.udp_port, self.msg_len)
         except Exception as err:
             self.is_start = False
             self.logger.error("客户端启动失败" + str(err))
-            # exit(-1)
             raise Exception("无法连接到服务器")
 
     def register_get_checkcode(self, username, email):
         identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
-        # identify_client = safeclient.SocketClient(self.reg_ip, self.reg_port, password=se)
         check_code = identify_client.get_check_code(username, email)
         self.logger.info("[register]user:{} email:{}Register get check_code".format(username, email))
         del identify_client
@@ -83,7 +86,6 @@ class ClientMain:
 
     def reset_get_checkcode(self, username, email):
         identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
-        # identify_client = safeclient.SocketClient(self.reg_ip, self.reg_port, password=se)
         check_code = identify_client.reset_get_check_code(username, email)
         self.logger.info("[register]user:{} email:{}Reset get check_code.".format(username, email))
         del identify_client
@@ -369,16 +371,9 @@ class ClientMain:
         self.start_client()
         self.user = input("input the user name")
         password = input("input the pass word")
-        # self.user = "sxm250"
-        # password = "123123"
         if not self.login(self.user, password):
             self.client.close()
             exit(-1)
-        # print(self.creatroom("12345678901234567890", "地月系统"))
-        # for i in range(1000):
-        #     st = time.time()
-        #     self.deleteroom()
-        #     print(time.time() - st)
         while True:
             ints = input()
             opt = -1

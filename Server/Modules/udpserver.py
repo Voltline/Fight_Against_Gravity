@@ -2,7 +2,6 @@ import socket
 import queue
 from threading import Thread
 import json
-from message_dealer import MessageDealer
 
 
 class UdpServer:

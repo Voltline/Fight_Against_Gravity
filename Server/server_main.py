@@ -5,6 +5,7 @@ from Server.Modules import OptType, safeclient, safeserver
 from Server.Modules.Flogger import Flogger
 from Server.Modules.User import User
 from Server.Modules.Room import Room
+from Server.Modules.udpserver import UdpServer
 from content.maps.map_obj import Map
 import json
 import uuid
@@ -37,6 +38,8 @@ class ServerMain:
             settings = json.load(f)
         ip = settings["Client"]["Game_Local_IP"]
         port = settings["Client"]["Game_Local_Port"]
+        udp_ip = settings["Client"]["Udp_Local_IP"]
+        udp_port = settings["Client"]["Udp_Local_Port"]
         heart_beat = settings["Client"]["heart_beat"]
         self.msg_len = settings["Client"]["msg_len"]
         self.user_list: {str: User} = {}
@@ -46,6 +49,7 @@ class ServerMain:
         self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat,
                                               models=server_model, logpath=path, level=server_level,
                                               msg_len=self.msg_len)
+        self.udp_server = UdpServer(udp_ip, udp_port, self.msg_len)
         self.game_settings = game_settings
 
     @staticmethod
