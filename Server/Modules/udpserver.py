@@ -1,6 +1,9 @@
 import socket
 import queue
 from threading import Thread
+import json
+from message_dealer import MessageDealer
+
 
 class UdpServer:
     def __init__(self, ip, port: int, msg_len: int = 1024):
@@ -11,10 +14,19 @@ class UdpServer:
         thread_message = Thread(target=self.message_handler)
         thread_message.setDaemon(True)
         thread_message.start()
+
     def message_handler(self):
         while True:
-            recv = self.socket.recvfrom(self.msg_len)
-            self.que.put((recv[1], recv[0]))
+            try:
+                recv = self.socket.recvfrom(self.msg_len)
+                message = recv[0].decode()
+                try:
+                    message = json.loads(message)
+                except:
+                    pass
+                self.que.put((recv[1], message))
+            except Exception as err:
+                print("in message_handler", err)
 
     def get_message(self):
         """
@@ -26,11 +38,27 @@ class UdpServer:
             res.append(self.que.get())
         return res
 
+    def send(self, address, message):
+        """
+        发送数据
+        """
+        try:
+            if type(message) == dict:
+                message = json.dumps(message)
+            if type(message) != str:
+                return False
+            message = message.encode()
+            self.socket.sendto(message, address)
+        except Exception as err:
+            print("fail to send message", err)
+
 
 if __name__ == "__main__":
-    s = UdpServer("127.0.0.1", 25556)
+    s = UdpServer("192.168.3.13", 25556)
     res = []
     while True:
         res = s.get_message()
-        if len(res):
-            print(res)
+        for item in res:
+            addr, msg = item
+            print(item)
+            s.send(addr, {"id": msg["id"]})
