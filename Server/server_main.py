@@ -65,8 +65,6 @@ class ServerMain:
         """
         真的去注册服务器 进行check
         """
-        # if "--debug" in sys.argv:
-        #     return True
         with open(path, 'r') as f:
             information = json.load(f)
         reg_ip = information["Client"]["Reg_IP"]
@@ -122,7 +120,7 @@ class ServerMain:
             if roomid in self.room_list:
                 room: Room = self.room_list[roomid]
                 room.del_user(user)
-            self.server.close(messageAdr)
+            # self.server.close(messageAdr)
             self.logger.info("[game info]user {} logout the game".format(user.get_name()))
             self.user_list.pop(messageMsg["user"])
             return True

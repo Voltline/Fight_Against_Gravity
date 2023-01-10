@@ -42,6 +42,8 @@ class ClientMain:
         return self.is_start
 
     def start_client(self):
+        if self.is_start:
+            return False
         self.is_start = True
         try:
             self.client = safeclient.SocketClient(self.ip, self.port, heart_beat=self.heart_beat,
@@ -344,7 +346,8 @@ class ClientMain:
         if recv["status"] == "ACK":
             self.user = None
             self.roomid = None
-            self.client.close()
+            # self.client.close()
+            # del self.client
             return True
         else:
             return False
