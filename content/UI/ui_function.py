@@ -467,3 +467,44 @@ class UIFunction:
         label = Label(0, 0, 200, '飞船距离战场过远！即将迷航！', SceneFont.big_red_font)
         label.rect.center = scene.screen.get_rect().center
         return label
+
+    @staticmethod
+    def new_reset_labels(scene):
+        """找回密码界面五个输入框之前的文本提示"""
+        r_email_label = Label(scene.width * 0.28, 0.225 * scene.height, 98, "请输入您的邮箱", SceneFont.white_font)
+        r_id_label = Label(scene.width * 0.28, 0.325 * scene.height, 98, "请输入您的用户名", SceneFont.white_font)
+        r_pwd_label = Label(scene.width * 0.28, 0.425 * scene.height, 106, "请输入您的新密码", SceneFont.white_font)
+        r_confirm_pwd_label = Label(scene.width * 0.28, 0.525 * scene.height, 42, "再次输入新密码", SceneFont.white_font)
+        r_check_label = Label(scene.width * 0.28, 0.625 * scene.height, 40, "验证码", SceneFont.white_font)
+        labels = [r_email_label, r_id_label, r_pwd_label, r_confirm_pwd_label, r_check_label]
+        return labels
+
+    @staticmethod
+    def new_reset_boxes(scene):
+        """找回密码的五个输入框，分别是邮箱、用户名、密码、确认密码、验证码"""
+        r_email_box = InputBox(
+            Rect(0.42 * scene.width, 0.225 * scene.height, 0.292 * scene.width, 0.04375 * scene.height))
+        r_id_box = InputBox(
+            Rect(0.42 * scene.width, 0.325 * scene.height, 0.292 * scene.width, 0.04375 * scene.height))
+        r_pwd_box = InputBox(
+            Rect(0.42 * scene.width, 0.425 * scene.height, 0.292 * scene.width, 0.04375 * scene.height))
+        r_confirm_pwd_box = InputBox(
+            Rect(0.42 * scene.width, 0.525 * scene.height, 0.292 * scene.width, 0.04375 * scene.height))
+        r_check_box = InputBox(
+            Rect(0.42 * scene.width, 0.625 * scene.height, 0.292 * scene.width, 0.04375 * scene.height))
+        boxes = [r_email_box, r_id_box, r_pwd_box, r_confirm_pwd_box, r_check_box]
+        return boxes
+
+    @staticmethod
+    def new_reset_buttons(scene):
+        """找回密码界面的 确认重置 和 发送验证码 按钮"""
+        r_rect = Rect(0.542 * scene.width, 0.725 * scene.height, 0.0833 * scene.width, 0.05 * scene.height)
+        r_button = Button("reset", scene.confirm_reset_clicked, r_rect,
+                          scene.settings.btbg_light, 0, '确认重置', SceneFont.log_font)
+        r_button.add_img(scene.settings.btbg_light_pressed)
+        check_rect = Rect(0.3583 * scene.width, 0.725 * scene.height, 0.09167 * scene.width, 0.05 * scene.height)
+        r_check_button = Button('check', scene.reset_send_checkcode_clicked, check_rect,
+                                scene.settings.btbg_light, 0, '发送验证码', SceneFont.log_font)
+        r_check_button.add_img(scene.settings.btbg_light_pressed)
+        buttons = [r_button, r_check_button, scene.back]  # 包含了返回
+        return buttons

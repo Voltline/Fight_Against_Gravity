@@ -82,6 +82,32 @@ class ClientMain:
         else:
             return False
 
+    def reset_get_checkcode(self, username, email):
+        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
+        # identify_client = safeclient.SocketClient(self.reg_ip, self.reg_port, password=se)
+        check_code = identify_client.reset_get_check_code(username, email)
+        self.logger.info("[register]user:{} email:{}Reset get check_code.".format(username, email))
+        del identify_client
+        return check_code
+
+    def reset_push_password(self, username, email, check_code, input_check_code, password):
+        identify_client = IdentifyClient(self.reg_ip, self.reg_port, self.ip, self.port, self.aes_key)
+        if check_code != '':
+            if check_code.lower() == input_check_code.lower():
+                result = identify_client.reset_send_password(username, email, password)
+                del identify_client
+                if result is True:
+                    self.logger.info("[register]{}{}Reset Successfully!".format(username, email))
+                    return True
+                else:
+                    self.logger.info("[register]{}{}Reset Failed!".format(username, email))
+                    return False
+            else:
+                self.logger.info("[register]{}{}Reset Failed!".format(username, email))
+                return False
+        else:
+            return False
+
     def login(self, user: str, password: str):
         """
         用户登录

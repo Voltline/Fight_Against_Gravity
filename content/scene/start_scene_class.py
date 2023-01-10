@@ -68,9 +68,10 @@ class StartScene(Scene):
         self.loaded['msgbox'].pop()
 
     def logout_confirm_clicked(self):
-        # TODO 注销的具体操作还没写
+        self.client.logout()
+        PlayerInfo.player_name = ''
+        self.loaded['button'][0].set_text('登录')
         self.loaded['msgbox'].pop()
-        pass
 
     def select_map_button_clicked(self, name: str):
         self.loaded['panel'] = []

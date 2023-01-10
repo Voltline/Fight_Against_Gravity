@@ -11,6 +11,7 @@ import time
 
 OptType = OptType.OptType
 email_sent = {}
+reset_sent = {}
 user_list = []  # {"username" : address}
 
 
@@ -68,6 +69,37 @@ class IdentifyServer:
                 database_operate.insert_login_data([username, time.ctime()])
             else:
                 self.server.send(addr, "ERROR")
+        else:
+            self.server.send(addr, "ERROR")
+        self.server.close(addr)
+
+    def reset_send_email_opt(self, username: str, email: str, addr: tuple):
+        """重置密码发送验证码操作
+        :参数: username：用户名，email：邮箱，addr：地址元组
+        :返回: 无返回
+        """
+        check = database_operate.check_match([username, email])
+        if check:
+            reset_sent[(username, email)] = True
+            id_code = send_email.generate_id_code()
+            send_ans = send_email.send_email(username, email, id_code, 1)
+            if send_ans:
+                self.server.send(addr, id_code)
+            else:
+                self.server.send(addr, "ERROR")
+        else:
+            self.server.send(addr, "ERROR")
+
+    def reset_confirm_opt(self, username: str, email: str, rmessage: dict, addr: tuple):
+        """接受并写入数据库操作
+        :参数: username：用户名，email：邮箱，rmessage：传入的各种信息字典，addr：地址元组
+        :返回: 无返回
+        """
+        if (username, email) in reset_sent:
+            password = rmessage["password"]
+            time_n = time.ctime()
+            database_operate.reset_password_data([password, username])
+            reset_sent.pop((username, email))
         else:
             self.server.send(addr, "ERROR")
         self.server.close(addr)
@@ -177,16 +209,22 @@ class IdentifyServer:
                 all_reg_acc = database_operate.get_all_reg_acc()
                 if rmessage["opt"] != OptType.loginTransfer:
                     username, email = rmessage["user"], rmessage["email"]
-                    if database_operate.check_duplicate(username):
-                        self.logger.info(f"[ERROR]user {username} Duplicate Error")
-                        self.server.send(addr, "DUPLICATE")
+                    if rmessage["opt"] == OptType.resetSendEmail or rmessage["opt"] == OptType.resetSendPassword:
+                        if rmessage["opt"] == OptType.resetSendEmail:
+                            self.reset_send_email_opt(username,  email, addr)
+                        elif rmessage["opt"] == OptType.resetSendPassword:
+                            self.reset_confirm_opt(username, email, rmessage, addr)
                     else:
-                        if rmessage["opt"] == OptType.sendCheckCode:
-                            self.sendCheckCode_opt(username, email, addr)
-                        elif rmessage["opt"] == OptType.sendAllInformation:
-                            self.register_opt(username, email, rmessage, addr)
+                        if database_operate.check_duplicate(username):
+                            self.logger.info(f"[ERROR]user {username} Duplicate Error")
+                            self.server.send(addr, "DUPLICATE")
                         else:
-                            self.logger.info("[ERROR]Unexpected Opt")
+                            if rmessage["opt"] == OptType.sendCheckCode:
+                                self.sendCheckCode_opt(username, email, addr)
+                            elif rmessage["opt"] == OptType.sendAllInformation:
+                                self.register_opt(username, email, rmessage, addr)
+                            else:
+                                self.logger.info("[ERROR]Unexpected Opt")
                 else:
                     self.login_opt(rmessage, addr)
 

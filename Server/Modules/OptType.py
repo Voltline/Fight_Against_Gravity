@@ -28,7 +28,7 @@ class OptType:
     用户发送用户名与密码请求发送验证码
     {
         "opt" : 4
-        "user": "str",
+        "user": "str"
         "email": "str"
     }
     """
@@ -37,9 +37,28 @@ class OptType:
     用户发送所有注册信息
     {
         "opt" : 5
-        "user": "str",
-        "email": "str",
+        "user": "str"
+        "email": "str"
         "password": "str"
+    }
+    """
+    resetSendEmail = 6
+    """
+    用户重置密码请求发送验证码
+    {
+        "opt" ：6
+        "user" : "str"
+        "email" : "str"
+    }
+    """
+    resetSendPassword = 7
+    """
+    用户重置密码修改密码
+    {
+        "opt" ：7
+        "user" : "str"
+        "email" : "str"
+        "password" : "str"
     }
     """
     logout = 10

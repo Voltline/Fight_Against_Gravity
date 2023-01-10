@@ -45,6 +45,19 @@ def check_duplicate(username: str) -> bool:
     return check
 
 
+def check_match(info: list) -> bool:
+    """检查用户名与邮箱是否匹配
+    :参数：info：连接用户的信息列表
+    :返回：返回修改结果
+    """
+    accounts = get_all_reg_acc()
+    username, email = info
+    if username in accounts and accounts[username][1] == email:
+        return True
+    else:
+        return False
+
+
 def insert_acc_data(info: list) -> bool:
     """注册插入用户数据
     :参数：info：用户信息列表
@@ -87,6 +100,22 @@ def insert_login_data(info: list) -> bool:
     cur_acc.execute("CREATE TABLE IF NOT EXISTS login_history(ID,time)")
     try:
         cur_acc.execute("INSERT INTO login_history(ID,time) VALUES(?,?)", info)
+        con_account.commit()
+        return True
+    except:
+        return False
+
+
+def reset_password_data(info: list) -> bool:
+    """重置用户密码数据
+    :参数：info：连接用户的信息列表
+    :返回：返回修改结果
+    """
+    con_account = sql.connect("Database/account.db")  # 连接账户数据库文件account.db
+    cur_acc = con_account.cursor()  # 创建account数据库对应的指针cur_acc
+    cur_acc.execute("CREATE TABLE IF NOT EXISTS acc(ID,password,time,email)")
+    try:
+        cur_acc.execute("UPDATE acc SET password = ? where ID = ?", info)
         con_account.commit()
         return True
     except:
