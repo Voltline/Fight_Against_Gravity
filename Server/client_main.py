@@ -131,14 +131,14 @@ class ClientMain:
                 self.udp_client.send(msg)
                 time.sleep(0.1)
                 recvMsg = self.udp_client.get_message()
-                if recvMsg["opt"] == OptType.login and recvMsg["status"] == "ACK":
+                if recvMsg and recvMsg["opt"] == OptType.login and recvMsg["status"] == "ACK":
                     udp_yes = True
                     break
             if udp_yes:
                 msg["id"] = 3
                 self.client.send(msg)
                 recvMsg = self.client.receive()
-                if recvMsg["status"] == "ACK":
+                if recvMsg and recvMsg["status"] == "ACK":
                     self.user = user
                     self.logger.info("[login]" + str(recvMsg))
                     return True
