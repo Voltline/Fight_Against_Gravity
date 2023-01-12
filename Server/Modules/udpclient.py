@@ -1,7 +1,6 @@
 import socket
 import queue
 import json
-from message_dealer import MessageDealer
 from threading import Thread
 
 
@@ -36,7 +35,8 @@ class UdpClient:
                     message = json.loads(message)
                 except:
                     pass
-                self.que.put((recv[1], message))
+                self.que.put(message)
+                # print("recv", message)
             except Exception as err:
                 print("in message_handler", err)
 
@@ -44,6 +44,7 @@ class UdpClient:
         """
         发送数据
         """
+        # print("try to send", message, self.server_address)
         try:
             if type(message) == dict:
                 message = json.dumps(message)
@@ -51,7 +52,7 @@ class UdpClient:
                 return False
             message = message.encode()
             self.socket.sendto(message, self.server_address)
-            print(self.server_address)
+            # print("send", message)
         except Exception as err:
             print(err)
 

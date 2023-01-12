@@ -5,7 +5,7 @@ OptType = OptType.OptType
 from content.games import server_game
 import queue
 import threading
-import Server.Modules.safeserver as safeserver
+from Server.Modules.udpserver import UdpServer
 from settings import all_settings
 
 
@@ -14,7 +14,7 @@ class Room:
     房间类 存储玩家，房间号，运行每局游戏主逻辑
     """
 
-    def __init__(self, roomid, owner: User, roomname: str, roommap: str, server: safeserver.SocketServer,
+    def __init__(self, roomid, owner: User, roomname: str, roommap: str, server: UdpServer,
                  game_settings: all_settings.Settings):
         self.roomid = roomid
         self.owner = owner
@@ -61,7 +61,7 @@ class Room:
         addr_list = {}
         for user in self.userlist:
             user_name_list.append(user.get_name())
-            addr_list[user.get_name()] = user.get_address()
+            addr_list[user.get_name()] = user.get_udp_address()
         self.game = server_game.ServerGame(
             settings=self.game_settings,
             net=self.server_,

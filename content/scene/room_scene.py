@@ -305,7 +305,8 @@ class RoomScene(Scene):
 
     def deal_msgs(self):
         """非阻塞接收并处理消息"""
-        for msg in self.client.client.get_message_list():
+        msg_list = self.client.client.get_message_list() + self.client.udp_client.get_message_list()
+        for msg in msg_list:
             opt = msg['opt']
             if opt == OptType.getRoom:
                 res = msg['room']

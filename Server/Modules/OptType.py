@@ -9,6 +9,7 @@ class OptType:
     用户请求登录
     {
         "opt" : 1
+        “id” : 1/2/3 tcp连接,udp连接,登陆成功
         "user" : "str"
         "password" : "str"
         "status" : "ACK"/"NAK"

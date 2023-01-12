@@ -2,12 +2,14 @@ from typing import Union
 
 from Server.Modules.safeserver import SocketServer
 from Server.Modules.safeclient import SocketClient
+from Server.Modules.udpclient import UdpClient
+from Server.Modules.udpserver import UdpServer
 from content.games.fag_game import FAGGame
 
 
 class OnlineGame(FAGGame):
     """在线游戏，作为基类使用"""
-    def __init__(self, settings, screen, net: Union[SocketServer, SocketClient], room_id, map_name, player_names):
+    def __init__(self, settings, screen, net: Union[UdpServer, UdpClient], room_id, map_name, player_names):
         super().__init__(settings, screen, map_name, player_names)
         self.net = net
         self.room_id = room_id
