@@ -252,7 +252,7 @@ class RoomScene(Scene):
         if not res:
             self.not_allready_lable.is_show = True
         else:
-            # self.wating_start_panel.is_show = True
+            self.wating_start_panel.is_show = True
             pass
 
     def change_map_clicked(self):

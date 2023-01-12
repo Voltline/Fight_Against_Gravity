@@ -120,6 +120,8 @@ class ServerMain:
                 user = self.tmp_user_list[messageMsg["user"]]
                 user.set_udp_address(messageAdr)
                 self.udp_server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
+                self.logger.info(
+                    "[game info]user {},ip{},connect the game with udp".format(user.get_name(), str(messageAdr)))
             else:
                 self.udp_server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
         if id == 3:
@@ -129,9 +131,15 @@ class ServerMain:
                 user = self.tmp_user_list[messageMsg["user"]]
                 self.user_list[messageMsg["user"]] = user
                 self.tmp_user_list.pop(messageMsg["user"])
+                self.logger.info(
+                    "[game info]user {},tcp_address{},udp_address{},connect the game with tcp".
+                    format(user.get_name(),
+                           user.get_address(),
+                           user.get_udp_address()))
                 self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
             else:
                 self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+
     def logout(self, message):
         """
         用户登出
@@ -424,7 +432,7 @@ class ServerMain:
                 room.del_user(user)
             self.user_list.pop(item)
         to_del.clear()
-        #找到已掉线的申请玩家列表
+        # 找到已掉线的申请玩家列表
         for name, user in self.tmp_user_list.items():
             if user.get_address() not in connections:
                 to_del.append(name)
@@ -448,7 +456,7 @@ class ServerMain:
         self.logger.critical("[game info] server start")
         while True:
             # 处理消息队列
-            time.sleep(0.01)
+            time.sleep(0.001)
             # TCP
             messages = self.server.get_message()
             for message in messages:
