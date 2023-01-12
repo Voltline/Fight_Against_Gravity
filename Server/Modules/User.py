@@ -5,9 +5,16 @@ class User:
 
     def __init__(self, add, name: str):
         self.address = add
+        self.udp_address = None
         self.name = name
         self.isready = False
         self.roomid = None
+
+    def set_udp_address(self, add):
+        self.udp_address = add
+
+    def get_udp_address(self):
+        return self.udp_address
 
     def set_roomid(self, roomid):
         self.roomid = roomid

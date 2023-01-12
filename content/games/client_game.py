@@ -4,7 +4,7 @@ from pygame import Vector2
 
 from content.games.online_game import OnlineGame
 from content.local.camera import Camera
-from Server.Modules.safeclient import SocketClient
+from Server.Modules.udpclient import UdpClient
 from Server.Modules.OptType import OptType
 import content.game_modules.game_function as gf
 from content.online.snapshot import Snapshot
@@ -17,7 +17,7 @@ from content.online.player_info import PlayerInfo
 
 class ClientGame(OnlineGame):
     """客户端游戏"""
-    def __init__(self, settings, net: SocketClient, room_id,
+    def __init__(self, settings, net: UdpClient, room_id,
                  map_name, player_names, screen, player_name,
                  server_start_time=None):
         super().__init__(settings, screen, net, room_id, map_name, player_names)

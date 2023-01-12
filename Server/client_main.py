@@ -36,8 +36,8 @@ class ClientMain:
         self.reg_port = settings["Client"]["Reg_Port"]
         self.aes_key = settings["AES_Key"]
         self.msg_len = settings["Client"]["msg_len"]
-        self.client = None
-        self.udp_client = None
+        self.client: safeclient.SocketClient = None
+        self.udp_client: UdpClient = None
         self.user = None
         self.roomid = None
         self.is_start = False
@@ -117,15 +117,37 @@ class ClientMain:
         """
         msg = {
             "opt": OptType.login,
+            "id": 1,
             "user": user,
             "password": password
         }
         self.client.send(msg)
         recvMsg = self.client.receive()
         if recvMsg["status"] == "ACK":
-            self.user = user
-            self.logger.info("[login]" + str(recvMsg))
-            return True
+            msg["id"] = 2
+            self.udp_client.get_message_list()
+            udp_yes = False
+            for i in range(10):
+                self.udp_client.send(msg)
+                time.sleep(0.1)
+                recvMsg = self.udp_client.get_message()
+                if recvMsg["opt"] == OptType.login and recvMsg["status"] == "ACK":
+                    udp_yes = True
+                    break
+            if udp_yes:
+                msg["id"] = 3
+                self.client.send(msg)
+                recvMsg = self.client.receive()
+                if recvMsg["status"] == "ACK":
+                    self.user = user
+                    self.logger.info("[login]" + str(recvMsg))
+                    return True
+                else:
+                    self.logger.info("[login]" + str(recvMsg))
+                    return False
+            else:
+                self.logger.info("[login]" + str(recvMsg))
+                return False
         else:
             self.logger.info("[login]" + str(recvMsg))
             return False

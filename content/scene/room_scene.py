@@ -283,7 +283,7 @@ class RoomScene(Scene):
         self.change_room_name_panel.is_able = False
 
     def update_user(self):
-        if time.time() - self.last_update_time > 1:
+        if time.time() - self.last_update_time > 5:
             # print("update at", time.time())
             self.last_update_time = time.time()
             self.client.getroom()
@@ -305,7 +305,8 @@ class RoomScene(Scene):
 
     def deal_msgs(self):
         """非阻塞接收并处理消息"""
-        for msg in self.client.client.get_message_list():
+        msg_list = self.client.client.get_message_list() + self.client.udp_client.get_message_list()
+        for msg in msg_list:
             opt = msg['opt']
             if opt == OptType.getRoom:
                 res = msg['room']

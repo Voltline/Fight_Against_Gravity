@@ -44,11 +44,14 @@ class ServerMain:
         self.msg_len = settings["Client"]["msg_len"]
         self.user_list: {str: User} = {}
         """{"username" : User}"""
+        self.tmp_user_list: {str: User} = {}
+        """正在建立连接的用户{"username" : User}"""
         self.room_list: {str: Room} = {}
         """"{"roomid": Room}"""
         self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat,
                                               models=server_model, logpath=path, level=server_level,
                                               msg_len=self.msg_len)
+        print(udp_ip, udp_port)
         self.udp_server = UdpServer(udp_ip, udp_port, self.msg_len)
         self.game_settings = game_settings
 
@@ -95,20 +98,40 @@ class ServerMain:
         处理用户登录请求
         """
         messageAdr, messageMsg = message
-        recv = False
-        # print("start login test")
-        try:
-            recv = self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)
-        except Exception as err:
-            self.logger.error("验证服已被关闭" + str(err))
-        if (messageMsg["user"] not in self.user_list) and recv:
-            newUser = User(messageAdr, messageMsg["user"])
-            self.user_list[messageMsg["user"]] = newUser
-            self.logger.info("[game info]user {},ip{},join the game".format(newUser.get_name(), str(messageAdr)))
-            self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
-        else:
-            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
-
+        id = messageMsg["id"]
+        if id == 1:  # tcp建立连接
+            recv = False
+            try:
+                recv = self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)
+            except Exception as err:
+                self.logger.error("验证服已被关闭" + str(err))
+            if (messageMsg["user"] not in self.user_list) and recv and (messageMsg["user"] not in self.tmp_user_list):
+                newUser = User(messageAdr, messageMsg["user"])
+                self.tmp_user_list[messageMsg["user"]] = newUser
+                self.logger.info(
+                    "[game info]user {},ip{},connect the game with tcp".format(newUser.get_name(), str(messageAdr)))
+                self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
+                return True
+            else:
+                self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+                return False
+        if id == 2:  # udp建立连接
+            if messageMsg["user"] in self.tmp_user_list:
+                user = self.tmp_user_list[messageMsg["user"]]
+                user.set_udp_address(messageAdr)
+                self.udp_server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
+            else:
+                self.udp_server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+        if id == 3:
+            if (messageMsg["user"] in self.tmp_user_list) and \
+                    self.tmp_user_list[messageMsg["user"]].get_udp_address() and \
+                    (messageMsg["user"] not in self.user_list):
+                user = self.tmp_user_list[messageMsg["user"]]
+                self.user_list[messageMsg["user"]] = user
+                self.tmp_user_list.pop(messageMsg["user"])
+                self.server.send(messageAdr, self.back_msg(messageMsg, "ACK"))
+            else:
+                self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
     def logout(self, message):
         """
         用户登出
@@ -161,7 +184,7 @@ class ServerMain:
             self.server.send(messageAdr, sendMsg)
         else:
             roomid = str(uuid.uuid1())
-            newroom = Room(roomid, user, roomname, roommap, self.server, self.game_settings)
+            newroom = Room(roomid, user, roomname, roommap, self.udp_server, self.game_settings)
             self.room_list[roomid] = newroom
             user.set_roomid(roomid)
             sendMsg = messageMsg
@@ -401,6 +424,16 @@ class ServerMain:
                 room.del_user(user)
             self.user_list.pop(item)
         to_del.clear()
+        #找到已掉线的申请玩家列表
+        for name, user in self.tmp_user_list.items():
+            if user.get_address() not in connections:
+                to_del.append(name)
+        # 清除与掉线玩家有关的数据
+        for item in to_del:
+            self.logger.info("[game info]user {0} stop join the game".format((item, self.tmp_user_list[item].name)))
+            user: User = self.tmp_user_list[item]
+            self.tmp_user_list.pop(item)
+        to_del.clear()
         # 找到空的房间列表
         for roomid, room in self.room_list.items():
             if len(room.get_userlist()) == 0:
@@ -418,6 +451,7 @@ class ServerMain:
         while True:
             # 处理消息队列
             # clock.tick(1/self.game_settings.physics_dt)
+            # TCP
             messages = self.server.get_message()
             for message in messages:
                 self.logger.debug("[debug info]message" + str(message))
@@ -450,13 +484,22 @@ class ServerMain:
                     self.ready(message)
                 elif opt == OptType.changeroomname:
                     self.changeroomname(message)
+                else:
+                    self.logger.warning("unexpected opt" + str(message))
+            # UDP
+            messages = self.udp_server.get_message()
+            for message in messages:
+                messageAdr, messageMsg = message
+                opt = messageMsg["opt"]
+                if opt == OptType.login:
+                    self.login(message)
                 elif 27 <= opt <= 30:
                     room_id = messageMsg['args'][0]
                     if room_id in self.room_list:
                         room: Room = self.room_list[room_id]
                         room.release_message(message)
                 else:
-                    self.logger.warning("unexpected opt" + str(message))
+                    self.logger.warning("unexpected udp message opt" + str(message))
             self.clear()
 
 
