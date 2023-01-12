@@ -23,10 +23,12 @@ class UdpServer:
                     message = json.loads(message)
                 except:
                     pass
-                # print("recv", message, recv[1])
+                print("recv" + str(message) + str(recv[1]))
                 self.que.put((recv[1], message))
+            except OSError as oserr:
+                print("上一个消息发送失败 " + str(oserr))
             except Exception as err:
-                print("in message_handler", err)
+                print("in message_handler" + str(err))
 
     def get_message(self):
         """
@@ -48,18 +50,18 @@ class UdpServer:
             if type(message) != str:
                 return False
             message = message.encode()
-            # print("send", message, address)
+            print("send" + str(message) + str(address))
             self.socket.sendto(message, address)
         except Exception as err:
-            print("fail to send message", err)
+            print("fail to send message" + str(err))
 
 
 if __name__ == "__main__":
-    s = UdpServer("192.168.3.13", 25556)
+    s = UdpServer("192.168.3.23", 25556)
     res = []
     while True:
         res = s.get_message()
         for item in res:
             addr, msg = item
-            print(item)
+            # print(item)
             s.send(addr, {"id": msg["id"]})

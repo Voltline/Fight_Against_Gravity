@@ -36,7 +36,7 @@ class UdpClient:
                 except:
                     pass
                 self.que.put(message)
-                # print("recv", message)
+                print("recv", message)
             except Exception as err:
                 print("in message_handler", err)
 
@@ -52,7 +52,7 @@ class UdpClient:
                 return False
             message = message.encode()
             self.socket.sendto(message, self.server_address)
-            # print("send", message)
+            print("send", message)
         except Exception as err:
             print(err)
 
@@ -80,8 +80,8 @@ class UdpClient:
 
 
 if __name__ == "__main__":
-    c = UdpClient("192.168.3.13", 25556)
+    c = UdpClient("192.168.3.23", 25556)
     for i in range(100):
         c.send({0: "1", "id": i})
-    while True:
-        print(c.receive())
+    # while True:
+    #     print(c.receive())
