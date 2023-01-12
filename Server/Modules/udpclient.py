@@ -36,7 +36,7 @@ class UdpClient:
                 except:
                     pass
                 self.que.put(message)
-                print("recv", message)
+                # print("recv", message)
             except Exception as err:
                 print("in message_handler", err)
 
@@ -44,7 +44,7 @@ class UdpClient:
         """
         发送数据
         """
-        print("try to send", message, self.server_address)
+        # print("try to send", message, self.server_address)
         try:
             if type(message) == dict:
                 message = json.dumps(message)
@@ -52,7 +52,7 @@ class UdpClient:
                 return False
             message = message.encode()
             self.socket.sendto(message, self.server_address)
-            print("send", message)
+            # print("send", message)
         except Exception as err:
             print(err)
 

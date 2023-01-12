@@ -283,7 +283,7 @@ class RoomScene(Scene):
         self.change_room_name_panel.is_able = False
 
     def update_user(self):
-        if time.time() - self.last_update_time > 5:
+        if time.time() - self.last_update_time > 1:
             # print("update at", time.time())
             self.last_update_time = time.time()
             self.client.getroom()

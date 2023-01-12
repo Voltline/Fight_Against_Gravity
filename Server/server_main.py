@@ -51,7 +51,7 @@ class ServerMain:
         self.server = safeserver.SocketServer(ip, port, debug=False, heart_time=heart_beat,
                                               models=server_model, logpath=path, level=server_level,
                                               msg_len=self.msg_len)
-        print(udp_ip, udp_port)
+        # print(udp_ip, udp_port)
         self.udp_server = UdpServer(udp_ip, udp_port, self.msg_len)
         self.game_settings = game_settings
 
