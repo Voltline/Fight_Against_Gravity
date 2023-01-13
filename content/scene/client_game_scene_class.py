@@ -106,8 +106,7 @@ class ClientGameScene(Scene):
 
     def ping_label_update(self):
         if time.time() - self.ping_time >= 1:
-            self.last_ping_ms = int(self.ping_label.text.split(" ms")[0])
-            self.display_ping_ms = int(0.2 * self.last_ping_ms + 0.8 * self.game.ping_ms)
+            self.display_ping_ms = self.game.ping_test_ms
             if self.display_ping_ms <= 120:
                 tc = (18, 230, 53)
             elif self.display_ping_ms <= 240:

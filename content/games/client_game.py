@@ -1,4 +1,6 @@
 import math
+import time
+
 import pygame
 from pygame import Vector2
 
@@ -30,7 +32,9 @@ class ClientGame(OnlineGame):
         self.traces = []
         self.snapshots = []  # 用于检查预测正确性的快照
         self.snapshots_len = settings.snapshots_len
-        self.ping_ms = 0  # 延迟
+        self.ping_ms = 0  # 计算延迟
+        self.ping_begin_time = 0  # 延迟检测包发送时间
+        self.ping_test_ms = 0  # 检测延迟
         self.server_start_time = server_start_time
 
         # 校时
@@ -170,6 +174,8 @@ class ClientGame(OnlineGame):
     def send_msgs_physic_loop(self):
         """发送玩家控制消息"""
         self.send_ctrl_msg()
+        if self.now_tick % 20 == 0:
+            self.send_ping_test_msg()
 
     def deal_msgs_physic_loop(self):
         """接收并处理消息"""
@@ -194,6 +200,8 @@ class ClientGame(OnlineGame):
             # print(tick, self.now_tick)
             if tick > self.now_tick:  # 如果消息过新就塞回消息队列
                 self.net.que.put(msg)
+            elif opt == OptType.PingTest:
+                self.calc_ping_test_ms()
             elif opt == OptType.AllObjs:
                 if not all_ships_msg or all_ships_msg_tick < tick:
                     all_ships_msg_tick = tick
@@ -267,6 +275,16 @@ class ClientGame(OnlineGame):
             'kwargs': {}
         }
         self.net.send(msg)
+
+    def send_ping_test_msg(self):
+        msg = {
+            "opt": OptType.PingTest
+        }
+        self.ping_begin_time = time.time()
+        self.net.send(msg)
+
+    def calc_ping_test_ms(self):
+        self.ping_test_ms = int((time.time() - self.ping_begin_time) * 1000)
 
     def update_snapshots(self):
         """把这个tick结束时的状态存入snapshots，把过于久远的状态删除"""

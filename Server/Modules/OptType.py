@@ -251,6 +251,11 @@ class OptType:
     # msg_args=[win_player]
     GameWin = 31
 
+    # 客户端接收，记录发出与接收时的时间差作为延迟
+    # 服务器接收，给客户端发回这个包
+    # msg_args=[]
+    PingTest = 32
+
 
 if __name__ == "__main__":
     print(OptType.login)

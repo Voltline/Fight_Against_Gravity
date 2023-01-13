@@ -411,6 +411,14 @@ class ServerMain:
             self.server.send(messageAdr, sendMsg)
             time.sleep(0.1)
 
+    def ping_test(self, message):
+        messageAdr, messageMsg = message
+        sendMsg = {
+            "opt": OptType.PingTest
+        }
+        self.server.send(messageAdr, sendMsg)
+        self.logger.info("[game info]send Addr {0} ping test".format(messageAdr))
+
     def clear(self):
         """
         处理失效连接
@@ -495,6 +503,8 @@ class ServerMain:
                     if room_id in self.room_list:
                         room: Room = self.room_list[room_id]
                         room.release_message(message)
+                elif opt == OptType.PingTest:
+                    self.ping_test(message)
                 else:
                     self.logger.warning("unexpected udp message opt" + str(message))
             self.clear()
