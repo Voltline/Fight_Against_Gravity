@@ -187,10 +187,7 @@ class SocketServer:
                 message = json.dumps(message)
             self.logger.debug("{send %d lenth msg to %s}:%s" % (len(message), address, message))
             message = MessageDealer.encode(message, self.password)
-            send_thread = Thread(target=client.sendall, args=(message,))
-            send_thread.setDaemon(True)
-            send_thread.start()
-            # client.sendall(message)
+            client.sendall(message)
         except Exception as err:
             self.logger.error("[in send]" + str(err) + "发送失败")
 
