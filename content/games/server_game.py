@@ -36,7 +36,7 @@ class ServerGame(OnlineGame):
         #     pass
         # print('完成校时')
         # time.sleep(1)
-        self.net.get_message()  # 清除udp残留消息
+        # self.net.get_message()  # 清除udp残留消息
         super().main()
 
     def restart(self):
@@ -69,7 +69,7 @@ class ServerGame(OnlineGame):
 
     def send_all(self, msg: dict):
         """向所有玩家广播msg"""
-        for address in self.addresses.values():
+        for address in self.tcp_addresses.values():
             self.net.send(address, msg)
             # time.sleep(0.01)
 
@@ -255,7 +255,8 @@ class ServerGame(OnlineGame):
             name = self.quit_players.get()
             if name in self.addresses:
                 del self.addresses[name]
-
+            if name in self.tcp_addresses:
+                del self.tcp_addresses[name]
     def check_win(self):
         """检查是否游戏胜利(对局结束)并执行对应工作"""
         l = len(self.gm.ships)

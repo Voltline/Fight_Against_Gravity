@@ -68,7 +68,7 @@ class Room:
             tcp_addr_list[user.get_name()] = user.get_address()
         self.game = server_game.ServerGame(
             settings=self.game_settings,
-            net=self.udp_server,
+            net=self.tcp_server,
             tcp_net=self.tcp_server,
             room_id=self.roomid,
             map_name=self.roommap,
