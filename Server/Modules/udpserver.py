@@ -23,7 +23,7 @@ class UdpServer:
                     message = json.loads(message)
                 except:
                     pass
-                print("recv" + str(message) + str(recv[1]))
+                # print("recv" + str(message) + str(recv[1]))
                 self.que.put((recv[1], message))
             except OSError as oserr:
                 print("上一个消息发送失败 " + str(oserr))
@@ -50,7 +50,7 @@ class UdpServer:
             if type(message) != str:
                 return False
             message = message.encode()
-            print("send" + str(message) + str(address))
+            # print("send" + str(message) + str(address))
             self.socket.sendto(message, address)
         except Exception as err:
             print("fail to send message" + str(err))

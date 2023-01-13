@@ -11,7 +11,7 @@
     "Udp_Local_Port": 25556,
     "Udp_Online_Port": 25556,
     "heart_beat": 30,
-    "msg_len": 1048576
+    "msg_len": 4096
   },
   "Email": {
     "Addr": "fag_identify_norep@yeah.net",

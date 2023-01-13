@@ -9,14 +9,16 @@ from Server.Modules.OptType import OptType
 
 
 class ServerGame(OnlineGame):
-    def __init__(self, settings, net, room_id, map_name, player_names, addresses: dict={}):
+    def __init__(self, settings, net, tcp_net, room_id, map_name, player_names, addresses: dict = {},
+                 tcpaddresses: dict = {}):
         super().__init__(settings, None, net, room_id, map_name, player_names)
-        self.max_fps = 1/self.settings.physics_dt
+        self.max_fps = 1 / self.settings.physics_dt
         self.new_bullets = dict()  # 上次发消息到这次发消息新增的子弹
         self.dead_bullets_id = set()  # 上次发消息到这次发消息减少的子弹
-
+        self.tcp = tcp_net
         # self.camera = None
         self.addresses = addresses  # {player_name: address}
+        self.tcp_addresses = tcpaddresses
         self.quit_players = Queue()  # 退出房间的玩家在每轮循环结束时统一处理，防止addresses在使用时改变长度
 
         self.send_bullets_beg = 0  # 这次发送子弹消息的起始index
@@ -34,7 +36,7 @@ class ServerGame(OnlineGame):
         #     pass
         # print('完成校时')
         # time.sleep(1)
-
+        self.net.get_message()  # 清除udp残留消息
         super().main()
 
     def restart(self):
@@ -45,8 +47,8 @@ class ServerGame(OnlineGame):
         self.sended_tick = 20 * self.physics_dt
 
     def get_start_time(self) -> float:
-        time.sleep(random.randint(10,17))
-        start_time = gf.get_time()+5
+        time.sleep(random.randint(5, 17))
+        start_time = gf.get_time() + 5
         self.send_start_game_time(start_time)
         return start_time
 
@@ -60,13 +62,16 @@ class ServerGame(OnlineGame):
             'args': [self.room_id],
             'kwargs': {}
         }
-        self.send_all(msg)
+        for address in self.tcp_addresses.values():
+            self.tcp.send(address, msg)
+        # self.send_all(msg)
         # print('游戏开始时间发送成功')
 
     def send_all(self, msg: dict):
         """向所有玩家广播msg"""
         for address in self.addresses.values():
             self.net.send(address, msg)
+            # time.sleep(0.01)
 
     def physic_update(self):
         """每个物理dt的更新行为"""
@@ -155,7 +160,7 @@ class ServerGame(OnlineGame):
             'time': gf.get_time(),
             'args': [self.room_id, player_name],
         }
-        self.net.send(self.addresses[player_name], msg)
+        self.tcp.send(self.tcp_addresses[player_name], msg)
 
     def send_game_win_msg(self, win_player):
         """广播游戏胜利消息"""
@@ -261,4 +266,3 @@ class ServerGame(OnlineGame):
                 win_player = '本局无人生还'
             self.send_game_win_msg(win_player)
             self.is_run = False
-

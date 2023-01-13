@@ -11,10 +11,14 @@ class UdpClient:
             raise Exception("fail to build a udp client")
         self.msg_len = msg_len
         self.que = queue.Queue()
+        self.uque = queue.Queue()
         self.server_address = (ip, server_port)
         thread_message = Thread(target=self.message_handler)
         thread_message.setDaemon(True)
         thread_message.start()
+        thread_dealer = Thread(target=self.message_dealer)
+        thread_dealer.setDaemon(True)
+        thread_dealer.start()
 
     def create_client(self, port=0):
         if port > 65535:
@@ -26,17 +30,19 @@ class UdpClient:
         except:
             return self.create_client(port + 1)
 
+    def message_dealer(self):
+        while True:
+            recv = self.uque.get()
+            message = recv[0].decode()
+            message = json.loads(message)
+            self.que.put(message)
+
     def message_handler(self):
         while True:
             try:
                 recv = self.socket.recvfrom(self.msg_len)
-                message = recv[0].decode()
-                try:
-                    message = json.loads(message)
-                except:
-                    pass
-                self.que.put(message)
-                print("recv", message)
+                self.uque.put(recv)
+                # print("recv", recv)
             except Exception as err:
                 print("in message_handler", err)
 
@@ -52,7 +58,7 @@ class UdpClient:
                 return False
             message = message.encode()
             self.socket.sendto(message, self.server_address)
-            print("send", message)
+            # print("send", message)
         except Exception as err:
             print(err)
 
@@ -83,5 +89,5 @@ if __name__ == "__main__":
     c = UdpClient("192.168.3.23", 25556)
     for i in range(100):
         c.send({0: "1", "id": i})
-    # while True:
-    #     print(c.receive())
+    while True:
+        print(c.receive())
