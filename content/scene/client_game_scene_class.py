@@ -31,6 +31,7 @@ class ClientGameScene(Scene):
                                map_name, player_names, self.screen, PlayerInfo.player_name,
                                server_start_time)
         self.last_ping_ms = 0
+        self.display_ping_ms = 0
         self.ping_label = Label(0.97 * self.screen.get_rect().width, 0.02 * self.screen.get_rect().height,
                                 10, f"{int(self.game.ping_ms)} ms", SceneFont.ping_good_font)
         self.ping_time = time.time()
@@ -111,5 +112,12 @@ class ClientGameScene(Scene):
         self.player_ship_far_label.is_show = self.game.player_ship_is_far
         if time.time() - self.ping_time >= 1:
             self.last_ping_ms = int(self.ping_label.text.split(" ms")[0])
-            self.ping_label.set_text(f"{int(0.2 * self.last_ping_ms + 0.8 * self.game.ping_ms)} ms")
+            self.display_ping_ms = int(0.2 * self.last_ping_ms + 0.8 * self.game.ping_ms)
+            if self.display_ping_ms <= 120:
+                tc = (18, 230, 53)
+            elif self.display_ping_ms <= 240:
+                tc = (224, 135, 33)
+            else:
+                tc = (209, 27, 27)
+            self.ping_label.set_text(f"{self.display_ping_ms} ms", tc)
             self.ping_time = time.time()

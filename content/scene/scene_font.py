@@ -170,14 +170,14 @@ class SceneFont:
         }
         SceneFont.ping_normal_font = {
             'font': pygame.font.Font(scene_settings.font_path_normal, 16),
-            'tc': (255, 255, 255),
+            'tc': (224, 135, 33),
             'bc': None,
             'align': 2,
             'valign': 1
         }
         SceneFont.ping_bad_font = {
             'font': pygame.font.Font(scene_settings.font_path_normal, 16),
-            'tc': (255, 255, 255),
+            'tc': (209, 27, 27),
             'bc': None,
             'align': 2,
             'valign': 1
