@@ -17,11 +17,12 @@ from content.online.player_info import PlayerInfo
 
 class ClientGame(OnlineGame):
     """客户端游戏"""
-    def __init__(self, settings, net: UdpClient, room_id,
+    def __init__(self, settings, net: UdpClient, tcpnet,room_id,
                  map_name, player_names, screen, player_name,
                  server_start_time=None):
         super().__init__(settings, screen, net, room_id, map_name, player_names)
         self.player_name = player_name
+        self.tcp = tcpnet
         self.player_ship: Ship = None  # 玩家的飞船
         self.player_ship_is_far = False  # 玩家飞船是否距离
         self.win_player = None  # 胜利玩家
@@ -77,11 +78,11 @@ class ClientGame(OnlineGame):
                 'args': [room_id, self.player_name],
                 'kwargs': {}
             }
-            self.net.send(msg)
+            self.tcp.send(msg)
             # print('已发送校时信息:', cnt)
             msg = None
             while not msg:
-                msg = self.net.receive()
+                msg = self.tcp.receive()
                 if msg:
                     if msg['opt'] == OptType.CheckClock:
                         if msg['args'][1] != self.player_name:
@@ -100,7 +101,7 @@ class ClientGame(OnlineGame):
         self.send_get_server_start_time_msg(room_id)
         msg = None
         while not msg:
-            msg = self.net.receive()
+            msg = self.tcp.receive()
             if msg['opt'] == OptType.ServerStartGameTime:
                 if msg['args'][0] != room_id:
                     msg = None

@@ -192,7 +192,7 @@ class ServerMain:
             self.server.send(messageAdr, sendMsg)
         else:
             roomid = str(uuid.uuid1())
-            newroom = Room(roomid, user, roomname, roommap, self.udp_server, self.game_settings)
+            newroom = Room(roomid, user, roomname, roommap, self.udp_server, self.server, self.game_settings)
             self.room_list[roomid] = newroom
             user.set_roomid(roomid)
             sendMsg = messageMsg
@@ -458,7 +458,7 @@ class ServerMain:
             # 处理消息队列
             time.sleep(0.001)
             # TCP
-            messages = self.server.get_message()
+            messages = self.server.get_message()  + self.udp_server.get_message()
             for message in messages:
                 self.logger.debug("[debug info]message" + str(message))
                 messageAdr, messageMsg = message
@@ -490,15 +490,6 @@ class ServerMain:
                     self.ready(message)
                 elif opt == OptType.changeroomname:
                     self.changeroomname(message)
-                else:
-                    self.logger.warning("unexpected opt" + str(message))
-            # UDP
-            messages = self.udp_server.get_message()
-            for message in messages:
-                messageAdr, messageMsg = message
-                opt = messageMsg["opt"]
-                if opt == OptType.login:
-                    self.login(message)
                 elif 27 <= opt <= 30:
                     room_id = messageMsg['args'][0]
                     if room_id in self.room_list:

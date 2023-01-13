@@ -11,6 +11,7 @@ from content.online.player_info import PlayerInfo
 
 class ClientGameScene(Scene):
     """客户端在线游戏的场景"""
+
     def __init__(self, map_name, player_names, server_start_time=None):
         super().__init__()
         self.pause_panel = UIF.new_pause_panel(self)
@@ -24,7 +25,7 @@ class ClientGameScene(Scene):
         self.bgm_id = 2
 
         self.return_room_countdown_time = 5
-        self.game = ClientGame(self.settings, self.client.udp_client, self.client.roomid,
+        self.game = ClientGame(self.settings, self.client.udp_client, self.client.client, self.client.roomid,
                                map_name, player_names, self.screen, PlayerInfo.player_name,
                                server_start_time)
         self.game.restart()
@@ -93,7 +94,7 @@ class ClientGameScene(Scene):
             self.return_room_countdown_time -= self.game.delta_t
             if self.return_room_countdown_time <= 0:
                 self.return_room_button_clicked()
-            self.return_room_button.set_text('返回房间('+str(int(self.return_room_countdown_time))+')')
+            self.return_room_button.set_text('返回房间(' + str(int(self.return_room_countdown_time)) + ')')
 
     def update(self):
         self.deal_events()

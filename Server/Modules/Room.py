@@ -1,12 +1,13 @@
 import Server.Modules.User as User
 from Server.Modules import OptType
-
-OptType = OptType.OptType
 from content.games import server_game
 import queue
 import threading
 from Server.Modules.udpserver import UdpServer
+from Server.Modules.safeserver import SocketServer
 from settings import all_settings
+
+OptType = OptType.OptType
 
 
 class Room:
@@ -14,7 +15,7 @@ class Room:
     房间类 存储玩家，房间号，运行每局游戏主逻辑
     """
 
-    def __init__(self, roomid, owner: User, roomname: str, roommap: str, server: UdpServer,
+    def __init__(self, roomid, owner: User, roomname: str, roommap: str, server: UdpServer, tcp_server: SocketServer,
                  game_settings: all_settings.Settings):
         self.roomid = roomid
         self.owner = owner
@@ -22,7 +23,8 @@ class Room:
         self.userlist: [User] = [owner]
         self.roommap = roommap
         self.message_queue = queue.Queue()
-        self.server_ = server
+        self.udp_server = server
+        self.tcp_server = tcp_server
         self.game_settings = game_settings
         self.game: server_game.ServerGame = None
         self.started = False
@@ -59,16 +61,20 @@ class Room:
         self.started = True
         user_name_list = []
         addr_list = {}
+        tcp_addr_list = {}
         for user in self.userlist:
             user_name_list.append(user.get_name())
             addr_list[user.get_name()] = user.get_udp_address()
+            tcp_addr_list[user.get_name()] = user.get_address()
         self.game = server_game.ServerGame(
             settings=self.game_settings,
-            net=self.server_,
+            net=self.udp_server,
+            tcp_net=self.tcp_server,
             room_id=self.roomid,
             map_name=self.roommap,
             player_names=user_name_list,
-            addresses=addr_list
+            addresses=addr_list,
+            tcpaddresses=tcp_addr_list
         )
         thread = threading.Thread(target=self.game.main)
         thread.setDaemon(True)
