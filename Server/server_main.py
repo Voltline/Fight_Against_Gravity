@@ -417,7 +417,7 @@ class ServerMain:
             "opt": OptType.PingTest
         }
         self.server.send(messageAdr, sendMsg)
-        self.logger.info("[game info]send Addr {0} ping test".format(messageAdr))
+        # self.logger.info("[game info]send Addr {0} ping test".format(messageAdr))
 
     def clear(self):
         """
