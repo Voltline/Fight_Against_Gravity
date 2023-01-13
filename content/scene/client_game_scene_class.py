@@ -6,6 +6,8 @@ from content.scene.scene_class import Scene
 from content.scene.scene_player_class import ScenePlayer
 from content.games.client_game import ClientGame
 from content.UI.ui_function import UIFunction as UIF
+from content.UI.label_class import Label
+from content.scene.scene_font import SceneFont
 from content.online.player_info import PlayerInfo
 
 
@@ -28,6 +30,11 @@ class ClientGameScene(Scene):
         self.game = ClientGame(self.settings, self.client.client, self.client.client, self.client.roomid,
                                map_name, player_names, self.screen, PlayerInfo.player_name,
                                server_start_time)
+        self.last_ping_ms = 0
+        self.ping_label = Label(0.97 * self.screen.get_rect().width, 0.02 * self.screen.get_rect().height,
+                                10, f"{int(self.game.ping_ms)} ms", SceneFont.ping_good_font)
+        self.ping_time = time.time()
+        self.loaded['label'].append(self.ping_label)
         self.game.restart()
 
     def pause_clicked(self):
@@ -102,3 +109,7 @@ class ClientGameScene(Scene):
         self.check_win()
         self.return_room_countdown()
         self.player_ship_far_label.is_show = self.game.player_ship_is_far
+        if time.time() - self.ping_time >= 1:
+            self.last_ping_ms = int(self.ping_label.text.split(" ms")[0])
+            self.ping_label.set_text(f"{int(0.2 * self.last_ping_ms + 0.8 * self.game.ping_ms)} ms")
+            self.ping_time = time.time()

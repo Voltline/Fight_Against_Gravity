@@ -161,4 +161,24 @@ class SceneFont:
             'align': 0,
             'valign': 0
         }
-
+        SceneFont.ping_good_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 16),
+            'tc': (18, 230, 53),
+            'bc': None,
+            'align': 2,
+            'valign': 1
+        }
+        SceneFont.ping_normal_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 16),
+            'tc': (255, 255, 255),
+            'bc': None,
+            'align': 2,
+            'valign': 1
+        }
+        SceneFont.ping_bad_font = {
+            'font': pygame.font.Font(scene_settings.font_path_normal, 16),
+            'tc': (255, 255, 255),
+            'bc': None,
+            'align': 2,
+            'valign': 1
+        }
