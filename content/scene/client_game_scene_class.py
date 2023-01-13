@@ -104,12 +104,7 @@ class ClientGameScene(Scene):
                 self.return_room_button_clicked()
             self.return_room_button.set_text('返回房间(' + str(int(self.return_room_countdown_time)) + ')')
 
-    def update(self):
-        self.deal_events()
-        self.game.main_update()
-        self.check_win()
-        self.return_room_countdown()
-        self.player_ship_far_label.is_show = self.game.player_ship_is_far
+    def ping_label_update(self):
         if time.time() - self.ping_time >= 1:
             self.last_ping_ms = int(self.ping_label.text.split(" ms")[0])
             self.display_ping_ms = int(0.2 * self.last_ping_ms + 0.8 * self.game.ping_ms)
@@ -121,3 +116,11 @@ class ClientGameScene(Scene):
                 tc = (209, 27, 27)
             self.ping_label.set_text(f"{self.display_ping_ms} ms", tc)
             self.ping_time = time.time()
+
+    def update(self):
+        self.deal_events()
+        self.game.main_update()
+        self.check_win()
+        self.return_room_countdown()
+        self.player_ship_far_label.is_show = self.game.player_ship_is_far
+        self.ping_label_update()
