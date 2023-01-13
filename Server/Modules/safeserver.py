@@ -137,12 +137,12 @@ class SocketServer:
                 close("客户端主动")
                 break
             else:
-                tmpmsg = MessageDealer.decode(recv, self.password)#使用消息处理类解析消息
+                tmpmsg = MessageDealer.decode(recv, self.password)  # 使用消息处理类解析消息
                 for message in tmpmsg:
                     try:
                         message = json.loads(message)
                         if message["opt"] != 0:
-                            self.logger.debug("receive msg {} from {}".format(message,address))
+                            self.logger.debug("receive msg {} from {}".format(message, address))
                             self.que.put((address, message))
 
                     except Exception as err:
@@ -187,7 +187,10 @@ class SocketServer:
                 message = json.dumps(message)
             self.logger.debug("{send %d lenth msg to %s}:%s" % (len(message), address, message))
             message = MessageDealer.encode(message, self.password)
-            client.sendall(message)
+            send_thread = Thread(target=client.sendall, args=(message,))
+            send_thread.setDaemon(True)
+            send_thread.start()
+            # client.sendall(message)
         except Exception as err:
             self.logger.error("[in send]" + str(err) + "发送失败")
 
