@@ -8,6 +8,9 @@ from content.UI.panel_class import Panel
 from content.UI.ui_function import UIFunction as UI
 from content.scene.scene_player_class import ScenePlayer
 import pygame
+import re
+
+email_regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 
 
 class RegScene(Scene):
@@ -29,6 +32,7 @@ class RegScene(Scene):
         self.no_check_box = MessageBox((0.5, 0.5), "警告", "获取验证码不成功，可能是您的邮箱有误！")
         self.no_check_panel = Panel(self.reminder_panel_rect_small, '验证码为空', 22,
                                     [self.close_button])
+        self.wrong_email_box = MessageBox((0.5, 0.5), "警告", "您的邮箱不符合标准，请重新输入！")
         """显示没输入用户名的提示框"""
         self.no_id_and_email_box = MessageBox((0.5, 0.5), "警告", "用户名和邮箱不能为空！")
         self.loaded = {'label': labels, 'box': boxes, 'button': buttons, 'panel': [], 'msgbox': []}
@@ -39,7 +43,7 @@ class RegScene(Scene):
         self.height = self.screen.get_rect().height
         self.screen.fill((10, 10, 10))
         pygame.draw.rect(self.screen, (46, 46, 46),
-                         (self.width*0.25, self.height*0.20, self.width*0.5, self.height*0.5),
+                         (self.width * 0.25, self.height * 0.20, self.width * 0.5, self.height * 0.5),
                          border_radius=15)
         self.draw_elements()
         pygame.display.flip()
@@ -48,7 +52,10 @@ class RegScene(Scene):
         username = self.loaded['box'][1].text
         # print(username)  # 测试用
         email = self.loaded['box'][0].text
-        if username != '' and email != '':
+        if re.findall(email_regex, email) != [email]:
+            self.loaded['msgbox'] = [self.wrong_email_box]
+            self.has_msgbox = True
+        elif username != '' and email != '':
             # 如果用户名和邮箱都不为空
             self.check_code = self.client.register_get_checkcode(username, email)
             # 如果此处邮箱不合法或者用户名重复，就弹出一个msgbox
@@ -57,7 +64,10 @@ class RegScene(Scene):
             self.has_msgbox = True
 
     def confirm_reg_clicked(self):
-        if self.loaded['box'][1].text == '':
+        if re.findall(email_regex, self.loaded['box'][0].text) != [self.loaded['box'][0].text]:
+            self.loaded['msgbox'] = [self.wrong_email_box]
+            self.has_msgbox = True
+        elif self.loaded['box'][1].text == '':
             # 未输入用户名
             self.loaded['msgbox'] = [self.no_id_and_email_box]
             # self.ban_inputbox()

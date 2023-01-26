@@ -8,6 +8,9 @@ from content.UI.panel_class import Panel
 from content.UI.ui_function import UIFunction as UI
 from content.scene.scene_player_class import ScenePlayer
 import pygame
+import re
+
+email_regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 
 
 class ResetScene(Scene):
@@ -29,6 +32,7 @@ class ResetScene(Scene):
         self.no_check_warning = MessageBox((0.5, 0.5), "警告", "获取验证码不成功，邮箱或用户名有误！")
         self.no_check_panel = Panel(self.reminder_panel_rect_small, '验证码为空', 22,
                                     [self.close_button])
+        self.wrong_email_box = MessageBox((0.5, 0.5), "警告", "您的邮箱不符合标准，请重新输入！")
         """显示没输入用户名的提示框"""
         self.empty_input_box_warning = MessageBox((0.5, 0.5), "警告", "以上输入框不得留空！")
         self.conflict_pwd_warning = MessageBox((0.5, 0.5), "警告", "两次密码输入不一致！")
@@ -49,7 +53,10 @@ class ResetScene(Scene):
         username = self.loaded['box'][1].text
         # print(username)  # 测试用
         email = self.loaded['box'][0].text
-        if username != '' and email != '':
+        if re.findall(email_regex, email) != [email]:
+            self.loaded['msgbox'] = [self.wrong_email_box]
+            self.has_msgbox = True
+        elif username != '' and email != '':
             # 如果用户名和邮箱都不为空
             self.check_code = self.client.reset_get_checkcode(username, email)
             # 如果此处邮箱未注册，就弹出一个msgbox
@@ -65,7 +72,10 @@ class ResetScene(Scene):
                 self.has_msgbox = True
                 break
 
-        if self.loaded['box'][2].text != self.loaded['box'][3].text:
+        if re.findall(email_regex, self.loaded['box'][0].text) != [self.loaded['box'][0].text]:
+            self.loaded['msgbox'] = [self.wrong_email_box]
+            self.has_msgbox = True
+        elif self.loaded['box'][2].text != self.loaded['box'][3].text:
             self.loaded['msgbox'] = [self.conflict_pwd_warning]
             self.has_msgbox = True
         elif self.check_code == '':
