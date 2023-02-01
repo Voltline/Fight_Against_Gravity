@@ -13,6 +13,7 @@ class OptType:
         "user" : "str"
         "password" : "str"
         "status" : "ACK"/"NAK"
+        "version" : str
     }
     """
     loginTransfer = 3
