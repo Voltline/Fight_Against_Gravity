@@ -9,6 +9,7 @@ from Server.Modules.udpserver import UdpServer
 from content.maps.map_obj import Map
 import json
 import uuid
+from settings.all_settings import Settings
 import os
 
 OptType = OptType.OptType
@@ -20,7 +21,7 @@ class ServerMain:
     服务器主类 运行服务器主逻辑
     """
 
-    def __init__(self, game_settings, path, _debug_=False):
+    def __init__(self, game_settings: Settings, path, _debug_=False):
         # 获取服务器IP和端口
         self.absolute_setting_path = path + "/settings/settings.json"
         self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
@@ -41,7 +42,7 @@ class ServerMain:
         udp_ip = settings["Client"]["Udp_Local_IP"]
         udp_port = settings["Client"]["Udp_Local_Port"]
         heart_beat = settings["Client"]["heart_beat"]
-        self.version = settings["version"]
+        self.version = game_settings.version
         self.msg_len = settings["Client"]["msg_len"]
         self.user_list: {str: User} = {}
         """{"username" : User}"""
@@ -102,7 +103,7 @@ class ServerMain:
         id = messageMsg["id"]
         version = messageMsg["version"]
         if self.version != version:  # 版本号不匹配
-            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            self.server.send(messageAdr, self.back_msg(messageMsg, "VER"))
             return False
         if id == 1:  # tcp建立连接
             recv = False
