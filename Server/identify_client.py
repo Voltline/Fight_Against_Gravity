@@ -135,10 +135,12 @@ if __name__ == "__main__":
     if choice in ['A', 'a']:
         password = input("Input your password: ")
         result = client.login(username, password)
-        if result is True:
+        if result == "ACK":
             print("Login successfully!")
+        elif result == "NAK":
+            print("Username or Password Error! Try again later!")
         else:
-            print("Error! Try again later!")
+            print("Wrong Version! Update your client!")
     elif choice in ['B', 'b']:
         email = input("Input your email: ")
         check_code = client.get_check_code(username, email)

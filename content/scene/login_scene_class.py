@@ -66,13 +66,19 @@ class LogInScene(Scene):
         if userid != '' and userpw != '':
             # 输入用户名和密码的时候才登录
             answer = self.client.login(userid, userpw)
-            if answer:
+            if answer == "ACK":
                 # print("登录成功")
                 PlayerInfo.player_name = userid
                 ScenePlayer.pop()
-            else:
+            elif answer == "NAK":
                 error_msg_box = MessageBox((0.5, 0.5), "警告", "用户名或密码有误！")
                 self.loaded['msgbox'] = [error_msg_box]
+                self.has_msgbox = True
+            else:
+                server_version = answer.split()[1]
+                show_info = f"服务器({server_version})与客户端({self.settings.version})版本不匹配！"
+                wrong_version_msg_box = MessageBox((0.5, 0.5), "警告", show_info)
+                self.loaded['msgbox'] = [wrong_version_msg_box]
                 self.has_msgbox = True
         else:
             empty_msg_box = MessageBox((0.5, 0.5), "警告", "用户名和密码不能为空！")
