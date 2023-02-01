@@ -12,7 +12,7 @@ class OptType:
         “id” : 1/2/3 tcp连接,udp连接,登陆成功
         "user" : "str"
         "password" : "str"
-        "status" : "ACK"/"NAK"
+        "status" : "ACK"/"NAK"/"Wrong Version"
         "version" : str
     }
     """

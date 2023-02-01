@@ -4,6 +4,7 @@ from Server.Modules import OptType, safeclient
 from Server.Modules.Flogger import Flogger
 from Server.identify_client import IdentifyClient
 from Server.Modules.udpclient import UdpClient
+from settings.all_settings import Settings
 import sys
 import json
 
@@ -11,7 +12,7 @@ OptType = OptType.OptType
 
 
 class ClientMain:
-    def __init__(self, path, _debug_=False):
+    def __init__(self, path, game_settings: Settings, _debug_=False):
         self.path = path
         self.logger = Flogger(models=Flogger.FILE_AND_CONSOLE, level=Flogger.L_INFO,
                               folder_name="client_main", logpath=path)
@@ -28,7 +29,7 @@ class ClientMain:
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         self.ip = settings["Client"]["Game_Online_IP"]
-        self.version = settings["version"]
+        self.version = game_settings.version
         self.port = settings["Client"]["Game_Online_Port"]
         self.udp_ip = settings["Client"]["Udp_Online_IP"]
         self.udp_port = settings["Client"]["Udp_Online_Port"]
@@ -143,16 +144,16 @@ class ClientMain:
                 if recvMsg and recvMsg["status"] == "ACK":
                     self.user = user
                     self.logger.info("[login]" + str(recvMsg))
-                    return True
+                    return "ACK"
                 else:
                     self.logger.info("[login]" + str(recvMsg))
-                    return False
+                    return "NAK"
             else:
                 self.logger.info("[login]" + str(recvMsg))
-                return False
+                return "NAK"
         else:
-            self.logger.info("[login]" + str(recvMsg))
-            return False
+            self.logger.info("[login]" + recvMsg["status"])
+            return recvMsg["status"]
 
     def changemap(self, roommap):
         msg = {
