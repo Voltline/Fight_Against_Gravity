@@ -28,6 +28,7 @@ class ClientMain:
         with open(self.absolute_setting_path, "r") as f:
             settings = json.load(f)
         self.ip = settings["Client"]["Game_Online_IP"]
+        self.version = settings["version"]
         self.port = settings["Client"]["Game_Online_Port"]
         self.udp_ip = settings["Client"]["Udp_Online_IP"]
         self.udp_port = settings["Client"]["Udp_Online_Port"]
@@ -119,7 +120,8 @@ class ClientMain:
             "opt": OptType.login,
             "id": 1,
             "user": user,
-            "password": password
+            "password": password,
+            "version": self.version
         }
         self.client.send(msg)
         recvMsg = self.client.receive()

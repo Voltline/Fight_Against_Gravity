@@ -41,6 +41,7 @@ class ServerMain:
         udp_ip = settings["Client"]["Udp_Local_IP"]
         udp_port = settings["Client"]["Udp_Local_Port"]
         heart_beat = settings["Client"]["heart_beat"]
+        self.version = settings["version"]
         self.msg_len = settings["Client"]["msg_len"]
         self.user_list: {str: User} = {}
         """{"username" : User}"""
@@ -99,6 +100,10 @@ class ServerMain:
         """
         messageAdr, messageMsg = message
         id = messageMsg["id"]
+        version = messageMsg["version"]
+        if self.version != version:  # 版本号不匹配
+            self.server.send(messageAdr, self.back_msg(messageMsg, "NAK"))
+            return False
         if id == 1:  # tcp建立连接
             recv = False
             try:
@@ -465,7 +470,7 @@ class ServerMain:
             # 处理消息队列
             time.sleep(0.001)
             # TCP
-            messages = self.server.get_message()  + self.udp_server.get_message()
+            messages = self.server.get_message() + self.udp_server.get_message()
             for message in messages:
                 self.logger.debug("[debug info]message" + str(message))
                 messageAdr, messageMsg = message
