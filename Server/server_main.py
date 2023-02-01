@@ -103,7 +103,7 @@ class ServerMain:
         id = messageMsg["id"]
         version = messageMsg["version"]
         if self.version != version:  # 版本号不匹配
-            self.server.send(messageAdr, self.back_msg(messageMsg, "VER"))
+            self.server.send(messageAdr, self.back_msg(messageMsg, "VER " + self.version))
             return False
         if id == 1:  # tcp建立连接
             recv = False
