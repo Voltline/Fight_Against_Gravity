@@ -9,7 +9,7 @@
 ![Issues](https://img.shields.io/github/issues/Voltline/Fight_Against_Gravity)
 ![Stars](https://img.shields.io/github/stars/Voltline/Fight_Against_Gravity)
 
-## 成员/Collabrators
+## 成员/Collaborators
 * [ZYH (Voltline)](https://github.com/Voltline)
 * [LTY (D_S_O_)](https://github.com/DissipativeStructureObject)
 * [LKY (ShiinaRikka)](https://github.com/lky1433223)
