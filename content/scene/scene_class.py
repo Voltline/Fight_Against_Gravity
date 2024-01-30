@@ -23,15 +23,15 @@ class Scene:
         self.width = Scene.screen.get_rect().width
         self.height = Scene.screen.get_rect().height
         back_rect = pygame.Rect(20, 20, 45, 45)
-        self.back = Button("back", self.back_is_clicked, back_rect, self.path + "assets\\Img\\back.png", 1)
+        self.back = Button("back", self.back_is_clicked, back_rect, self.path + "assets/Img/back.png", 1)
         self.reminder_panel_rect = pygame.Rect(200, 300, 800, 200)
         self.reminder_panel_rect_small = pygame.Rect(450, 300, 300, 100)
         self.menu_like_panel_rect = pygame.Rect(300, 200, 600, 400)
         set_rect = pygame.Rect(0.4 * self.width, 0.6 * self.height, 290, 80)
         self.set_button = Button('setting', self.set_is_clicked, set_rect,
-                                 self.path + "assets\\Img\\start_unpressed.png",
+                                 self.path + "assets/Img/start_unpressed.png",
                                  0, '设置', SceneFont.start_font)
-        self.set_button.add_img(self.path + "assets\\Img\\start_press.png")
+        self.set_button.add_img(self.path + "assets/Img/start_press.png")
 
         self.close_button = UIF.new_close_button(self)
         self.switcher = 0

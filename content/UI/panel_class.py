@@ -28,7 +28,7 @@ class Panel(Control):
             path = os.path.dirname(sys.executable) + '/'
         else:
             path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '/'
-        self.font = pygame.font.Font(path + "assets\\font\\SourceHanSans-Normal.ttc", font_size)
+        self.font = pygame.font.Font(path + "assets/font/SourceHanSans-Normal.ttc", font_size)
         if text is not None:
             self.text_surface = self.font.render(text, True, SceneFont.white_font['tc'], SceneFont.white_font['bc'])
         self.loaded = {'ctrlrs': ctrlrs, 'boxes': boxes, 'others': others}

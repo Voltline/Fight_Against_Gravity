@@ -18,13 +18,13 @@ class Label:
         align和valign用于调整对齐
         """
         if hasattr(sys, 'frozen'):
-            path = os.path.dirname(sys.executable) + '\\'
+            path = os.path.dirname(sys.executable) + '/'
         else:
-            path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '\\'
+            path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '/'
 
         if font_info is None:
             font_info = {
-                'font': pygame.font.Font(path + "assets\\font\\SourceHanSans-Normal.ttc", 21),
+                'font': pygame.font.Font(path + "assets/font/SourceHanSans-Normal.ttc", 21),
                 'tc': (169, 183, 198),
                 'bc': None,
                 'align': 0,

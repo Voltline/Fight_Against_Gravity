@@ -31,7 +31,7 @@ class InputBox:
         else:
             path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '/'
 
-        self.font = pygame.font.Font(path + "assets\\font\\SourceHanSans-Normal.ttc", 18)  # 11/25 14:25 文件路径添加前缀UI
+        self.font = pygame.font.Font(path + "assets/font/SourceHanSans-Normal.ttc", 18)  # 11/25 14:25 文件路径添加前缀UI
         self.font_color = pygame.Color(169, 183, 198)
         self.is_pw = is_pw
         # self.bg = pygame.Color(52, 52, 52)

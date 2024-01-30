@@ -9,7 +9,7 @@ from content.UI.panel_class import Panel
 
 class StatusBar:
     def __init__(self, settings, username: str):
-        self.font = pygame.font.Font(settings.path + "assets\\font\\SourceHanSans-Normal.ttc", 16)
+        self.font = pygame.font.Font(settings.path + "assets/font/SourceHanSans-Normal.ttc", 16)
 
         self.name_label = Label(0, 0, 60, username, SceneFont.nickname_font)
         self.hp_bar = HP(0, 0, settings)

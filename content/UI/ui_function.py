@@ -14,7 +14,7 @@ class UIFunction:
     @staticmethod
     def new_start_logo(scene):
         """开始界面的logo"""
-        start_title = pygame.image.load(scene.path + "assets\\texture\\FAGWhite.png")  # 用作画图
+        start_title = pygame.image.load(scene.path + "assets/texture/FAGWhite.png")  # 用作画图
         start_title = pygame.transform.smoothscale(start_title, (514, 200))
         start_title = start_title.convert_alpha()
         return start_title
@@ -25,8 +25,8 @@ class UIFunction:
         start_font = SceneFont.start_font
         start_rect = Rect(0.4 * scene.width, 0.275 * scene.height, 290, 80)
         online_game_button = Button("onlinegame", scene.online_is_clicked, start_rect,
-                                    scene.path + "assets\\Img\\start_unpressed.png", 1, '在线游戏', start_font)  # 用作画图
-        online_game_button.add_img(scene.path + "assets\\Img\\start_press.png")
+                                    scene.path + "assets/Img/start_unpressed.png", 1, '在线游戏', start_font)  # 用作画图
+        online_game_button.add_img(scene.path + "assets/Img/start_press.png")
         return online_game_button
 
     @staticmethod
@@ -43,16 +43,16 @@ class UIFunction:
         """开始界面的本地登录按钮"""
         local_rect = Rect(0.4 * scene.width, 0.4375 * scene.height, 290, 80)
         local_button = Button('local game', scene.local_is_clicked, local_rect,
-                              scene.path + "assets\\Img\\start_unpressed.png", 0, '本地游戏', SceneFont.start_font)
-        local_button.add_img(scene.path + "assets\\Img\\start_press.png")
+                              scene.path + "assets/Img/start_unpressed.png", 0, '本地游戏', SceneFont.start_font)
+        local_button.add_img(scene.path + "assets/Img/start_press.png")
         return local_button
 
     @staticmethod
     def new_exit_button(scene):
         exit_rect = Rect(0.4 * scene.width, 0.7625 * scene.height, 290, 80)
-        exit_button = Button('exit', scene.exit_is_clicked, exit_rect, scene.path + "assets\\Img\\start_unpressed.png",
+        exit_button = Button('exit', scene.exit_is_clicked, exit_rect, scene.path + "assets/Img/start_unpressed.png",
                              0, '退出游戏', SceneFont.start_font)
-        exit_button.add_img(scene.path + "assets\\Img\\start_press.png")
+        exit_button.add_img(scene.path + "assets/Img/start_press.png")
         return exit_button
 
     @staticmethod
@@ -94,7 +94,7 @@ class UIFunction:
 
     @staticmethod
     def new_select_map_button(scene, name):
-        path = scene.path + "assets\\texture\\thumbnail\\" + name + ".png"
+        path = scene.path + "assets/texture/thumbnail/" + name + ".png"
         temp_rect = Rect(0, 0, 250, 250)
         select_map_button = Button(name, lambda: scene.select_map_button_clicked(name),
                                    temp_rect, path, 1, name, SceneFont.map_list_font)
@@ -114,9 +114,9 @@ class UIFunction:
 
         close_rect = Rect(0, 0, 20, 20)
         close_button = Button('close', scene.close_is_clicked, close_rect,
-                              scene.path + 'assets\\Img\\close_unclicked.png', 0)
+                              scene.path + 'assets/Img/close_unclicked.png', 0)
         close_button.r_xy = 0.968, 0.020
-        close_button.add_img(scene.path + 'assets\\Img\\close_clicked.png')
+        close_button.add_img(scene.path + 'assets/Img/close_clicked.png')
 
         buttons.append(close_button)
 
@@ -283,8 +283,8 @@ class UIFunction:
         height = scene.screen.get_rect().height
         close_rect = pygame.Rect(0, 0, 20, 20)
         close_button = Button('close', scene.set_close_is_clicked, close_rect,
-                              scene.path + 'assets\\Img\\close_unclicked.png', 0)
-        close_button.add_img(scene.path + 'assets\\Img\\close_clicked.png')
+                              scene.path + 'assets/Img/close_unclicked.png', 0)
+        close_button.add_img(scene.path + 'assets/Img/close_clicked.png')
         close_button.r_xy = 0.95, 0.03
         return close_button
 
@@ -312,8 +312,8 @@ class UIFunction:
         set_default_button.r_xy = 0.425, 0.9
         set_key_cancel_button.r_xy = 0.725, 0.9
         close_button = Button('close', scene.set_close_is_clicked, close_rect,
-                              scene.path + 'assets\\Img\\close_unclicked.png', 0)
-        close_button.add_img(scene.path + 'assets\\Img\\close_clicked.png')
+                              scene.path + 'assets/Img/close_unclicked.png', 0)
+        close_button.add_img(scene.path + 'assets/Img/close_clicked.png')
         close_button.r_xy = 0.95, 0.03
 
         setting_all_rect = pygame.Rect(0.1667 * width, 0.0625 * height, 0.667 * width, 0.875 * height)
