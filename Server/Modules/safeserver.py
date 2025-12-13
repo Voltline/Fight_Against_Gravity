@@ -1,56 +1,37 @@
-from Server.Modules.message_dealer import MessageDealer
-from Server.Modules.Flogger import Flogger
-from threading import Thread
+import asyncio
 import queue
 import socket
+import threading
+from typing import Dict, Tuple, Optional
+
 import json
-import time
+import msgpack
+
+from Server.Modules.Flogger import Flogger
+from Server.Modules.message_dealer import MessageDealer
 
 
 class SocketServer:
     """
-    对服务端的socket进行封装
-    一些info
-    {
-        [server info]服务器正常info
-        [debug info]debug信息
-        [err info]错误信息
-        [warning info]警报信息，代表有一些不影响运行的错误发生
-    }
+    基于 asyncio 的 TCP 服务器封装。
+    - 单线程事件循环，避免每连接一线程的开销
+    - 心跳超时控制（可选）
+    - 收/发消息统一通过 MessageDealer 处理
     """
 
     def __init__(self, ip: str, port: int, heart_time: int = -1, debug: bool = False,
                  msg_len: int = 1024, password: str = None,
                  models=Flogger.DLOGG, logpath=None, level=Flogger.L_INFO):
-        """
-        初始化socketserver
-        ip:绑定服务器ip
-        port:进程端口号
-        heart_time: 心跳检测，即超时断开连接时间。默认heart_time = -1表示不开启
-        debug: debug选项
-        warning: warning选项
-        msg_len: 报文长度 默认1024 实测在每秒60帧，4Mbps情况下，报文长度最高3000，否则丢包
-        password：AES加密秘钥，默认None
-        models，logpath，level，folde_name都是日志选项
-        收发流程：
-        发：msg->encode(msg)->encrypt(encode(msg))
-        收：encrypt(encode(msg))->encode(msg)->msg
-        """
         self.logger = Flogger(models, logpath, level, folder_name="safeserver")
         self.heart_time = heart_time
-        """心跳检测"""
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        """服务端socket"""
+        """心跳检测（秒），<=0 关闭"""
         self.__host = ip
-        """服务端ip，云端请保留云服务器ip"""
         self.__port = port
-        """服务器端口"""
         self.que = queue.Queue()
         """消息队列 [（address， recv）]"""
-        self.conn_poll = {}  #
-        """socket连接池 以字典方式存储 {address : socket}"""
-        self.accept_thread = None
-        """消息接收线程"""
+        self._connections: Dict[Tuple[str, int], asyncio.StreamWriter] = {}
+        """连接池 {address : writer}"""
+        self.conn_poll = self._connections  # 兼容旧命名
         self.debug = debug
         """debug选项"""
         self.msg_len = msg_len
@@ -63,91 +44,98 @@ class SocketServer:
             self.logger.error("秘钥长度非16:" + password)
             exit(-1)
 
-        try:
-            self.__socket.bind((self.__host, self.__port))
-            self.__socket.listen(5)
-        except Exception as err:
-            self.logger.error("Fail to build a socked listener" + str(err))
-            exit(-1)
-        # 以下是初始化logging
         self.logger.info("heart time：" + str(self.heart_time))
         self.logger.info("ip:" + str(self.__host) + " port:" + str(self.__port))
         self.logger.info("message length:" + str(self.msg_len))
         self.logger.info("debug:" + str(self.debug))
-        if password:
-            self.logger.info("Encrypt message on")
-        else:
-            self.logger.info("Encrypt message off")
+        self.logger.info("Encrypt message %s" % ("on" if password else "off"))
 
-        def start():
-            """
-            开始接收连接
-            """
-            self.logger.info("server started")
-            self.accept_thread = Thread(target=self.accept_client)
-            self.accept_thread.setDaemon(True)
-            self.accept_thread.setName("accept_thread")
-            self.accept_thread.start()
+        self._loop = asyncio.new_event_loop()
+        self._server_task: Optional[asyncio.Task] = None
+        self._server_thread = threading.Thread(target=self._run_loop, name="async_socket_server", daemon=True)
+        self._server_ready = threading.Event()
+        self._lock = threading.Lock()
+        self._server_thread.start()
+        # 等待事件循环启动，避免初始化后立即访问连接池为空导致的异常
+        if not self._server_ready.wait(timeout=5):
+            self.logger.error("Fail to start async socket server within 5 seconds")
+            raise RuntimeError("socket server failed to start")
+        if self._server_task and self._server_task.done():
+            # 触发异常抛出
+            self._server_task.result()
 
-        start()
+    def _run_loop(self):
+        asyncio.set_event_loop(self._loop)
+        self._server_task = self._loop.create_task(self._start_server())
+        self._loop.run_forever()
 
-    def accept_client(self):
-        """
-        接受连接，请新开线程使用 以免阻塞
-        """
-        while True:
-            client, address = self.__socket.accept()
-            self.logger.info("client {0} connected".format(address))
-            client.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
-            self.conn_poll.update({address: client})
-            if self.heart_time > 0:
-                client.settimeout(self.heart_time)
-            thread_message = Thread(target=self.message_handle, args=(client, address))
-            thread_message.setDaemon(True)
-            thread_message.setName("message_" + str(address))
-            thread_message.start()
+    async def _start_server(self):
+        try:
+            server = await asyncio.start_server(self._handle_client, self.__host, self.__port,
+                                                limit=self.msg_len)
+            addresses = ", ".join(str(sock.getsockname()) for sock in server.sockets or [])
+            self.logger.info("server started on %s" % addresses)
+            self._server_ready.set()
+            async with server:
+                await server.serve_forever()
+        except Exception as err:
+            self.logger.error("Fail to build a socket listener: %s" % err)
+            self._server_ready.set()
+            raise
 
-    def message_handle(self, client: socket.socket, address):
-        """
-        消息接收函数 传入socket和address，将接收到的消息存入消息队列
-        """
+    async def _handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+        address = writer.get_extra_info("peername")
+        if address is None:
+            address = ("unknown", 0)
+        self.logger.info("client %s connected" % (address,))
+        raw_socket = writer.get_extra_info("socket")
+        if raw_socket:
+            raw_socket.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, True)
+        with self._lock:
+            self._connections[address] = writer
 
-        def close(close_reason: str, err_reason=None):
-            if address in self.conn_poll:
-                self.conn_poll.pop(address)
-            client.close()
-            if err_reason is not None:
-                self.logger.info("连接{0}{1}断开".format(address, close_reason) + str(err_reason))
-            else:
-                self.logger.info("连接{0}{1}断开".format(address, close_reason))
+        try:
+            while True:
+                try:
+                    if self.heart_time > 0:
+                        recv = await asyncio.wait_for(reader.read(self.msg_len), timeout=self.heart_time)
+                    else:
+                        recv = await reader.read(self.msg_len)
+                except asyncio.TimeoutError as err:
+                    self.logger.info("连接%s超时%s" % (address, err))
+                    break
+                except Exception as err:
+                    self.logger.info("连接%s意外断开%s" % (address, err))
+                    break
 
-        while True:
-            if getattr(client, '_closed'):
-                self.logger.info("[server info] {}已停止运行".format(address))
-                break
-            try:
-                recv = client.recv(self.msg_len)
-            except socket.timeout as err:
-                close("超时", err_reason=err)
-                break
-            except Exception as err:
-                close("意外", err_reason=err)
-                break
-            if recv is None or len(recv) == 0:
-                close("客户端主动")
-                break
-            else:
-                tmpmsg = MessageDealer.decode(recv, self.password)  # 使用消息处理类解析消息
+                if not recv:
+                    self.logger.info("连接%s客户端主动断开" % (address,))
+                    break
+
+                tmpmsg = MessageDealer.decode(recv, self.password)
                 for message in tmpmsg:
                     try:
-                        message = json.loads(message)
-                        if message["opt"] != 0:
-                            self.logger.debug("receive msg {} from {}".format(message, address))
-                            self.que.put((address, message))
-
+                        if isinstance(message, (dict, list)):
+                            parsed = message
+                        elif isinstance(message, (bytes, bytearray)):
+                            parsed = msgpack.unpackb(message, raw=False)
+                        else:
+                            parsed = json.loads(message)
+                        if isinstance(parsed, dict) and parsed.get("opt", 0) != 0:
+                            self.logger.debug("receive msg {} from {}".format(parsed, address))
+                        self.que.put((address, parsed))
                     except Exception as err:
                         self.logger.warning("消息{}不是json格式报文,未解析".format(message) + str(err))
                         self.que.put((address, message))
+        finally:
+            with self._lock:
+                self._connections.pop(address, None)
+            try:
+                writer.close()
+                await writer.wait_closed()
+            except Exception as err:
+                self.logger.warning("关闭连接{}异常{}".format(address, err))
+            self.logger.info("连接{}断开".format(address))
 
     def get_message(self):
         """
@@ -163,31 +151,50 @@ class SocketServer:
         """
         放回连接池中的address
         """
-        return list(self.conn_poll.keys())
+        with self._lock:
+            return list(self._connections.keys())
+
+    async def _async_close(self, address):
+        writer = None
+        with self._lock:
+            writer = self._connections.pop(address, None)
+        if writer:
+            try:
+                writer.close()
+                await writer.wait_closed()
+            except Exception as err:
+                self.logger.warning("[in close]%s 连接关闭异常" % err)
+        else:
+            self.logger.error("[in close]连接未找到: %s" % (address,))
 
     def close(self, address):
         """
         关闭指定连接
         """
+        asyncio.run_coroutine_threadsafe(self._async_close(address), self._loop)
+
+    async def _async_send(self, address, message: bytes):
+        writer = self._connections.get(address)
+        if writer is None:
+            self.logger.error("[in send]连接未找到: %s" % (address,))
+            return
         try:
-            client = self.conn_poll[address]
-            client.close()
-            self.conn_poll.pop(address)
+            writer.write(message)
+            await writer.drain()
         except Exception as err:
-            self.logger.error("[in close]" + str(err) + "连接未找到")
+            self.logger.error("[in send]" + str(err) + "发送失败")
 
     def send(self, address, message):
         """
         msg:支持dict（json）/str格式
         """
         try:
-            client: socket
-            client = self.conn_poll[address]
-            if type(message) == dict:
+            if isinstance(message, dict):
                 message = json.dumps(message)
             self.logger.debug("{send %d lenth msg to %s}:%s" % (len(message), address, message))
-            message = MessageDealer.encode(message, self.password)
-            client.sendall(message)
+            encoded = MessageDealer.encode(message, self.password)
+            fut = asyncio.run_coroutine_threadsafe(self._async_send(address, encoded), self._loop)
+            fut.result(timeout=2)
         except Exception as err:
             self.logger.error("[in send]" + str(err) + "发送失败")
 

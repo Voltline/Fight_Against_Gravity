@@ -67,6 +67,8 @@ class IdentifyServer:
         if username in self.all_reg_acc:
             if password == self.all_reg_acc[username][0]:
                 database_operate.insert_login_data([username, time.ctime()])
+                # 登录成功向验证客户端返回 close，符合游戏服期望逻辑
+                self.server.send(addr, "close")
             else:
                 self.server.send(addr, "ERROR")
         else:
@@ -195,10 +197,13 @@ class IdentifyServer:
                 print("指令输入有误/操作失败！请重新输入！")
 
     def start(self):
-        self.accept_thread = Thread(target=self.console)
-        self.accept_thread.setDaemon(True)
-        self.accept_thread.setName("Console_thread")
-        self.accept_thread.start()
+        if sys.stdin and sys.stdin.isatty():
+            self.accept_thread = Thread(target=self.console)
+            self.accept_thread.daemon = True
+            self.accept_thread.name = "Console_thread"
+            self.accept_thread.start()
+        else:
+            self.logger.info("Console disabled (no TTY stdin detected), running headless.")
         while True:
             messages = self.server.get_message()
             for message in messages:

@@ -1,10 +1,13 @@
-﻿from Server.Modules.message_dealer import MessageDealer
-from Server.Modules.Flogger import Flogger
-from threading import Thread
+﻿import json
 import queue
 import socket
-import json
 import time
+from threading import Thread
+
+import msgpack
+
+from Server.Modules.Flogger import Flogger
+from Server.Modules.message_dealer import MessageDealer
 
 
 class SocketClient:
@@ -73,22 +76,26 @@ class SocketClient:
             self.heart_thread.start()
 
     def message_handler(self):
-        try:
-            while True:
+        while True:
+            try:
                 recv_segment = self.__socket.recv(self.msg_len)
                 tmpmsg = MessageDealer.decode(recv_segment, self.password)
-                for item in tmpmsg:
-                    message = None
-                    try:
-                        self.logger.debug("接收到服务端消息" + str(item))
+            except Exception as err:
+                self.logger.error("client decode error: %s" % err)
+                continue
+            for item in tmpmsg:
+                try:
+                    if isinstance(item, (dict, list)):
+                        message = item
+                    elif isinstance(item, (bytes, bytearray)):
+                        message = msgpack.unpackb(item, raw=False)
+                    else:
                         message = json.loads(item)
-                        if message["opt"] != 0:
-                            self.que.put(message)
-                    except Exception as err:
-                        self.logger.warning("消息{}不是json格式报文,未解析".format(message) + str(err))
-                        self.que.put(item)
-        except Exception as err:
-            self.logger.error("client closed" + str(err))
+                    self.logger.debug("接收到服务端消息" + str(message))
+                    self.que.put(message)
+                except Exception as err:
+                    self.logger.warning("消息{}解析失败".format(item) + str(err))
+                    self.que.put(item)
 
     def beating(self):
         while True:
@@ -101,11 +108,9 @@ class SocketClient:
         data:数据 支持str/json格式
         发送数据
         """
-        if type(message) == str or message["opt"] != 0:
+        if isinstance(message, str) or (isinstance(message, dict) and message.get("opt", 0) != 0):
             self.logger.debug("sending message" + str(message))
 
-        if type(message) == dict:
-            message = json.dumps(message)
         message = MessageDealer.encode(message, self.password)
         try:
             self.__socket.sendall(message)
@@ -118,6 +123,15 @@ class SocketClient:
         """
         res = self.que.get()
         return res
+
+    def receive_timeout(self, timeout: float):
+        """
+        返回数据（带超时），超时返回None
+        """
+        try:
+            return self.que.get(timeout=timeout)
+        except queue.Empty:
+            return None
 
     def get_message(self):
         """

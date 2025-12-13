@@ -7,6 +7,8 @@ from Server.Modules.udpclient import UdpClient
 from settings.all_settings import Settings
 import sys
 import json
+import threading
+import queue
 
 OptType = OptType.OptType
 
@@ -19,6 +21,8 @@ class ClientMain:
         self.absolute_setting_path = path + "settings/settings.json"
         self.client_models = Flogger.FILE
         self.client_level = Flogger.L_INFO
+        self.login_result_q = queue.Queue()
+        self.login_thread = None
         if "--debug" in sys.argv:
             self.absolute_setting_path = path + "settings/settings_local.json"
         if "--sakura" in sys.argv:
@@ -112,11 +116,91 @@ class ClientMain:
             return False
 
     def login(self, user: str, password: str):
+        """同步登录（内部使用 async 线程并等待结果）"""
+        self.login_async(user, password)
+        try:
+            result = self.login_result_q.get(timeout=8)
+            return result
+        except queue.Empty:
+            return "TIMEOUT"
+
+    def login_async(self, user: str, password: str):
+        """异步登录，结果放入 login_result_q，使用 poll_login_result 获取"""
+        if self.login_thread and self.login_thread.is_alive():
+            return False
+
+        def wait_recv(timeout=5):
+            recv = self.client.receive_timeout(timeout=timeout)
+            if recv is None:
+                raise TimeoutError("login timeout")
+            return recv
+
+        def worker():
+            res = "NAK"
+            try:
+                msg = {
+                    "opt": OptType.login,
+                    "id": 1,
+                    "user": user,
+                    "password": password,
+                    "version": self.version
+                }
+                self.client.send(msg)
+                recvMsg = wait_recv()
+                if recvMsg["status"] == "ACK":
+                    msg["id"] = 2
+                    self.udp_client.get_message_list()
+                    udp_yes = False
+                    for i in range(10):
+                        self.udp_client.send(msg)
+                        time.sleep(0.1)
+                        recvMsg = self.udp_client.get_message()
+                        if recvMsg and recvMsg["opt"] == OptType.login and recvMsg["status"] == "ACK":
+                            udp_yes = True
+                            break
+                    if udp_yes:
+                        msg["id"] = 3
+                        self.client.send(msg)
+                        recvMsg = wait_recv()
+                        if recvMsg and recvMsg["status"] == "ACK":
+                            self.user = user
+                            self.logger.info("[login]" + str(recvMsg))
+                            res = "ACK"
+                        else:
+                            res = "NAK"
+                    else:
+                        res = "NAK"
+                else:
+                    res = recvMsg.get("status", "NAK")
+            except Exception as err:
+                self.logger.error("[login async error]%s" % err)
+                res = "ERROR"
+            finally:
+                try:
+                    self.login_result_q.put_nowait(res)
+                except queue.Full:
+                    pass
+
+        self.login_thread = threading.Thread(target=worker, name="login_async", daemon=True)
+        self.login_thread.start()
+        return True
+
+    def poll_login_result(self):
+        """非阻塞获取登录结果，若无则返回None"""
+        if self.login_result_q.empty():
+            return None
+        return self.login_result_q.get()
+
+    def login(self, user: str, password: str):
         """
-        用户登录
-        user：用户名
-        password：用户密码
+        用户登录（兼容旧接口，同步等待）
         """
+        self.login_async(user, password)
+        try:
+            result = self.login_result_q.get(timeout=8)
+            return result
+        except queue.Empty:
+            return "TIMEOUT"
         msg = {
             "opt": OptType.login,
             "id": 1,
@@ -125,7 +209,7 @@ class ClientMain:
             "version": self.version
         }
         self.client.send(msg)
-        recvMsg = self.client.receive()
+        recvMsg = wait_recv()
         if recvMsg["status"] == "ACK":
             msg["id"] = 2
             self.udp_client.get_message_list()
@@ -140,7 +224,7 @@ class ClientMain:
             if udp_yes:
                 msg["id"] = 3
                 self.client.send(msg)
-                recvMsg = self.client.receive()
+                recvMsg = wait_recv()
                 if recvMsg and recvMsg["status"] == "ACK":
                     self.user = user
                     self.logger.info("[login]" + str(recvMsg))

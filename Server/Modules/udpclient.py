@@ -1,41 +1,58 @@
 import socket
 import queue
-import json
 from threading import Thread
+
+import msgpack
+
+from Server.Modules.message_dealer import MessageDealer
 
 
 class UdpClient:
     def __init__(self, ip, server_port: int, msg_len: int = 1024):
+        self.server_address = (ip, server_port)
         self.socket = self.create_client()
         if self.socket is None:
             raise Exception("fail to build a udp client")
+        try:
+            # 连接目标以便操作系统自动选择合适的本地地址（避免绑定到错误网卡无法回环）
+            self.socket.connect(self.server_address)
+        except Exception:
+            pass
         self.msg_len = msg_len
         self.que = queue.Queue()
         self.uque = queue.Queue()
-        self.server_address = (ip, server_port)
         thread_message = Thread(target=self.message_handler)
-        thread_message.setDaemon(True)
+        thread_message.daemon = True
         thread_message.start()
         thread_dealer = Thread(target=self.message_dealer)
-        thread_dealer.setDaemon(True)
+        thread_dealer.daemon = True
         thread_dealer.start()
 
     def create_client(self, port=0):
-        if port > 65535:
-            return None
         try:
             client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            client.bind((socket.gethostbyname(socket.gethostname()), port))
+            # 绑定 0.0.0.0:0，让系统选择与目标匹配的本地地址
+            client.bind(("", port))
             return client
-        except:
-            return self.create_client(port + 1)
+        except Exception as err:
+            print("fail to build udp client", err)
+            return None
 
     def message_dealer(self):
         while True:
             recv = self.uque.get()
-            message = recv[0].decode()
-            message = json.loads(message)
-            self.que.put(message)
+            try:
+                decoded = MessageDealer.decode(recv[0])
+                for message in decoded:
+                    if isinstance(message, (dict, list)):
+                        self.que.put(message)
+                    elif isinstance(message, (bytes, bytearray)):
+                        self.que.put(msgpack.unpackb(message, raw=False))
+                    else:
+                        self.que.put(message)
+            except Exception as err:
+                # 保留异常信息，避免线程悄悄退出
+                print("udp client decode error", err, recv)
 
     def message_handler(self):
         while True:
@@ -52,12 +69,8 @@ class UdpClient:
         """
         # print("try to send", message, self.server_address)
         try:
-            if type(message) == dict:
-                message = json.dumps(message)
-            if type(message) != str:
-                return False
-            message = message.encode()
-            self.socket.sendto(message, self.server_address)
+            encoded = MessageDealer.encode(message)
+            self.socket.send(encoded)
             # print("send", message)
         except Exception as err:
             print(err)

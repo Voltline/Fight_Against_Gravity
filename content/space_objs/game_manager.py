@@ -8,7 +8,7 @@ from content.game_modules.physics import G
 
 
 class GameManager:
-    """管理游戏状态变量的类"""
+    """管理游戏状态变量的类（客户端使用 pygame sprite/碰撞）。"""
     def __init__(self, settings):
         """初始化"""
         self.settings = settings

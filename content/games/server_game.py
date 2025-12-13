@@ -68,10 +68,13 @@ class ServerGame(OnlineGame):
         # print('游戏开始时间发送成功')
 
     def send_all(self, msg: dict):
-        """向所有玩家广播msg"""
-        for address in self.tcp_addresses.values():
-            self.net.send(address, msg)
-            # time.sleep(0.01)
+        """向所有玩家广播msg，游戏内实时数据用 UDP，其他可靠数据可继续用 TCP"""
+        for player_name, address in self.addresses.items():
+            if address:
+                self.net.send(address, msg)
+            else:
+                # 回退 TCP 保底
+                self.tcp.send(self.tcp_addresses[player_name], msg)
 
     def physic_update(self):
         """每个物理dt的更新行为"""

@@ -1,7 +1,10 @@
 import socket
 import queue
 from threading import Thread
-import json
+
+import msgpack
+
+from Server.Modules.message_dealer import MessageDealer
 
 
 class UdpServer:
@@ -18,13 +21,14 @@ class UdpServer:
         while True:
             try:
                 recv = self.socket.recvfrom(self.msg_len)
-                message = recv[0].decode()
-                try:
-                    message = json.loads(message)
-                except:
-                    pass
-                # print("recv" + str(message) + str(recv[1]))
-                self.que.put((recv[1], message))
+                decoded = MessageDealer.decode(recv[0])
+                for message in decoded:
+                    if isinstance(message, (dict, list)):
+                        self.que.put((recv[1], message))
+                    elif isinstance(message, (bytes, bytearray)):
+                        self.que.put((recv[1], msgpack.unpackb(message, raw=False)))
+                    else:
+                        self.que.put((recv[1], message))
             except OSError as oserr:
                 print("上一个消息发送失败 " + str(oserr))
             except Exception as err:
@@ -45,13 +49,8 @@ class UdpServer:
         发送数据
         """
         try:
-            if type(message) == dict:
-                message = json.dumps(message)
-            if type(message) != str:
-                return False
-            message = message.encode()
-            # print("send" + str(message) + str(address))
-            self.socket.sendto(message, address)
+            encoded = MessageDealer.encode(message)
+            self.socket.sendto(encoded, address)
         except Exception as err:
             print("fail to send message" + str(err))
 

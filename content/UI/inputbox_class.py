@@ -7,6 +7,25 @@ import sys
 from pygame.locals import SCRAP_TEXT
 import platform
 
+SCRAP_READY = False
+SCRAP_TRIED = False
+
+
+def ensure_scrap():
+    """初始化剪贴板模块，失败则返回 False 防止闪退。"""
+    global SCRAP_READY, SCRAP_TRIED
+    if SCRAP_TRIED:
+        return SCRAP_READY
+    SCRAP_TRIED = True
+    try:
+        if not pygame.display.get_init():
+            return False
+        pygame.scrap.init()
+        SCRAP_READY = pygame.scrap.get_init()
+    except Exception:
+        SCRAP_READY = False
+    return SCRAP_READY
+
 
 class InputBox:
     def __init__(self, rect: pygame.Rect, is_pw=0, is_set=False) -> None:
@@ -37,7 +56,7 @@ class InputBox:
         # self.bg = pygame.Color(52, 52, 52)
 
     def deal_event(self, event: pygame.event.Event):
-        pygame.scrap.init()
+        ensure_scrap()
         if self.active:
             self.color = self.color_active
             self.color_inside = self.color_inside_active
@@ -53,7 +72,7 @@ class InputBox:
                     if event.key == pygame.K_RETURN:
                         # print('*' + self.text + '*')
                         pass
-                    elif event.key == 118 and (event.mod == 4160 or event.mod == 4224):
+                    elif event.key == 118 and (event.mod == 4160 or event.mod == 4224) and SCRAP_READY:
                         scrap_text = pygame.scrap.get(SCRAP_TEXT)
                         if scrap_text:
                             if 'Windows' in platform.platform():

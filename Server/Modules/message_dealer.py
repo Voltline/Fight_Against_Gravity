@@ -1,11 +1,16 @@
-import gzip
-import json
-import re
 import base64
+import gzip
+import re
+
+import msgpack
 from Crypto.Cipher import AES
 
 
 class MessageDealer:
+    FLAG_COMPRESS = 0x01
+    FLAG_MSGPACK = 0x02
+    COMPRESS_THRESHOLD = 512  # bytes
+
     @staticmethod
     def encrypt(message, password: bytes) -> bytes:
         """
@@ -38,7 +43,7 @@ class MessageDealer:
             raise TypeError("加密数据类型错误")
         d = AES.new(password, AES.MODE_ECB).decrypt(message)
         d = d.strip(b'$')
-        return d.decode()
+        return d
 
     @staticmethod
     def enbase64(message) -> bytes:
@@ -72,25 +77,60 @@ class MessageDealer:
 
     @staticmethod
     def encode(message: str, password=None) -> bytes:
-        if type(message) == str:
-            message = message.encode()
-        if type(message) != bytes:
-            raise TypeError("加密数据类型错误")
+        """
+        将消息编码为带头部的 bytes，再进行可选 AES、base64 封装。
+        头部第 1 字节为 flags：
+        - bit0: 是否压缩
+        - bit1: 是否 msgpack 编码（否则按 utf-8 文本或原始 bytes）
+        """
+        flags = 0
+        payload = None
+        if isinstance(message, (dict, list, tuple)):
+            payload = msgpack.packb(message, use_bin_type=True)
+            flags |= MessageDealer.FLAG_MSGPACK
+        elif isinstance(message, str):
+            payload = message.encode()
+        elif isinstance(message, (bytes, bytearray)):
+            payload = bytes(message)
+        else:
+            raise TypeError("不支持的消息类型: %s" % type(message))
+
+        if len(payload) > MessageDealer.COMPRESS_THRESHOLD:
+            payload = MessageDealer.engzip(payload)
+            flags |= MessageDealer.FLAG_COMPRESS
+
+        payload = bytes([flags]) + payload
         if password:
-            message = MessageDealer.encrypt(message, password)
-        # message = MessageDealer.engzip(message)
-        message = MessageDealer.enbase64(message)
-        return message
+            payload = MessageDealer.encrypt(payload, password)
+        payload = MessageDealer.enbase64(payload)
+        return payload
 
     @staticmethod
     def decode(message: bytes, password=None) -> [str]:
-        message = MessageDealer.debase64(message)
-        # message = [MessageDealer.degzip(item) for item in message]
-        if password:
-            message = [MessageDealer.decrypt(item, password) for item in message]
-        else:
-            message = [item.decode() for item in message]
-        return message
+        """
+        解码并返回对象列表（dict/list/str/bytes）。
+        """
+        chunks = MessageDealer.debase64(message)
+        results = []
+        for chunk in chunks:
+            if password:
+                chunk = MessageDealer.decrypt(chunk, password)
+            flags = chunk[0]
+            payload = chunk[1:]
+            if flags & MessageDealer.FLAG_COMPRESS:
+                payload = MessageDealer.degzip(payload)
+            if flags & MessageDealer.FLAG_MSGPACK:
+                try:
+                    obj = msgpack.unpackb(payload, raw=False)
+                    results.append(obj)
+                    continue
+                except Exception:
+                    pass
+            try:
+                results.append(payload.decode())
+            except Exception:
+                results.append(payload)
+        return results
 
 
 if __name__ == "__main__":

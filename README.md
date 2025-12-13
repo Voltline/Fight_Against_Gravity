@@ -9,6 +9,38 @@
 ![Issues](https://img.shields.io/github/issues/Voltline/Fight_Against_Gravity)
 ![Stars](https://img.shields.io/github/stars/Voltline/Fight_Against_Gravity)
 
+## 目录结构/Project Structure
+- `main.py`：客户端入口，启动 Pygame 窗口与场景。
+- `server.py`：无头专用服务器入口。
+- `Server/`：房间/用户管理、TCP/UDP 通信、日志等后台逻辑。
+- `content/`：游戏场景、实体、地图定义与 UI 组件。
+- `assets/`：纹理、音频等静态资源。
+- `settings/`：多套配置 JSON 与加载器 `all_settings.py`。
+- 工具：`joysticktest.py` 手柄检测，`test.py` 网络探针。
+
+## 快速开始/Getting Started
+1. 准备 Python 3.10+，建议虚拟环境：
+   ```bash
+   python -m venv .venv && source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
+2. 本地一键跑通（服务器 + 客户端，连接 127.0.0.1）：
+   ```bash
+   ./scripts/run_local.sh
+   ```
+   默认使用 `settings/settings_local.json`（本地 IP/端口，内置本地注册服务器一起启动）。
+3. 单独启动客户端：
+   ```bash
+   python main.py [--debug] [--nogui]
+   ```
+   `--nogui` 仅启动网络层，便于联机测试。
+4. 单独启动专用服务器（默认绑定设置文件中的本地 IP/端口）：
+   ```bash
+   python server.py [--debug]
+   ```
+   `server.py` 已内置 SDL dummy 驱动，适合无显示的主机。
+5. 配置：修改 `settings/settings.json`（或 `settings_local.json` / `settings_sakura.json`），`--debug` 使用本地配置。
+
 ## 成员/Collaborators
 * [ZYH (Voltline)](https://github.com/Voltline)
 * [LTY (D_S_O_)](https://github.com/DissipativeStructureObject)

@@ -44,6 +44,7 @@ class ServerMain:
         heart_beat = settings["Client"]["heart_beat"]
         self.version = game_settings.version
         self.msg_len = settings["Client"]["msg_len"]
+        self.allow_local_auth = settings["Client"].get("Allow_Local_Auth", False)
         self.user_list: {str: User} = {}
         """{"username" : User}"""
         self.tmp_user_list: {str: User} = {}
@@ -70,10 +71,12 @@ class ServerMain:
         return message
 
     @staticmethod
-    def check(user: str, password: str, path) -> bool:
+    def check(user: str, password: str, path, allow_local_auth: bool = False) -> bool:
         """
         真的去注册服务器 进行check
         """
+        if allow_local_auth:
+            return True
         with open(path, 'r') as f:
             information = json.load(f)
         reg_ip = information["Client"]["Reg_IP"]
@@ -108,7 +111,8 @@ class ServerMain:
         if id == 1:  # tcp建立连接
             recv = False
             try:
-                recv = self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path)
+                recv = self.check(messageMsg["user"], messageMsg["password"], path=self.absolute_setting_path,
+                                  allow_local_auth=self.allow_local_auth)
             except Exception as err:
                 self.logger.error("验证服已被关闭" + str(err))
             if (messageMsg["user"] not in self.user_list) and recv and (messageMsg["user"] not in self.tmp_user_list):
@@ -420,9 +424,14 @@ class ServerMain:
     def ping_test(self, message):
         messageAdr, messageMsg = message
         sendMsg = {
-            "opt": OptType.PingTest
+            "opt": OptType.PingTest,
+            "time": messageMsg.get("time", None)  # 原样回送客户端时间戳便于测 RTT
         }
-        self.server.send(messageAdr, sendMsg)
+        if messageAdr in self.server.get_connection():
+            self.server.send(messageAdr, sendMsg)
+        else:
+            # 回给 UDP 来源
+            self.udp_server.send(messageAdr, sendMsg)
 
     def clear(self):
         """
@@ -479,6 +488,8 @@ class ServerMain:
                 解码后的message
                 """
                 opt = messageMsg["opt"]
+                if opt == OptType.heartBeat:
+                    continue
                 if opt == OptType.login:
                     self.login(message)
                 elif opt == OptType.logout:

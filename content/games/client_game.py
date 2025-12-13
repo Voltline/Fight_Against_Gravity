@@ -25,6 +25,8 @@ class ClientGame(OnlineGame):
         super().__init__(settings, screen, net, room_id, map_name, player_names)
         self.player_name = player_name
         self.tcp = tcpnet
+        self.net_type = "UDP" if isinstance(net, UdpClient) else "TCP"
+        self.net_rtt_ms = 0  # 由接收线程直接更新的纯网络 RTT
         self.player_ship: Ship = None  # 玩家的飞船
         self.player_ship_is_far = False  # 玩家飞船是否距离
         self.win_player = None  # 胜利玩家
@@ -201,7 +203,7 @@ class ClientGame(OnlineGame):
             if tick > self.now_tick:  # 如果消息过新就塞回消息队列
                 self.net.que.put(msg)
             elif opt == OptType.PingTest:
-                self.calc_ping_test_ms()
+                self.calc_ping_test_ms(msg)
             elif opt == OptType.AllObjs:
                 if not all_ships_msg or all_ships_msg_tick < tick:
                     all_ships_msg_tick = tick
@@ -280,11 +282,18 @@ class ClientGame(OnlineGame):
         msg = {
             "opt": OptType.PingTest
         }
-        self.ping_begin_time = time.time()
+        now = time.time()
+        msg["time"] = now
+        self.ping_begin_time = now
         self.net.send(msg)
 
-    def calc_ping_test_ms(self):
-        self.ping_test_ms = int((time.time() - self.ping_begin_time) * 1000)
+    def calc_ping_test_ms(self, msg):
+        now = time.time()
+        # 优先使用服务器原样回送的 time 字段做 RTT 估计
+        if "time" in msg:
+            sent = msg["time"]
+            self.net_rtt_ms = int((now - sent) * 1000)
+        self.ping_test_ms = int((now - self.ping_begin_time) * 1000)
 
     def update_snapshots(self):
         """把这个tick结束时的状态存入snapshots，把过于久远的状态删除"""

@@ -27,13 +27,14 @@ class ClientGameScene(Scene):
         self.bgm_id = 2
 
         self.return_room_countdown_time = 5
-        self.game = ClientGame(self.settings, self.client.client, self.client.client, self.client.roomid,
+        # UDP 用于实时游戏帧同步，TCP 仍做可靠请求
+        self.game = ClientGame(self.settings, self.client.udp_client, self.client.client, self.client.roomid,
                                map_name, player_names, self.screen, PlayerInfo.player_name,
                                server_start_time)
         self.last_ping_ms = 0
         self.display_ping_ms = 0
         self.ping_label = Label(0.97 * self.screen.get_rect().width, 0.02 * self.screen.get_rect().height,
-                                10, f"{int(self.game.ping_ms)} ms", SceneFont.ping_good_font)
+                                10, f"{self.game.net_type} {int(self.game.ping_ms)} ms", SceneFont.ping_good_font)
         self.ping_time = time.time()
         self.loaded['label'].append(self.ping_label)
         self.game.restart()
@@ -113,7 +114,8 @@ class ClientGameScene(Scene):
                 tc = (224, 135, 33)
             else:
                 tc = (209, 27, 27)
-            self.ping_label.set_text(f"{self.display_ping_ms} ms", tc)
+            rtt = self.game.net_rtt_ms
+            self.ping_label.set_text(f"{self.game.net_type} {self.display_ping_ms} ms (rtt {rtt} ms)", tc)
             self.ping_time = time.time()
 
     def update(self):
